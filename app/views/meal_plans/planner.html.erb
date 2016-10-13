@@ -1,0 +1,66 @@
+<%= render 'shared/navbar' %>
+<div class = "row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-8 heading">	
+		This Week's Meal suggestions are:
+	</div>
+</div>
+</br>
+<div class="row">
+	<p> This week meals </p>
+</div>
+<div class = "row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-8">
+		<%# Need to figure out how to do the link link <%= form_tag meal_plans_path do %>
+			<% @this_week_meals.each do |meal| %>
+				<div class="row">
+					<div class="col-sm-5"><%= meal.name %> - (recipe id) - <%= meal.id %> </div> 
+				</div>
+			<% end %>
+		<%#<%= submit_tag %>
+		<%#<% end %>
+	</div>
+</div>
+</br>
+<div class = "row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-8">
+		<%# Need to figure out how to do the link link <%= form_tag meal_plans_path do %>
+			<%= @random_recipe.name %> - <%= @random_recipe.id %>
+			<%#<% end %>
+		<%#<%= submit_tag %>
+		<%#<% end %>
+	</div>
+</div>
+</br>
+</br>
+<div class="row">
+	<div class="col-sm-4"></div>
+	<%# Need to figure out appropriate layout for this section %>
+	<%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+</div>
+
+		<%# 
+		It is impossible to have more than 3 items with a value of 2 or higher, so you only
+		need 3 conditions. Not sure if there's a way to combine these
+		
+		 would be nice if we could use the same code for grains without having to rewrite
+
+		 VISIT README FOR ADDITIONAL UNTESTED PLANNER CODE  %>
+
+
+<div class="row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-3">
+		<button class="btn btn-success">
+			Save Meal Plan
+		</button>
+	</div>
+</div>
+</br>
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-2"><%= link_to "home", recipes_path %></div>
+	<div class="col-sm-3"><%= link_to "See Last Week's Meals", meal_plans_path(date_filter: 7) %></div>
+</div>
