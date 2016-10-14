@@ -9,8 +9,6 @@ class MealPlansController < ApplicationController
 
 	def planner
 		@this_week_meals = MealPlan.order(:meal_date).meal_plan_generator
-		#can't get this to work right...keeps giving me a relation :()
-		@random_recipe = MealPlan.get_random_recipe
 	end
 
 	def new
