@@ -1,4 +1,5 @@
 class RecipesController < ApplicationController
+
 	def index
 		@recipes = Recipe.order(:name)
 	end
@@ -49,7 +50,7 @@ class RecipesController < ApplicationController
 	      end
 	    end
 	end
-#will need to look into this when update to new versions as there have been some changes
+
 	private
 	def recipe_params
       params.require(:recipe).permit(:name, :difficulty_level, :grain_id, :protein_id)
