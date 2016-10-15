@@ -33,8 +33,6 @@ def self.meal_plan_generator
 	while(@this_week_meals.length < 7)
 		#is this going to generate a new # every time?
 		rando_recipe = self.get_random_recipe
-
-		rando_recipe_grain = rando_recipe.grain
 		
 		#this is dumb. should set up differently
 		lw_string = "lw"
@@ -48,8 +46,14 @@ def self.meal_plan_generator
 			tw_match = self.compare_to_week(@this_week_meals, rando_recipe,tw_string)
 		end
 
-		#grain_max = self.check_component_part(@this_week_meals,rando_recipe,grain,rando_recipe_grain)
-
+		# we really only want to check the component parts if there are no matches with the meal lists
+		#but don't want to stuff w/ control flows
+		#so need to figure out something else i guess
+		#this is also dumb. should set up differently
+		#def self.check_component_part(arr,recipe, component_hash, type)
+	#	grain_max = self.check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain)
+		
+		#if(lw_match == false && tw_match == false && grain_max == false)
 		if(lw_match == false && tw_match == false)
 			add_to_list(@this_week_meals,rando_recipe)
 		else
@@ -113,21 +117,18 @@ def self.add_to_list(arr, item)
 end
 
 #this isn't working now, so will just stuff the main method
-def self.check_component_part(arr,recipe, component, type)
+def self.check_component_part(arr,recipe, component_hash, type)
 	#infinite loop if you do if(component[type] == 0)
 	grain_max = false
-		if(component.has_key?(type) && component.values_at(type)[0]< 3)
-			component[type] = component[type]  + 1
-
-
-		#it is in the list but already at 3 items
-		elsif(component.has_key?(type))
-			#invalid break try to send back to method?
-			meal_plan_generator
-		#it's not in the list yet, so set it's value to 1
+		if(component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3)
+			component_hash[type] = component_hash[type]  + 1
+			#grain_max is still false so don't need to add anything
+		elsif(component_hash.has_key?(type))
+			#if the component has the key and it's equal to three, you're at your max
+			grain_max = true
 		else
-			component[type] = 1
-			add_to_list(arr,recipe)
+			component_hash[type] = 1
+			#grain_max is still false so don't need to add anything
 		end
 end
 

@@ -1,6 +1,6 @@
 class Recipe < ApplicationRecord
 
-	#before_validation :capitalize
+	before_validation :titleize
 
 	validates :name, length: { minimum: 4 }, uniqueness: true
 	
@@ -11,12 +11,7 @@ class Recipe < ApplicationRecord
 	has_many :meal_plans
 
 	protected
-	#def capitalize
-		#temp_arr = name.to_a
-
-		#cap_arr = temp_arr.map do |word|
-		#	word.capitalize!
-		#end
-		#self.name = cap_arr.join
-	#end
+	def titleize
+		self.name = name.titleize
+	end
 end
