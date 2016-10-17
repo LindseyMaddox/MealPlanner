@@ -51,19 +51,24 @@
 $(function () {
     var saveButton = $('.save');
 
-    //var name = $(this).closest('.meal_name').val();
-
     //this will pull the first meal's Id
     var recipeId = $('.meal').data("recipe-id");
    
-   //will have to write the dates using javascript formats
-   var date = Date.now() + 1;
-
-   var dateCorFormat = date.GetYear + date.GetMonth() + date.getDate();
-    //date.setDate(date.getDate + 10)
+   //I'm not even sure we have to convert the date format
+   //we should either have a date select option or automatically set it based on its number in
+   //this week meals
    
-    //need to decide how to select date & update the date format
+   var date = new Date(Date.now() + 1);
+
+   date.setDate(date.getDate() + 1);
+   var month = Number(date.getMonth()) + 1
+   	if(month < 10){
+   		month = "0" + month;
+   	}
+  	var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
+
     saveButton.on("click", function() {
+    	alert(date);
         $.ajax({
            url:'/meal_plans/',
             type: 'POST',
