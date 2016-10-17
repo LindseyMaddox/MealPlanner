@@ -11,6 +11,10 @@ class MealPlansController < ApplicationController
 		@this_week_meals = MealPlan.order(:meal_date).meal_plan_generator
 	end
 
+	def show
+		@meal_plan = MealPlan.find(params[:id])
+	end
+	
 	def new
 		@meal_plan = MealPlan.new
 
@@ -21,8 +25,11 @@ class MealPlansController < ApplicationController
 	end
 
 	def create
-		    @meal_plan = MealPlan.new(meal_plan_params)
+		
+		 @meal_plan = MealPlan.new(meal_plan_params)
 
+		 #still need to figure out where to redirect when posting from ajax
+	    
 	    respond_to do |format|
 	      if @meal_plan.save
 	        format.html { redirect_to @meal_plan, notice: 'meal_plan was successfully created.' }
