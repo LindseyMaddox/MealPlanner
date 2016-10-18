@@ -42,11 +42,9 @@
 
 		<%# 
 		It is impossible to have more than 3 items with a value of 2 or higher, so you only
-		need 3 conditions. Not sure if there's a way to combine these
+		need 3 conditions. 
 		
-		 would be nice if we could use the same code for grains without having to rewrite
-
-		 VISIT README FOR ADDITIONAL UNTESTED PLANNER CODE  %>
+ %>
 
 
 <div class="row">
@@ -64,9 +62,12 @@
 $(function () {
     var saveButton = $('.save');
 
-    //this will pull the first meal's Id
+    //leave this in for now so the call works and for reference.
     var recipeId = $('.meal').data("recipe-id");
-   
+
+    //probably easier to just have the ids array ready from the model tham find it in the dom
+    var recipeIdList = "<%= j @this_week_meal_ids.to_json %>"
+
    //I'm not even sure we have to convert the date format
    //we should either have a date select option or automatically set it based on its number in
    //this week meals
@@ -80,10 +81,10 @@ $(function () {
    	}
   	var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
 
+    //single item save
     saveButton.on("click", function() {
-    	alert(date);
-        $.ajax({
-           url:'/meal_plans/',
+    	$.ajax({
+           url:'/meal_plans',
             type: 'POST',
             dataType: 'json',
              data: { meal_plan: {'recipe_id': recipeId, 'meal_date': date }},
@@ -102,6 +103,30 @@ $(function () {
     });
 
 });
+//batch create version
+   /*saveButton.on("click", function() {
+       alert(recipeIdList); checking 
+        $.ajax({
+          url:'/meal_plans/batch_create',
+            type: 'POST',
+            dataType: 'json',
+            //this will probably be multi-dimensional
+             data: { meal_plan: {'recipe_id': recipeId, 'meal_date': date }},
+            complete: function (jqXHR, textStatus) {
+                // callback
+            },
+            success: function (data, textStatus, jqXHR) {
+                // inform user that it was a sucess like:
+             //  alert("successfully saved recipe to meal plan list");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // do something if the request fails
+               // alert("could not save this meal");
+            }
+        });
+    });
+
+});*/
 
 </script>
 <div class="row">

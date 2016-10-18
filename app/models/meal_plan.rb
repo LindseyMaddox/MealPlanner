@@ -89,8 +89,19 @@ def self.meal_plan_generator
 	end
 
 	@this_week_meals	
-	#@components
+end
 
+#for js code only
+def self.meal_plan_generator_ids
+	@this_week_meals = self.meal_plan_generator
+
+	@this_week_meal_ids = []
+
+	@this_week_meals.each do |meal|
+		@this_week_meal_ids.push(meal.id)
+	end
+
+	@this_week_meal_ids
 end
 
 def self.get_random_recipe
@@ -146,7 +157,23 @@ def self.check_component_part(arr,component_hash, type)
 		end
 
 	max	
-	#component_hash
 end
+
+	def batch_create(post_content)
+		#begin exception handling
+			begin
+				# begin a transaction on the mp model
+    			MealPlan.transaction do
+      			# for each student record in the passed json
+      				JSON.parse(post_content).each do |meal_plan_hash|
+        				# create a new meal plan
+        				MealPlan.create!(meal_plan_hash)
+      				end # json.parse
+    			end # transaction
+  			rescue
+    			# do nothing
+    			Rails.logger.info("Did not create batch records")
+  			end  # exception handling
+	end  # batch_create
 
 end

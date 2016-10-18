@@ -9,9 +9,11 @@ class MealPlansController < ApplicationController
 
 	def planner
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
-		#@this_week_meals = MealPlan.order(:meal_date).meal_plan_generator.number_of_meals(params[:number_of_meals])
-		@this_week_meals = MealPlan.order(:meal_date).meal_plan_generator
-		
+		#@this_week_meals = MealPlan.meal_plan_generator.number_of_meals(params[:number_of_meals])
+		@this_week_meals = MealPlan.meal_plan_generator
+
+		@this_week_meal_ids = MealPlan.meal_plan_generator_ids
+									   
 	end
 
 	def show
@@ -43,6 +45,17 @@ class MealPlansController < ApplicationController
 	        format.json { render json: @meal_plan.errors, status: :unprocessable_entity }
 	      end
 	    end
+	end
+
+	def batch_create
+		 # call the batch create method within the model
+  		success = MealPlan.batch_create(request.raw_post)
+		  # return an appropriate response
+		  if success
+		    render json: {success: 'meals added'}, status: :created
+		  else
+		    render json: {failed: 'meals not added'}, status: :unprocessable_entity
+		  end
 	end
 
 	private
