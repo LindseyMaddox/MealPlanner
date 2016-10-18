@@ -1,21 +1,36 @@
 <%= render 'shared/navbar' %>
 <%= render 'shared/recipe_link.html.erb' %>
+
 <div class = "row">
-	<div class="col-sm-4"></div>
-	<div class="col-sm-8 heading">	
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 heading">	
 		This Week's Meal suggestions are:
 	</div>
 </div>
-</br>
 <div class = "row">
-	<div class="col-sm-4"></div>
-	<div class="col-sm-8">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6">
     <% @this_week_meals.each do |meal| %>
 		  <div class="row meal" data-recipe-id="<%=meal.id %>">
-        <div class="col-sm-5"><%= link_to meal.name, meal %> - <%= meal.grain.name %> - <%= meal.protein.name %></div> 
+        <div class="col-sm-8"><%= link_to meal.name, meal %> - <%= meal.grain.name %> - <%= meal.protein.name %></div> 
 		  </div>
 		<% end %>
-	</div>
+  </div>
+     <div class="col-sm-3">
+          <div class="row">
+              <div class="col-sm-12">
+                <strong>Filter by Date</strong>
+              </div>
+              <div class="col-sm-12">
+                <% @number_of_meals.each_pair do |text, number| %>
+                  <li>
+                    <%= text %>
+                   <%# <%= link_to "#{text}", planner_meal_plans(number_of_meals: number), class: 'label label-primary' %>
+                  </li>
+                <% end %>
+              </div>
+          </div>
+      </div>
 </div>
 </br>
 </br>

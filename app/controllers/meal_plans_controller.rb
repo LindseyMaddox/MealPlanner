@@ -8,7 +8,10 @@ class MealPlansController < ApplicationController
 	end
 
 	def planner
+		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
+		#@this_week_meals = MealPlan.order(:meal_date).meal_plan_generator.number_of_meals(params[:number_of_meals])
 		@this_week_meals = MealPlan.order(:meal_date).meal_plan_generator
+		
 	end
 
 	def show

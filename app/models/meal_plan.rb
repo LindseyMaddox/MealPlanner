@@ -13,14 +13,26 @@ class MealPlan < ApplicationRecord
 	    where(meal_date: 8.days.ago..1.days.ago ) 
 	    end } 
 
+
+	   # scope :number_of_meals, ->(number) {
+	    #	if number.present?
+	    #		number = number.to_i
+	    #	else
+	    #		number = 7
+	    #	end
+	    #}
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
 
 def self.meal_plan_generator
-#create a meal plan for next X days --> create scope above to do this
 
 #don't forget the direction from which you are coming joins must start from the has many side
 #e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
+
+#create a meal plan for next X days --> still trying to figure out best way to do this
+
+	meals_requested = 7
+
 	@last_week_meals = self.last_week_meals
 
 	@this_week_meals = []
@@ -30,7 +42,7 @@ def self.meal_plan_generator
 	
 	#make it time out if it tries to many times. Probably base it on the length of recipes table
 
-	while(@this_week_meals.length < 7)
+	while(@this_week_meals.length < meals_requested)
 		
 		#random recipe is pulling from the recipe table, so recipe id is just ID
 		rando_recipe = self.get_random_recipe
