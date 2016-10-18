@@ -31,7 +31,8 @@ def self.meal_plan_generator
 	#make it time out if it tries to many times. Probably base it on the length of recipes table
 
 	while(@this_week_meals.length < 7)
-		#is this going to generate a new # every time?
+		
+		#random recipe is pulling from the recipe table, so recipe id is just ID
 		rando_recipe = self.get_random_recipe
 		
 		#this is dumb. should set up differently
@@ -40,43 +41,43 @@ def self.meal_plan_generator
 
 		lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
 		
-		if(@this_week_meals.empty?)
-			tw_match = false
+
+		# we really only want to check each criteria if the criteria before it is met
+		#first check for matches with last week and this week
+		#then check for grain and protein counts
+		
+		if lw_match == true
+			next
+		elsif @this_week_meals.empty?
+			#tw_match = false we can actually add without checking anything else
+			#but we also want to move on to the next item
+			add_to_list(@this_week_meals, rando_recipe)
 		else
 			tw_match = self.compare_to_week(@this_week_meals, rando_recipe,tw_string)
 		end
 
-		# we really only want to check the component parts if there are no matches with the meal lists
-		#but don't want to stuff w/ control flows
-		#so need to figure out something else i guess
-		#this is also dumb. should set up differently
-		#def self.check_component_part(arr,recipe, component_hash, type)
-	#	grain_max = self.check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain)
-		
-		#if(lw_match == false && tw_match == false && grain_max == false)
-		if(lw_match == false && tw_match == false)
+		if(tw_match == false)
+			grain_max = self.check_component_part(@this_week_meals,grain_counts,rando_recipe.grain.name)
+		else
+			next
+		end
+
+		if(grain_max == false)
+			protein_max = self.check_component_part(@this_week_meals,protein_counts,rando_recipe.protein.name)
+		else
+			next
+		end
+
+		if(protein_max == false)
 			add_to_list(@this_week_meals,rando_recipe)
 		else
 			next
 		end
 
-			#version without sending to another method. yucky so many loops
-			#if(grain_counts.has_key?(rando_recipe_grain) && grain_counts.values_at(rando_recipe_grain)[0] < 3)
-			#		grain_counts[rando_recipe_grain] = grain_counts[rando_recipe_grain]  + 1
-			#		add_to_list(@this_week_meals,rando_recipe)
-			#		this_week_meal_ids.push(rando_recipe.id)
-
-			#elsif(grain_counts.has_key?(rando_recipe_grain))
-			#	next
-			#else
-			#	grain_counts[rando_recipe_grain] = 1
-			#	add_to_list(@this_week_meals,rando_recipe)
-			#	this_week_meal_ids.push(rando_recipe.id)
-			#end
-			#check_component_part(@this_week_meals,rando_recipe, grain_counts, rando_recipe.grain)
 	end
 
-	@this_week_meals
+	@this_week_meals	
+	#@components
 
 end
 
@@ -117,19 +118,23 @@ def self.add_to_list(arr, item)
 end
 
 #this isn't working now, so will just stuff the main method
-def self.check_component_part(arr,recipe, component_hash, type)
-	#infinite loop if you do if(component[type] == 0)
-	grain_max = false
-		if(component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3)
+def self.check_component_part(arr,component_hash, type)
+	#example method with arguments
+	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
+		
+	max = false
+		if component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3
 			component_hash[type] = component_hash[type]  + 1
 			#grain_max is still false so don't need to add anything
-		elsif(component_hash.has_key?(type))
-			#if the component has the key and it's equal to three, you're at your max
-			grain_max = true
+		elsif component_hash.has_key?(type) 
+			max = true
 		else
+			#grain_max is still false so don't need to mention. just set the type to 1
 			component_hash[type] = 1
-			#grain_max is still false so don't need to add anything
 		end
+
+	max	
+	#component_hash
 end
 
 end
