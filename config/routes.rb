@@ -8,8 +8,6 @@ Rails.application.routes.draw do
    collection do
       get 'planner'
     end
-    collection do
-    	match :batch_create, via: [:post]
-    end
+    match :batch_create, via: [:post], on: :collection
   end
 end

@@ -158,17 +158,16 @@ def self.check_component_part(arr,component_hash, type)
 
 	max	
 end
-
-	def batch_create(post_content)
+	def self.batch_create(post_content)
 		#begin exception handling
 			begin
 				# begin a transaction on the mp model
     			MealPlan.transaction do
-      			# for each student record in the passed json
-      				JSON.parse(post_content).each do |meal_plan_hash|
+      			# for each record
+      				inputs.each do |input|
         				# create a new meal plan
-        				MealPlan.create!(meal_plan_hash)
-      				end # json.parse
+        				MealPlan.create!(input)
+      				end 
     			end # transaction
   			rescue
     			# do nothing

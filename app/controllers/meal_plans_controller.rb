@@ -49,18 +49,31 @@ class MealPlansController < ApplicationController
 
 	def batch_create
 		 # call the batch create method within the model
+		# binding.pry
+		 @meal_plan = MealPlan.new(meal_plan_params)
   		success = MealPlan.batch_create(request.raw_post)
 		  # return an appropriate response
-		  if success
-		    render json: {success: 'meals added'}, status: :created
-		  else
-		    render json: {failed: 'meals not added'}, status: :unprocessable_entity
-		  end
+		  respond_to do |format|
+			  if success
+			  	format.html { redirect_to meal_plans_path, notice: 'meal_plans were successfully created.' }    
+			  else
+			    format.html { render action: "new" }
+	        	format.json { render json: @meal_plan.errors, status: :unprocessable_entity }
+			  end
+			end
 	end
 
 	private
+
+#for batch create, meal_plan_batch_params returns unpermitted params either way
+#meal_plan_params does not specificy any error just doesn't save the records
+#both only return the first item
+	def meal_plan_batch_params
+      params.require(:meal_plan).permit(meal_plan: [:recipe_id, :meal_date])
+      #params.require(:meal_plan).permit({ meal_plan: [:id, :recipe_id, :meal_date] })
+    end
+
 	def meal_plan_params
       params.require(:meal_plan).permit(:recipe_id, :meal_date)
     end
-	
 end
