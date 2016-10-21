@@ -13,25 +13,24 @@ class MealPlan < ApplicationRecord
 	    where(meal_date: 8.days.ago..1.days.ago ) 
 	    end } 
 
+	    scope :number_of_meals, ->(number) {
+	    	if number.present?
+	    		number = number.to_i
+	    	else
+	    		number = 7
+	    	end
+	    	number
+	    }
 
-	   # scope :number_of_meals, ->(number) {
-	    #	if number.present?
-	    #		number = number.to_i
-	    #	else
-	    #		number = 7
-	    #	end
-	    #}
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
-
-def self.meal_plan_generator
+def self.meal_plan_generator(number)
 
 #don't forget the direction from which you are coming joins must start from the has many side
 #e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
 
-#create a meal plan for next X days --> still trying to figure out best way to do this
-
-	meals_requested = 7
+#create a meal plan for next X days 
+	meals_requested = self.number_of_meals(number)
 
 	@last_week_meals = self.last_week_meals
 
@@ -92,8 +91,8 @@ def self.meal_plan_generator
 end
 
 #for js code only
-def self.meal_plan_generator_ids
-	@this_week_meals = self.meal_plan_generator
+def self.meal_plan_generator_ids(number)
+	@this_week_meals = self.meal_plan_generator(number)
 
 	@this_week_meal_ids = []
 
@@ -158,21 +157,22 @@ def self.check_component_part(arr,component_hash, type)
 
 	max	
 end
-	def self.batch_create(post_content)
+#NOT CURRENTLY USING
+	#def self.batch_create(post_content)
 		#begin exception handling
-			begin
+			#begin
 				# begin a transaction on the mp model
-    			MealPlan.transaction do
+    			#MealPlan.transaction do
       			# for each record
-      				inputs.each do |input|
+      				#inputs.each do |input|
         				# create a new meal plan
-        				MealPlan.create!(input)
-      				end 
-    			end # transaction
-  			rescue
+        			#	MealPlan.create!(input)
+      				#end 
+    			#end # transaction
+  			#rescue
     			# do nothing
-    			Rails.logger.info("Did not create batch records")
-  			end  # exception handling
-	end  # batch_create
+    			#Rails.logger.info("Did not create batch records")
+  			#end  # exception handling
+	#end  # batch_create
 
 end

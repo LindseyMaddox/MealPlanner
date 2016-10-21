@@ -24,8 +24,7 @@
               <div class="col-sm-12">
                 <% @number_of_meals.each_pair do |text, number| %>
                   <li>
-                    <%= text %>
-                   <%# <%= link_to "#{text}", planner_meal_plans(number_of_meals: number), class: 'label label-primary' %>
+                   <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
                   </li>
                 <% end %>
               </div>
