@@ -1,5 +1,7 @@
 class MealPlan < ApplicationRecord
-	belongs_to :recipe
+	belongs_to :recipe, inverse_of: :meal_plans
+#if they don't have anything input to the database for that period, we need to perform a different 
+#set of methods
 
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago

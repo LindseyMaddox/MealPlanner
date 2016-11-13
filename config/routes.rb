@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  #this is off somehow because it generated an error when I started the server
+  #root 'recipes/index'
+
   resources :recipes
 
 #may only want to provide routes for index and planner

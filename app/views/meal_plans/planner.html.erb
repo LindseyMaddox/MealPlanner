@@ -71,6 +71,9 @@ $(function () {
    //we should either have a date select option or automatically set it based on its number in
    //this week meals
    
+   //could probably actually set the dates in the controller & pass as json
+   //combine them as a hash?
+   
    var date = new Date(Date.now() + 1);
 
    date.setDate(date.getDate() + 1);
@@ -84,7 +87,7 @@ $(function () {
     saveButton.on("click", function() {
     	$.ajax({
            url:'/meal_plans',
-            type: 'POST',
+            type: 'POST'
             dataType: 'json',
              data: { meal_plan: {'recipe_id': recipeId, 'meal_date': date }},
             complete: function (jqXHR, textStatus) {
