@@ -31,12 +31,6 @@
           <%= f.collection_select :grain_id, Grain.all, :id, :name, :include_blank => true %>
       </div>
     </br>
-      <%= f.fields_for :meal_plans do |meal| %>
-        <div class="field">
-          <%= meal.label :date %><br>
-          <%= meal.date_select :meal_date, :include_blank => true %>
-        </div>
-      <% end %>
       <div class="actions">
         <%= f.submit class: 'btn btn-primary' %>
       </div>

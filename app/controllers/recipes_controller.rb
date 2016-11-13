@@ -11,10 +11,6 @@ class RecipesController < ApplicationController
 	def new
 		@recipe = Recipe.new
 
-		@recipe.meal_plans.build
-		 #@recipe.meal_plans.build(recipe_id: @recipe.id)
-	    #(meal_plan_params)
-
 		respond_to do |format|
 	      format.html # new.html.erb
 	      format.json { render json: @recipe }
@@ -59,12 +55,8 @@ class RecipesController < ApplicationController
 
 	private
 	def recipe_params
-      params.require(:recipe).permit(:name, :difficulty_level, :grain_id, :protein_id, 
-      	meal_plans_attributes: [:id, :meal_date])
+      params.require(:recipe).permit(:name, :difficulty_level, :grain_id, :protein_id)
     end
 
-    #  def meal_plan_params
-     # params.require(:meal_plan).permit(:id, :meal_date, :recipe_id) 
-    #end
 
 end
