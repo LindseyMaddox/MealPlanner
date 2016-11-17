@@ -20,6 +20,7 @@ class MealPlansController < ApplicationController
 	
 	def new
 		@meal_plan = MealPlan.new
+	
 
 		respond_to do |format|
 	      format.html # new.html.erb
@@ -45,60 +46,53 @@ class MealPlansController < ApplicationController
 	    end
 	end
 
-	def batch_create
-	
-		@meal_plans = []
-		#params[:meal_plans].each do 
+ def batch_create_2
+   #binding.pry
+	#@meal_plans = MealPlan.new(meal_plan_params)
+	#@meal_plan_content = JSON.parse(request.raw_post)
+	#binding.pry
+	  #  @meal_plan_content.each do |meal|
+	   #   meal = MealPlan.create(meal)
+	    #end
+	    #@meal_plans = MealPlan.create(params[:meal_plan])
 
-			#see last answer on this q http://stackoverflow.com/questions/23673513/saving-multiple-records-with-a-single-form-in-rails-4
-			
-			#meal_plans.push(m)
-		#end
-
-		#meal_plan_params[]
-		#binding.pry
-#should look something like this just need to figure out how the items are labelled when posted
-		#meal_plan_params.each do |m|
-		#meal_plan_batch_params[:meal_plan_item].each do |m|
-		#	item = MealPlan.new
-			#undefined method 'recipe_id' for "recipe_id": String
-		#	item.recipe_id = m.recipe_id
-		#	item.date = m.date
-		#	item.save
-		#end
-end
-  def batch_save
-   
-@meal_plans = MealPlan.new(meal_plan_params)
-#@meal_plan_content = JSON.parse(request.raw_post)
-#binding.pry
-  #  @meal_plan_content.each do |meal|
-   #   meal = MealPlan.create(meal)
-    #end
-    #@meal_plans = MealPlan.create(params[:meal_plan])
-
-      respond_to do |format|
-
+     MealPlan.create(params[:meal_plan])
         @mealrecords = []
-        save_succeeded = true
-      #  params[:meal_plans].each do |meal|
-       #     m = MealPlan.new(batch_meal_params(meal_plan_record))
-        #    save_succeeded = false unless m.save
-         #   @mealrecords << m
+       # save_succeeded = true
+
+      #  params["meal_plan"].each do |meal|
+       # 	m = MealPlan.new(meal_plan_params)
+		#	
+         #   save_succeeded = false unless m.save
+          #  @mealrecords << m
         #end
 
-         #   if save_succeeded
-          #      format.json{ render :json => @contactrecords.to_json ,status: 200 }
-           # else
-                format.json { render json: @mealrecords.errors, status: 404 }
-            #end
+         #respond_to do |format|
+           # if save_succeeded
+		    #  render json: {success: 'meal plans added'}, status: :created
+		    #else
+		     # render json: {failed: 'meal plans not added'}, status: :unprocessable_entity 
+		    #end
 
-      end
+
+            #if save_succeeded
+             #   format.json{ render :json => @mealrecords.to_json ,status: 200 }
+            #else
+             #   format.json { render json: @mealrecords.errors, status: 404 }
+            #end
+      	#end
+
   end
 
   def batch_create #codeschool version
     # call the batch create method within the student model
-    success = MealPlan.batch_create(request.raw_post)
+  #  binding.pry
+   # ordered_keys = request.raw_post.split('&')
+    #.collect {|k_v|k_v.split('=').first.to_s }
+
+   # success = MealPlan.batch_create(ordered_keys)
+
+   success = MealPlan.batch_create(request.raw_post)
     # return an appropriate response
     if success
       render json: {success: 'meal plans added'}, status: :created
@@ -113,7 +107,7 @@ end
 #meal_plan_params does not specificy any error just doesn't save the records
 #both only return the first item
 	def meal_plan_batch_params
-		 params.require(:meal_plan).permit(meal_plan: [:recipe_id, :meal_date])
+		 params.require(:meal_plan).permit( meal_plan: [recipe_id, :meal_date])
       #params.permit({meal_plan: [:recipe_id, :meal_date] }).require(:meal_plan)
     end
 

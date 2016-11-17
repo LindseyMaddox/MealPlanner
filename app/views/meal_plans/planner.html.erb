@@ -67,6 +67,8 @@ $(function () {
     //probably easier to just have the ids array ready from the model tham find it in the dom
     var recipeIdList = "<%= j @this_week_meal_ids.to_json %>"
 
+
+//[{"given_name":"John","middle_name":"Dee","family_name":"Doe","date_of_birth":"2005-03-25","grade_point_average":3,"start_date":"2014-03-25"},{"given_name":"Kelly","middle_name":null,"family_name":"Smith","date_of_birth":"2014-04-29","grade_point_average":null,"start_date":"2014-01-19"}]
    //I'm not even sure we have to convert the date format
    //we should either have a date select option or automatically set it based on its number in
    //this week meals
@@ -85,11 +87,18 @@ $(function () {
 
     //single item save
     saveButton.on("click", function() {
+
+      console.log("test");
     	$.ajax({
-           url:'/meal_plans',
-            type: 'POST'
+           url:'/meal_plans/batch_create',
+            type: 'POST',
             dataType: 'json',
-             data: { meal_plan: {'recipe_id': recipeId, 'meal_date': date }},
+            data: {meal_plan: [{'recipe_id': 12, 'meal_date': '2016-11-18'},
+             {'recipe_id': 13,    'meal_date': '2016-11-19'}] } ,
+            headers: {
+              'X-Transaction': 'POST Example',
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            },
             complete: function (jqXHR, textStatus) {
                 // callback
             },

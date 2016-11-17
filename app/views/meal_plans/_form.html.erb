@@ -1,27 +1,23 @@
 
-
-<%= form_tag batch_create_meal_plans_url do %>
+<%= form_for @meal_plan do |f| %>
 <div class="row">
   <div class="col-sm-1"></div>
   <div class="col-sm-4">
-    <%= @meal_plans.each_with_index do |meal, index| %>
-      <% fields_for "meals[#{index}]", meal do |f| %>
         <div class="field">
-              <%= f.label :recipe %>
-              <br />
-             <%= f.collection_select :recipe_id, Recipe.order(:name), :id, :name %>
+           <%= f.label :recipe %>
+            <br />
+            <%= f.collection_select :recipe_id, Recipe.order(:name), :id, :name %>
         </div>
         <div class="field">
-          <%= f.label :date %>
-          <br />
-           <%= f.date_select :meal_date %>
+            <%= f.label :date %>
+            <br />
+            <%= f.date_select :meal_date %>
         </div>
-      <% end %>
-    <% end %>
-    </br>
-      <div class="actions">
-        <%= submit_tag nil, class: 'btn btn-primary' %>
-      </div>
+        </br>
+          <div class="actions">
+            <%= submit_tag nil, class: 'btn btn-primary' %>
+          </div>
+   <% end %>
   </div>
 </div>
 <% end %>

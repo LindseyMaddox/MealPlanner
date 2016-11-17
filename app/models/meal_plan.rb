@@ -52,8 +52,12 @@ def self.meal_plan_generator(number)
 		lw_string = "lw"
 		tw_string = "tw"
 
-		lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
-		
+		#if they don't have anything on file for last week, go ahead and return false
+		if @last_week_meals.empty?
+			lw_match = false
+		else
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
+		end
 
 		# we really only want to check each criteria if the criteria before it is met
 		#first check for matches with last week and this week
@@ -159,22 +163,22 @@ def self.check_component_part(arr,component_hash, type)
 
 	max	
 end
-#NOT CURRENTLY USING
-	#def self.batch_create(post_content)
-		#begin exception handling
-			#begin
-				# begin a transaction on the mp model
-    			#MealPlan.transaction do
-      			# for each record
-      				#inputs.each do |input|
-        				# create a new meal plan
-        			#	MealPlan.create!(input)
-      				#end 
-    			#end # transaction
-  			#rescue
-    			# do nothing
-    			#Rails.logger.info("Did not create batch records")
-  			#end  # exception handling
-	#end  # batch_create
+#still can't get json parse correct
+def self.batch_create(post_content)
+
+  # begin exception handling
+  begin
+    # begin a transaction on the student model
+    MealPlan.transaction do
+      # for each student record in the passed json
+      JSON.parse(post_content).each do |meal_hash|
+        # create a new student
+        MealPlan.create!(meal_hash)
+      end # json.parse
+    end # transaction
+  rescue
+    # do nothing
+  end  # exception handling
+end  # batch_create
 
 end
