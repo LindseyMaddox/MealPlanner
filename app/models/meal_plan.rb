@@ -26,26 +26,29 @@ class MealPlan < ApplicationRecord
 
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
-def self.meal_plan_generator(number)
+def self.set_date_options
+	current_date = Date.today.strftime("%m/%d/%Y")
+	@date_options = []
+	@date_options.push(current_date)
+
+	(1..7).each do |x|
+		date = x.days.from_now.strftime("%m/%d/%Y")
+		@date_options.push(date)
+	end
+	@date_options
+end
+
+def self.meal_plan_generator
 
 #don't forget the direction from which you are coming joins must start from the has many side
 #e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
-
-#create a meal plan for next X days 
-	meals_requested = self.number_of_meals(number)
 
 	@last_week_meals = self.last_week_meals
 
 	@this_week_meals = []
 
-	grain_counts = {}
-	protein_counts = {}
-	
-	#make it time out if it tries to many times. Probably base it on the length of recipes table
-
-	while(@this_week_meals.length < meals_requested)
-		
-		#random recipe is pulling from the recipe table, so recipe id is just ID
+	while @this_week_meals.length < 1
+	#random recipe is pulling from the recipe table, so recipe id is just ID
 		rando_recipe = self.get_random_recipe
 		
 		#this is dumb. should set up differently
@@ -65,48 +68,13 @@ def self.meal_plan_generator(number)
 		
 		if lw_match == true
 			next
-		elsif @this_week_meals.empty?
-			#tw_match = false we can actually add without checking anything else
-			#but we also want to move on to the next item
+		else
 			add_to_list(@this_week_meals, rando_recipe)
-		else
-			tw_match = self.compare_to_week(@this_week_meals, rando_recipe,tw_string)
 		end
 
-		if(tw_match == false)
-			grain_max = self.check_component_part(@this_week_meals,grain_counts,rando_recipe.grain.name)
-		else
-			next
-		end
-
-		if(grain_max == false)
-			protein_max = self.check_component_part(@this_week_meals,protein_counts,rando_recipe.protein.name)
-		else
-			next
-		end
-
-		if(protein_max == false)
-			add_to_list(@this_week_meals,rando_recipe)
-		else
-			next
-		end
-
+		#could add code here to specify difficulty level, grain type, etc.
 	end
-
 	@this_week_meals	
-end
-
-#for js code only
-def self.meal_plan_generator_ids(number)
-	@this_week_meals = self.meal_plan_generator(number)
-
-	@this_week_meal_ids = []
-
-	@this_week_meals.each do |meal|
-		@this_week_meal_ids.push(meal.id)
-	end
-
-	@this_week_meal_ids
 end
 
 def self.get_random_recipe
@@ -163,22 +131,5 @@ def self.check_component_part(arr,component_hash, type)
 
 	max	
 end
-#still can't get json parse correct
-def self.batch_create(post_content)
-
-  # begin exception handling
-  begin
-    # begin a transaction on the student model
-    MealPlan.transaction do
-      # for each student record in the passed json
-      JSON.parse(post_content).each do |meal_hash|
-        # create a new student
-        MealPlan.create!(meal_hash)
-      end # json.parse
-    end # transaction
-  rescue
-    # do nothing
-  end  # exception handling
-end  # batch_create
 
 end

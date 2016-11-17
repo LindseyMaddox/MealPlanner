@@ -1,17 +1,19 @@
 <%= render 'shared/navbar' %>
 <%= render 'shared/recipe_link.html.erb' %>
-
+<%= form_for @meal_plan, url: {action: "create"} do |f| %>
 <div class = "row">
 	<div class="col-sm-3"></div>
 	<div class="col-sm-6 heading">	
-		This Week's Meal suggestions are:
+		Your meal suggestion:
 	</div>
 </div>
+</br>
 <div class = "row">
 	<div class="col-sm-3"></div>
 	<div class="col-sm-6">
     <% @this_week_meals.each do |meal| %>
 		  <div class="row meal" data-recipe-id="<%=meal.id %>">
+        <%=  f.hidden_field :recipe_id, value: 'meal.id' %>
         <div class="col-sm-8"><%= link_to meal.name, meal %> - <%= meal.grain.name %> - <%= meal.protein.name %></div> 
 		  </div>
 		<% end %>
@@ -33,25 +35,19 @@
 </div>
 </br>
 </br>
-<div class="row">
-	<div class="col-sm-4"></div>
-	<%# Need to figure out appropriate layout for this section %>
-	<%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
-</div>
-
-		<%# 
-		It is impossible to have more than 3 items with a value of 2 or higher, so you only
-		need 3 conditions. 
-		
- %>
-
 
 <div class="row">
 	<div class="col-sm-4"></div>
-	<div class="col-sm-3">
+	<div class="col-sm-6">Save meal for
+   <% @date_options.each do |date| %>
+      <%= f.radio_button :meal_date, date %>
+      <%= f.label(:date_date, date) %>
+    <br />
+  <% end %>
 		<button class="btn btn-success save">
-			Save Meal Plan
+			Save Meal
 		</button>
+<% end %>
 	</div>
 </div>
 </br>
@@ -61,40 +57,18 @@
 $(function () {
     var saveButton = $('.save');
 
-    //leave this in for now so the call works and for reference.
     var recipeId = $('.meal').data("recipe-id");
 
-    //probably easier to just have the ids array ready from the model tham find it in the dom
-    var recipeIdList = "<%= j @this_week_meal_ids.to_json %>"
+   var date = $('input[name=date_option]:checked').val();
 
-
-//[{"given_name":"John","middle_name":"Dee","family_name":"Doe","date_of_birth":"2005-03-25","grade_point_average":3,"start_date":"2014-03-25"},{"given_name":"Kelly","middle_name":null,"family_name":"Smith","date_of_birth":"2014-04-29","grade_point_average":null,"start_date":"2014-01-19"}]
-   //I'm not even sure we have to convert the date format
-   //we should either have a date select option or automatically set it based on its number in
-   //this week meals
-   
-   //could probably actually set the dates in the controller & pass as json
-   //combine them as a hash?
-   
-   var date = new Date(Date.now() + 1);
-
-   date.setDate(date.getDate() + 1);
-   var month = Number(date.getMonth()) + 1
-   	if(month < 10){
-   		month = "0" + month;
-   	}
-  	var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
-
-    //single item save
     saveButton.on("click", function() {
+      console.log("test_fired");
 
-      console.log("test");
     	$.ajax({
-           url:'/meal_plans/batch_create',
+           url:'/meal_plans/',
             type: 'POST',
             dataType: 'json',
-            data: {meal_plan: [{'recipe_id': 12, 'meal_date': '2016-11-18'},
-             {'recipe_id': 13,    'meal_date': '2016-11-19'}] } ,
+            data: {meal_plan: {'recipe_id': recipeId, 'meal_date': date } },
             headers: {
               'X-Transaction': 'POST Example',
               'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -104,40 +78,17 @@ $(function () {
             },
             success: function (data, textStatus, jqXHR) {
                 // inform user that it was a sucess like:
-             //  alert("successfully saved recipe to meal plan list");
+               alert("successfully saved recipe to meal plan list");
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // do something if the request fails
-               // alert("could not save this meal");
+                alert("could not save this meal");
             }
         });
     });
 
 });
-//batch create version
-   /*saveButton.on("click", function() {
-       alert(recipeIdList); checking 
-        $.ajax({
-          url:'/meal_plans/batch_create',
-            type: 'POST',
-            dataType: 'json',
-            //this will probably be multi-dimensional
-             data: { meal_plan: {'recipe_id': recipeId, 'meal_date': date }},
-            complete: function (jqXHR, textStatus) {
-                // callback
-            },
-            success: function (data, textStatus, jqXHR) {
-                // inform user that it was a sucess like:
-             //  alert("successfully saved recipe to meal plan list");
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                // do something if the request fails
-               // alert("could not save this meal");
-            }
-        });
-    });
 
-});*/
 
 </script>
 <div class="row">
