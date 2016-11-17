@@ -27,13 +27,15 @@ class MealPlan < ApplicationRecord
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
 def self.set_date_options
-	current_date = Date.today.strftime("%m/%d/%Y")
-	@date_options = []
-	@date_options.push(current_date)
+	current_date_user = Date.today.strftime("%m/%d/%Y")
+	current_date_db = Date.today.strftime("%Y/%m/%d")
+	@date_options = {}
+	@date_options[current_date_user] = current_date_db
 
 	(1..7).each do |x|
-		date = x.days.from_now.strftime("%m/%d/%Y")
-		@date_options.push(date)
+		date_user = x.days.from_now.strftime("%m/%d/%Y")
+		date_db = x.days.from_now.strftime("%Y/%m/%d")
+		@date_options[date_user] = date_db
 	end
 	@date_options
 end

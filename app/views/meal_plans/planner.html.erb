@@ -18,22 +18,7 @@
 		  </div>
 		<% end %>
   </div>
-     <div class="col-sm-3">
-          <div class="row">
-              <div class="col-sm-12">
-                <strong>Filter by Date</strong>
-              </div>
-              <div class="col-sm-12">
-                <% @number_of_meals.each_pair do |text, number| %>
-                  <li>
-                   <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
-                  </li>
-                <% end %>
-              </div>
-          </div>
-      </div>
 </div>
-</br>
 </br>
 
 <div class="row">
@@ -42,13 +27,13 @@
     <div class="row">
       Select date for meal
     </div>
-   <% @date_options.each do |date| %>
+   <% @date_options.each_pair do |user,db| %>
       <div class="row">   
-        <%= f.radio_button :meal_date, date %>
-        <%= f.label(:date_date, date) %>
+        <%= f.radio_button :meal_date, db %>
+        <%= f.label(:date_date, user) %>
       </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
 </div>
 </br> 
 <div class="row">

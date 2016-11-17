@@ -14,7 +14,6 @@ class MealPlansController < ApplicationController
 
 		@meal_plan = MealPlan.new
 	
-		#binding
 		respond_to do |format|
 	      format.html # new.html.erb
 	      format.json { render json: @meal_plan }
@@ -36,11 +35,8 @@ class MealPlansController < ApplicationController
 	end
 
 	def create
-		#binding.pry
 		 @meal_plan = MealPlan.new(meal_plan_params)
 
-		 #still need to figure out where to redirect when posting from ajax
-	    
 	    respond_to do |format|
 	      if @meal_plan.save
 	        format.html { redirect_to @meal_plan, notice: 'meal_plan was successfully created.' }
