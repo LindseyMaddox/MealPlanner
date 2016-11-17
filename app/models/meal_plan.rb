@@ -1,7 +1,5 @@
 class MealPlan < ApplicationRecord
 	belongs_to :recipe, inverse_of: :meal_plans
-#if they don't have anything input to the database for that period, we need to perform a different 
-#set of methods
 
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago
@@ -11,18 +9,8 @@ class MealPlan < ApplicationRecord
 		if number.present?
 	 		where(meal_date: start_date..end_date ) 
 	    else
-	    	#figure out how to reference the other scope below instead of repeating
-	    where(meal_date: 8.days.ago..1.days.ago ) 
+	   	 where(meal_date: 8.days.ago..1.days.ago ) 
 	    end } 
-
-	    scope :number_of_meals, ->(number) {
-	    	if number.present?
-	    		number = number.to_i
-	    	else
-	    		number = 7
-	    	end
-	    	number
-	    }
 
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
@@ -115,7 +103,7 @@ def self.add_to_list(arr, item)
 	arr.push(item)
 end
 
-#this isn't working now, so will just stuff the main method
+#future reference
 def self.check_component_part(arr,component_hash, type)
 	#example method with arguments
 	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
