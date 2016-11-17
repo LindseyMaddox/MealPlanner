@@ -12,8 +12,8 @@
 	<div class="col-sm-3"></div>
 	<div class="col-sm-6">
     <% @this_week_meals.each do |meal| %>
-		  <div class="row meal" data-recipe-id="<%=meal.id %>">
-        <%=  f.hidden_field :recipe_id, value: 'meal.id' %>
+		  <div class="row meal">
+        <%=  f.hidden_field :recipe_id, value: meal.id %>
         <div class="col-sm-8"><%= link_to meal.name, meal %> - <%= meal.grain.name %> - <%= meal.protein.name %></div> 
 		  </div>
 		<% end %>
@@ -51,46 +51,7 @@
 	</div>
 </div>
 </br>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script> 
-$(function () {
-    var saveButton = $('.save');
 
-    var recipeId = $('.meal').data("recipe-id");
-
-   var date = $('input[name=date_option]:checked').val();
-
-    saveButton.on("click", function() {
-      console.log("test_fired");
-
-    	$.ajax({
-           url:'/meal_plans/',
-            type: 'POST',
-            dataType: 'json',
-            data: {meal_plan: {'recipe_id': recipeId, 'meal_date': date } },
-            headers: {
-              'X-Transaction': 'POST Example',
-              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-            },
-            complete: function (jqXHR, textStatus) {
-                // callback
-            },
-            success: function (data, textStatus, jqXHR) {
-                // inform user that it was a sucess like:
-               alert("successfully saved recipe to meal plan list");
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                // do something if the request fails
-                alert("could not save this meal");
-            }
-        });
-    });
-
-});
-
-
-</script>
 <div class="row">
 	<div class="col-sm-3"></div>
 	<div class="col-sm-2"><%= link_to "home", recipes_path %></div>
