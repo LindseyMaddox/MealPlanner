@@ -14,7 +14,7 @@
     <% @this_week_meals.each do |meal| %>
 		  <div class="row meal">
         <%=  f.hidden_field :recipe_id, value: meal.id %>
-        <div class="col-sm-8"><%= link_to meal.name, meal %> - <%= meal.grain.name %> - <%= meal.protein.name %></div> 
+        <div class="col-sm-8"><%= link_to meal.name, meal %></div> 
 		  </div>
 		<% end %>
   </div>
@@ -23,15 +23,16 @@
 
 <div class="row">
 	<div class="col-sm-3"></div>
-	<div class="col-sm-6">
-    <div class="row">
-      Select date for meal
-    </div>
+	<div class="col-sm-6"> Select date for meal: </div>
+</div>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
    <% @date_options.each_pair do |user,db| %>
-      <div class="row">   
-        <%= f.radio_button :meal_date, db %>
-        <%= f.label(:date_date, user) %>
-      </div>
+        <label class="form-check-inline">
+          <%= f.radio_button :meal_date, db %>
+          <%= f.label(:date_date, user) %>
+        </label>
     <% end %>
   </div>
 </div>

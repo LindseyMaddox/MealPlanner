@@ -10,10 +10,8 @@ In the future, we may have the option to request a new meal for a specific day, 
 
 
 #TO DO
-#create scopes for setting the number of recipe suggestions you want to see -- IN PROGRESS
-#need an alternate planner engine if you don't have any recent meal plans
-#how to save multiple items to db at once
-#how to save multiple items to db at once through an ajax call
+#find pluralize action
+#possible summary stats for prior meal plans
 
 
 

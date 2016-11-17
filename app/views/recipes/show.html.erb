@@ -2,12 +2,21 @@
 <%= render 'shared/side_links' %>
 <div class="row">
   <div class="col-sm-4"></div>
-  <% if @recipe.grain.name = "none" %>
-    <div class="col-sm-6"><em><%= @recipe.name %></em> is made with <%= @recipe.protein.name %>.</div>
+  <div class="col-sm-6">
+  	  <% if @recipe.grain.name == "none" &&  @recipe.protein.name == "none" %>
+  	  		<em><%= @recipe.name %></em> does not contain protein or grains 
+	  <% elsif @recipe.grain.name == "none"  %>
+	    <em><%= @recipe.name %></em> is made with <%= @recipe.protein.name %>.</div>
+	 <% elsif @recipe.protein.name == "none"  %>
+	    <em><%= @recipe.name %></em> is made with <%= @recipe.grain.name %>.</div>
+	  <% else %>
+	     <em><%= @recipe.name %></em> is made with <%= @recipe.protein.name %> and <%= @recipe.grain.name %>.</div>
+	  <% end %>
+  </div>
 </div>
-  <% else %>
-    <div class="col-sm-6"><em><%= @recipe.name %></em> is made with <%= @recipe.grain.name %> and <%= @recipe.protein.name %>.</div>
+</br>
+<div class="row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
 </div>
-  <% end %>
-
 </br>

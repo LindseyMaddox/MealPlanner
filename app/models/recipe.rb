@@ -12,7 +12,9 @@ class Recipe < ApplicationRecord
 
 	accepts_nested_attributes_for :meal_plans, reject_if: lambda {|attributes| attributes['meal_date'].blank?}
 
-	
+	default_scope -> { order(:name) }
+
+
 	protected
 	def titleize
 		self.name = name.titleize
