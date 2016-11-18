@@ -30,8 +30,11 @@
   <div class="col-sm-6">
    <% @date_options.each_pair do |user,db| %>
         <label class="form-check-inline">
-          <%= f.radio_button :meal_date, db %>
-          <%= f.label(:date_date, user) %>
+          <div class="col-sm-3">
+            <%= f.radio_button :meal_date, db %>
+            <%= f.label(:date_date, user) %>
+         </div>
+         
         </label>
     <% end %>
   </div>

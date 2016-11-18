@@ -14,6 +14,8 @@ class MealPlan < ApplicationRecord
 
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
+	    scope :meal_order, -> {order(:meal_date)}
+
 def self.set_date_options
 	current_date_user = Date.today.strftime("%m/%d/%Y")
 	current_date_db = Date.today.strftime("%Y/%m/%d")

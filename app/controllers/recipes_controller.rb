@@ -6,6 +6,7 @@ class RecipesController < ApplicationController
 
 	def show
 		@recipe = Recipe.find(params[:id])
+		@times_eaten = Recipe.times_eaten(params[:id])
 	end
 
 	def new
@@ -22,7 +23,6 @@ class RecipesController < ApplicationController
 	end
 
 	def create
-		#binding.pry
 	    @recipe = Recipe.new(recipe_params)
 
 

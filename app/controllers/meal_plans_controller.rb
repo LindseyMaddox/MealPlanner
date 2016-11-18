@@ -1,8 +1,6 @@
 class MealPlansController < ApplicationController
 	def index
-		
-		# might have to map this to make it to an active record relation
-		@meal_plans = MealPlan.order(:meal_date).date_filter(params[:date_filter])
+		@meal_plans = MealPlan.meal_order.date_filter(params[:date_filter])
 		#last week, 7 days before date to 14 days before date
 		@time_period = {"last week" => 7, "two weeks ago" => 14}
 	end
