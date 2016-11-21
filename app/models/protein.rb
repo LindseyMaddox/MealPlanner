@@ -3,6 +3,7 @@ class Protein < ApplicationRecord
 	
 	has_many :recipes
 
+		#this could probably go in its own module if being used repeatedly?
 	protected
 	  def normalize_name
       self.name = name.downcase

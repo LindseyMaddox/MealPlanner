@@ -3,7 +3,11 @@
 <div class="row">
   <div class="col-sm-4"></div>
   <div class="col-sm-6">
-  	  	<em><%= @recipe.name %></em> was last eaten on <%= @times_eaten.last %>.
+  		<% if @times_eaten.empty? %>
+  	  		You have not yet made <em><%= @recipe.name %></em>.
+  	  	<% else %>
+  	  		<em><%= @recipe.name %></em> was last eaten on <%= @times_eaten.last %>.
+  	  	<% end %>
   </div>
 </div>
 </br>
