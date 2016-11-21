@@ -1,60 +1,135 @@
 <%= render 'shared/navbar' %>
 <%= render 'shared/recipe_link.html.erb' %>
-<%= form_for @meal_plan, url: {action: "create"} do |f| %>
+
 <div class = "row">
-	<div class="col-sm-3"></div>
-	<div class="col-sm-6 heading">	
-		Your meal suggestion:
-	</div>
-</div>
-</br>
-<div class = "row">
-	<div class="col-sm-3"></div>
-	<div class="col-sm-6">
-    <% @this_week_meals.each do |meal| %>
-		  <div class="row meal">
-        <%=  f.hidden_field :recipe_id, value: meal.id %>
-        <div class="col-sm-8"><%= link_to meal.name, meal %></div> 
-		  </div>
-		<% end %>
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6 heading">  
+    <h4>This Week's Meal suggestions are:</h4>
   </div>
 </div>
 </br>
-
-<div class="row">
-	<div class="col-sm-3"></div>
-	<div class="col-sm-6"> Select date for meal: </div>
-</div>
-<div class="row">
+<div class = "row">
   <div class="col-sm-3"></div>
   <div class="col-sm-6">
-   <% @date_options.each_pair do |user,db| %>
-        <label class="form-check-inline">
-          <div class="col-sm-3">
-            <%= f.radio_button :meal_date, db %>
-            <%= f.label(:date_date, user) %>
-         </div>
-         
-        </label>
+    <div class="row subheading">
+      <div class="col-sm-6">Meal</div>
+    </div>
+  </div>
+</div>  
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6 meal-suggestions">
+    <% @this_week_meals.each do |meal| %>
+      <div class="row meal">
+        <div class="col-sm-6">
+          <%= link_to meal.name, meal %>
+           <%=  hidden_field_tag :recipe_id, value: meal.id %>
+        </div>
+      </div>
     <% end %>
   </div>
-</div>
-</br> 
-<div class="row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6">
-		<button class="btn btn-success save">
-			Save Meal
-		</button>
-  </div>
-</div>
-<% end %>
-
+     <div class="col-sm-3">
+          <div class="row">
+              <div class="col-sm-12">
+                <strong>Filter by Date</strong>
+              </div>
+              <div class="col-sm-12">
+                <% @number_of_meals.each_pair do |text, number| %>
+                  <li>
+                   <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
+                  </li>
+                <% end %>
+              </div>
+          </div>
+      </div>
 </div>
 </br>
+</br>
+<div class="row">
+  <div class="col-sm-4"></div>
+  <%# Need to figure out appropriate layout for this section %>
+  <%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+
+    <%# 
+    It is impossible to have more than 3 items with a value of 2 or higher, so you only
+    need 3 conditions. 
+    
+ %>
+
+</div>
+
 
 <div class="row">
-	<div class="col-sm-3"></div>
-	<div class="col-sm-2"><%= link_to "home", recipes_path %></div>
-	<div class="col-sm-3"><%= link_to "See Last Week's Meals", meal_plans_path(date_filter: 7) %></div>
+  <div class="col-sm-4"></div>
+  <div class="col-sm-3">
+    <button class="btn btn-success save">
+      Save Meal Plan
+    </button>
+  </div>
+</div>
+</br>
+<script type="text/javascript"> 
+$(function () {
+    var saveButton = $('.save');
+
+
+//currently basing date on tomorrow + 1 for each new recipe
+   
+   var date = new Date(Date.now());
+
+
+
+    saveButton.on("click", function() {
+        var hiddenElements = $( "body" ).find( ":hidden" ).not( "script" );
+
+     var date = new Date(Date.now());
+     var dataArr = [];
+       // for now, doing regex to get the id val
+
+        
+       for(var i=0; i<hiddenElements.length; i++){
+        var tempHash = {}
+        var val = hiddenElements[i].value;
+       // get the value only. returns an array, so get the first index of that array
+        var recipeId = val.match(/\d+/g)[0];
+        
+     //   date is getting reset every time, so you only need to add 1
+        date.setDate(date.getDate() + 1);
+        var month = Number(date.getMonth()) + 1
+           if(month < 10){
+             month = "0" + month;
+           }
+        var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
+        tempHash["recipe_id"] = recipeId;
+        tempHash["meal_date"] = dateDbFormat;
+
+       
+         dataArr.push(tempHash);
+       }
+      
+       $.ajax({
+            url:'/meal_plans/batch_create',
+             type: 'POST',
+             dataType: 'json',
+             contentType: 'application/json',
+             data: JSON.stringify(dataArr),
+              headers: {
+               'X-Transaction': 'POST Example',
+               'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+             },
+         //    success handled by the controller
+            error: function (jqXHR, textStatus, errorThrown) {
+             //     may want to do flash instead
+                 alert("could not save this meal");
+             }
+         });
+    });
+
+});
+
+</script>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-2"><%= link_to "home", recipes_path %></div>
+  <div class="col-sm-3"><%= link_to "See Last Week's Meals", meal_plans_path(date_filter: 7) %></div>
 </div>
