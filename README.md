@@ -7,6 +7,5 @@ What if you had an app that stored all of your favorite meals and offered you su
 
 MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken! 
 
-New features coming:
---Ability to set the difficulty level, grain type, or protein of your meal recommendation.
+New features coming: Ability to set the difficulty level, grain type, or protein of your meal recommendation.
 
