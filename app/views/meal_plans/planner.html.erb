@@ -22,31 +22,43 @@
     <% @this_week_meals.each do |meal| %>
       <div class="row meal">
         <div class="col-sm-6">
-          <%= link_to meal.name, meal %>
-           <%=  hidden_field_tag :recipe_id, value: meal.id %>
+          <%= link_to meal.name, recipe_path(meal.recipe_id) %>
+           <%=  hidden_field_tag :recipe_id, value: meal.recipe_id %>
         </div>
       </div>
     <% end %>
   </div>
-     <div class="col-sm-3">
-          <div class="row">
-              <div class="col-sm-12">
-                <strong>Filter by Date</strong>
-              </div>
-              <div class="col-sm-12">
-                <% @number_of_meals.each_pair do |text, number| %>
-                  <li>
-                   <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
-                  </li>
-                <% end %>
-              </div>
+  <div class="col-sm-3">
+    <div class="row">
+       <div class="col-sm-12"> <strong>Filter by Date</strong></div>
+          <div class="col-sm-12">
+              <% @number_of_meals.each_pair do |text, number| %>
+                <li>
+                  <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
+                </li>
+              <% end %>
           </div>
-      </div>
-</div>
+        </div>
+    </div>
+  </div>
 </br>
 </br>
 <div class="row">
-  <div class="col-sm-4"></div>
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">Filter by grain:</div>
+</div>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+     <% @grains.each do |grain| %>
+      <% unless grain == @grains.last %>
+       <%= link_to grain.name, planner_meal_plans_path(grain_requests: grain.id) %>,
+      <% else %>
+        <%= link_to grain.name, planner_meal_plans_path(grain_requests: grain.id) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
   <%# Need to figure out appropriate layout for this section %>
   <%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
 
@@ -55,9 +67,6 @@
     need 3 conditions. 
     
  %>
-
-</div>
-
 
 <div class="row">
   <div class="col-sm-4"></div>

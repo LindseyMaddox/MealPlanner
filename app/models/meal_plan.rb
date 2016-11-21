@@ -29,6 +29,7 @@ scope :date_filter, ->(number){
 
 	    scope :meal_order, -> {order(:meal_date)}
 
+
 def self.meal_plan_generator(number)
 
 #don't forget the direction from which you are coming joins must start from the has many side
@@ -48,18 +49,13 @@ def self.meal_plan_generator(number)
 
 	while(@this_week_meals.length < meals_requested)
 		
-		#random recipe is pulling from the recipe table, so recipe id is just ID
 		rando_recipe = self.get_random_recipe
-		
-		#this is dumb. should set up differently
-		lw_string = "lw"
-		tw_string = "tw"
 
 		#if they don't have anything on file for last week, go ahead and return false
 		if @last_week_meals.empty?
 			lw_match = false
 		else
-			lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
 		end
 
 
@@ -74,7 +70,7 @@ def self.meal_plan_generator(number)
 			#but we also want to move on to the next item
 			add_to_list(@this_week_meals, rando_recipe)
 		else
-			tw_match = self.compare_to_week(@this_week_meals, rando_recipe,tw_string)
+			tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
 		end
 
 		if(tw_match == false)
@@ -99,31 +95,18 @@ def self.meal_plan_generator(number)
 
 	@this_week_meals	
 end
+	def self.get_random_recipe
+		#change id column to recipe_id so it has consistent naming to last week meals
+		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level, grain_id, protein_id").offset(rand(Recipe.count)).first
+	end
 
-def self.get_random_recipe
-	@random_recipe = Recipe.offset(rand(Recipe.count)).first
-end
-#item uses recipe.id
-#this week's meal uses recipe.id while last week's has recipe_id
-#for now using two methods
-
-
-def self.compare_to_week(arr,item,week)
+def self.compare_to_week(arr,item)
 	match = true
-	item_id_val = item.id
 	arr.each do |a|
 
-		#the recipe id is in a different location if it's already in meal plans
-		#we may want to go back and map the ids or something (in the original or another earlier method) so that it is the same for both
-		if(week == "tw")
-			a_id_val = a.id
-		else
-			a_id_val = a.recipe_id
-		end
-
-		if(a_id_val == item_id_val)
+		if(a.recipe_id == item.recipe_id)
 			break
-		elsif(a_id_val != item_id_val && arr.index(a) == arr.index(arr.last))
+		elsif(a.recipe_id != item.recipe_id && arr.index(a) == arr.index(arr.last))
 			match = false
 		else
 			next
@@ -136,7 +119,6 @@ def self.add_to_list(arr, item)
 	arr.push(item)
 end
 
-#this isn't working now, so will just stuff the main method
 def self.check_component_part(arr,component_hash, type)
 	#example method with arguments
 	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
