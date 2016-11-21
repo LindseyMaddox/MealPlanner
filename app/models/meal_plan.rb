@@ -3,20 +3,18 @@ class MealPlan < ApplicationRecord
 
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago
-		scope :date_filter, ->(number){
-			#convert to integer
-			number = number.to_i
-			start_date = (number + 1).days.ago #since it's beginning and end need to start 1 earlier
-			end_date = (number - 6).days.ago #1 day ago 7-6
-		if number.present? && number >= 7
-	 		where(meal_date: start_date..end_date ) 
-	    elsif number.present? && number < 7
-	    	#if number is < 7, you want to end with yesterday
-	    	where(meal_date: start_date..1.days.ago)
-	    	#figure out how to reference the other scope below instead of repeating
-	    else
-	    	where(meal_date: 8.days.ago..1.days.ago ) 
-	    end } 
+
+scope :date_filter, ->(number){
+			n = number.to_i
+ 			start_date = (n + 1).days.ago #since it's beginning and end need to start 1 earlier
+ 			end_date = (n - 6).days.ago #1 day ago 7-6
+ 		if number.present? && n >= 7
+ 	 		where(meal_date: start_date..end_date )
+ 	 	elsif number.present? && n < 7
+ 	 		 where(meal_date: start_date..1.days.ago )
+ 	    else
+ 	    	where(meal_date: 8.days.ago..1.days.ago ) 
+ 	    end } 
 
 	    scope :number_of_meals, ->(number) {
 	    	if number.present?
