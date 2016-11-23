@@ -1,5 +1,4 @@
 class RecipesController < ApplicationController
-
 	def index
 		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15)
 	end
@@ -25,7 +24,6 @@ class RecipesController < ApplicationController
 	end
 
 	def create
-		#binding.pry
 	    @recipe = Recipe.new(recipe_params)
 
 

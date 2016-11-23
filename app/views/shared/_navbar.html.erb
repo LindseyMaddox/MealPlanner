@@ -1,14 +1,10 @@
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-    	<div class="navbar header">
-	        <div class="row">
-	          <div class="col-sm-3">
-	            <div class="navbar-header">Meal Planner</div>
-	          </div>
-	        </div>
-	    </div>
-	    <ul class="nav navbar-nav navbar-right">
-		  <% if logged_in? %>
+<header class="navbar navbar-fixed-top navbar-inverse">
+  <div class="container">
+    <%= link_to "Meal Planner", root_path, id: "logo" %>
+    <nav>
+      <ul class="nav navbar-nav navbar-right">
+        <li><%= link_to "Home",   root_path %></li>
+        <% if logged_in? %>
           <li><%= link_to "Recipes", recipes_path %></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -16,7 +12,7 @@
             </a>
             <ul class="dropdown-menu">
               <li><%= link_to "Profile", current_user %></li>
-              <li><%= link_to "Settings", '#' %></li>
+              <li><%= link_to "Settings", edit_user_path(current_user) %></li>
               <li class="divider"></li>
               <li>
                 <%= link_to "Log out", logout_path, method: "delete" %>
@@ -25,8 +21,8 @@
           </li>
         <% else %>
           <li><%= link_to "Log in", login_path %></li>
-      <% end %>
-    </div>
-</nav>
-</br>
-
+        <% end %>
+      </ul>
+    </nav>
+  </div>
+</header>
