@@ -7,6 +7,12 @@
     <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %> <%= javascript_include_tag "application", "data-turbolinks-track" => true %> </head>
 
   <body>
-    <%= yield %>
+  	<div class="container">
+      <%= render 'shared/navbar' %>
+      <% flash.each do |message_type, message| %>
+        <div class="alert alert-<%= message_type %>"><%= message %></div>
+      <% end %>
+      <%= yield %>
+	</div>
   </body>
 </html>
