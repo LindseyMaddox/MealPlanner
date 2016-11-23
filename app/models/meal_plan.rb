@@ -138,7 +138,6 @@ def self.check_component_part(arr,component_hash, type)
 end
 
 	def self.batch_create(post_content)
-		#get rid of the extra "meal_plan" key
 		meal_values = JSON.parse(post_content)
 	  # begin exception handling
 	  begin
