@@ -1,5 +1,5 @@
-class MealPlan < ApplicationRecord
-	belongs_to :recipe, inverse_of: :meal_plans
+class Meal < ApplicationRecord
+	belongs_to :recipe, inverse_of: :meals
 
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago
@@ -30,10 +30,10 @@ scope :date_filter, ->(number){
 	    scope :meal_order, -> {order(:meal_date)}
 
 
-def self.meal_plan_generator(number)
+def self.meal_generator(number)
 
 #don't forget the direction from which you are coming joins must start from the has many side
-#e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
+#e.g. Recipe has_many :meals --> Recipe.joins(:meals)
 
 #create a meal plan for next X days 
 	meals_requested = self.number_of_meals(number)
@@ -142,11 +142,11 @@ end
 	  # begin exception handling
 	  begin
 	    # begin a transaction on the  mp model
-	    MealPlan.transaction do
+	    Meal.transaction do
 	      # for each student record in the passed json
 	      meal_values.each do |meal_hash|
 	        # create a new student
-	        MealPlan.create!(meal_hash)
+	        Meal.create!(meal_hash)
 	      end # json.parse
 	    end # transaction
 	  rescue

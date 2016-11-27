@@ -8,7 +8,7 @@ class Recipe < ApplicationRecord
 
 	belongs_to :protein, optional: true
 
-	has_many :meal_plans, inverse_of: :recipe
+	has_many :meals, inverse_of: :recipe
 
 	has_many :recipe_ingredients
 	

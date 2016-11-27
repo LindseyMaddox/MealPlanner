@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   #probably will want to restrict the routes later
   resources :ingredients
 
-resources :meal_plans do 
+resources :meals do 
    collection do
       get 'planner'
     end

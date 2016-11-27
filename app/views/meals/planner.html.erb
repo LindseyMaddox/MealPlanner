@@ -33,7 +33,7 @@
           <div class="col-sm-12">
               <% @number_of_meals.each_pair do |text, number| %>
                 <li>
-                  <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
+                  <%= link_to "#{text}", planner_meals_path(number_of_meals: number), class: 'label label-primary' %>
                 </li>
               <% end %>
           </div>
@@ -51,9 +51,9 @@
   <div class="col-sm-6">
      <% @grains.each do |grain| %>
       <% unless grain == @grains.last %>
-       <%= link_to grain.name, planner_meal_plans_path(grain_requests: grain.id) %>,
+       <%= link_to grain.name, planner_meals_path(grain_requests: grain.id) %>,
       <% else %>
-        <%= link_to grain.name, planner_meal_plans_path(grain_requests: grain.id) %>
+        <%= link_to grain.name, planner_meals_path(grain_requests: grain.id) %>
       <% end %>
     <% end %>
   </div>
@@ -116,7 +116,7 @@ $(function () {
        }
       
        $.ajax({
-            url:'/meal_plans/batch_create',
+            url:'/meals/batch_create',
              type: 'POST',
              dataType: 'json',
              contentType: 'application/json',

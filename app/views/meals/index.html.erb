@@ -2,7 +2,7 @@
 <div class="row">
           <div class="col-sm-3"></div>
           <div class="col-sm-6">
-          <% @meal_plans.each do |meal| %>
+          <% @meals.each do |meal| %>
             <li> <%= link_to meal.recipe.name, meal.recipe %> - <%= meal.meal_date %></li>
           <% end %>
           </div>
@@ -14,7 +14,7 @@
               <div class="col-sm-12">
                 <% @time_period.each_pair do |text, number| %>
                   <li>
-                    <%= link_to "#{text}", meal_plans_path(date_filter: number), class: 'label label-primary' %>
+                    <%= link_to "#{text}", meals_path(date_filter: number), class: 'label label-primary' %>
                   </li>
                 <% end %>
               </div>
