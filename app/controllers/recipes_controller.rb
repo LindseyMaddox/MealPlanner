@@ -1,4 +1,5 @@
 class RecipesController < ApplicationController
+
 	def index
 		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15)
 	end
@@ -44,7 +45,7 @@ class RecipesController < ApplicationController
 	    @recipe = Recipe.find(params[:id])
 
 	    respond_to do |format|
-	      if @recipe.update_(recipe_params)
+	      if @recipe.update(recipe_params)
 	        format.html { redirect_to @recipe, notice: 'recipe was successfully updated.' }
 	        format.json { head :no_content }
 	      else
@@ -56,7 +57,7 @@ class RecipesController < ApplicationController
 
 	private
 	def recipe_params
-      params.require(:recipe).permit(:name, :difficulty_level, :grain_id, :protein_id)
+      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] })
     end
 
 

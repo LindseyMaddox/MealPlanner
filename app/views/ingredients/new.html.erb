@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="row">
+      <div class="col-sm-1"></div>
+    <div class="col-sm-8">Add an ingredient</div>
+  </div>
+<%= form_for(@ingredient) do |f| %>
+  <% if @ingredient.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ingredient.errors.count, "error") %> prohibited this recipe from being saved:</h2>
+
+      <ul>
+      <% @ingredient.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+<div class="row">
+  <div class="col-sm-1"></div>
+  <div class="col-sm-4">
+      <div class="field">
+        <%= f.label :name %><br />
+        <%= f.text_field :name %>
+      </div>
+      <%# later change to only allow certain food group options %>
+      <div class="field">
+        <%= f.label :food_group %><br />
+        <%= f.text_field :food_group %>
+      </div>
+      <div class="actions">
+        <%= f.submit class: 'btn btn-primary' %>
+      </div>
+  </div>
+</div>
+<% end %>

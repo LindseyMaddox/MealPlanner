@@ -22,14 +22,12 @@
         <%= f.label :difficulty_level %><br />
         <%= f.number_field :difficulty_level, max: 5, min: 0 %>
       </div>
-      <div class="field">
-          <%= f.label :protein %><br />
-          <%= f.collection_select :protein_id, Protein.all, :id, :name, :include_blank => true %>
-      </div>
-       <div class="field">
-          <%= f.label :grain %><br />
-          <%= f.collection_select :grain_id, Grain.all, :id, :name, :include_blank => true %>
-      </div>
+   <label><strong>Ingredients</strong></label>
+ <% Ingredient.all.each do |ingredient| %>
+   <div class="field check-ingredient">
+       <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id %> <%= ingredient.name %>
+     </div>
+<% end %>
     </br>
       <div class="actions">
         <%= f.submit class: 'btn btn-primary' %>
