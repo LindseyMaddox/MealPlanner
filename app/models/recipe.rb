@@ -16,7 +16,7 @@ class Recipe < ApplicationRecord
 
 	default_scope -> { order(:name) }
 
-	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where(id: id).pluck('meals.meal_date') }
 
 
 	scope :grain_requests, ->(grain_id) { 

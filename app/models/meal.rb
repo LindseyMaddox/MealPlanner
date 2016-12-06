@@ -42,8 +42,7 @@ def self.meal_generator(number)
 
 	@this_week_meals = []
 
-	grain_counts = {}
-	protein_counts = {}
+	ingredients_hash = {}
 	
 	#make it time out if it tries to many times. Probably base it on the length of recipes table
 
@@ -73,23 +72,14 @@ def self.meal_generator(number)
 			tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
 		end
 
-		if(tw_match == false)
-			grain_max = self.check_component_part(@this_week_meals,grain_counts,rando_recipe.grain.name)
-		else
-			next
-		end
-
-		if(grain_max == false)
-			protein_max = self.check_component_part(@this_week_meals,protein_counts,rando_recipe.protein.name)
-		else
-			next
-		end
-
-		if(protein_max == false)
-			add_to_list(@this_week_meals,rando_recipe)
-		else
-			next
-		end
+	#account for nil values with ingredients
+		if tw_match == false && rando_recipe.ingredients = []
+			add_to_list(@this_week_meals, rando_recipe)
+		 elsif tw_match == false 
+			recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
+		 else
+		 	next
+		 end
 
 	end
 
@@ -119,21 +109,24 @@ def self.add_to_list(arr, item)
 	arr.push(item)
 end
 
-def self.check_component_part(arr,component_hash, type)
+
+
+def self.check_amount(arr,hsh, item_list)
 	#example method with arguments
-	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
+	#check_amount(@this_week_meals,recipe_hash, rando_recipe.ingredients)
 		
 	max = false
-		if component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3
-			component_hash[type] = component_hash[type]  + 1
-			#grain_max is still false so don't need to add anything
-		elsif component_hash.has_key?(type) 
+	item_list.each do |item|
+		if hsh.has_key?(item) && hsh.values_at(item)[0]< 3
+			hsh[item] = hsh[item]  + 1
+			#max is still false so don't need to add anything
+		elsif hsh.has_key?(item) 
 			max = true
 		else
-			#grain_max is still false so don't need to mention. just set the type to 1
-			component_hash[type] = 1
+			#max is still false so don't need to mention. just set the type to 1
+			hsh[item] = 1
 		end
-
+	end
 	max	
 end
 

@@ -2,9 +2,9 @@
 <div class="row">
   <div class="col-sm-4"></div>
   <div class="col-sm-6">
-  	<% if @meals.meal_date > Date.today %>
-  		You're eating <%= @meals.recipe.name %> on <%= @meals.meal_date %>.</div>
+  	<% if @meal.meal_date > Date.today %>
+  		You're eating <%= @meal.recipe.name %> on <%= @meal.meal_date %>.</div>
   	<% else %>
-  	   You ate <%= @meals.recipe.name %> on <%= @meal_plan.meal_date %>.</div>
+  	   You ate <%= @meal.recipe.name %> on <%= @meal.meal_date %>.</div>
   	 <% end %>
 </div>
