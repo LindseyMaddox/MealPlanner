@@ -1,6 +1,8 @@
 class Meal < ApplicationRecord
 	belongs_to :recipe, inverse_of: :meals
 
+	validates :user_id, presence: true
+
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago
 
@@ -25,13 +27,15 @@ scope :date_filter, ->(number){
 	    	number
 	    }
 
-	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
+
+	    scope :current_user_meals, ->(current_user) {where(user_id: current_user.id)}
+
+	    scope :last_week_meals, -> {where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
 	    scope :meal_order, -> {order(:meal_date)}
 
 
 def self.meal_generator(number)
-
 #don't forget the direction from which you are coming joins must start from the has many side
 #e.g. Recipe has_many :meals --> Recipe.joins(:meals)
 
@@ -49,7 +53,7 @@ def self.meal_generator(number)
 	while(@this_week_meals.length < meals_requested)
 		
 		rando_recipe = self.get_random_recipe
-
+		
 		#if they don't have anything on file for last week, go ahead and return false
 		if @last_week_meals.empty?
 			lw_match = false
@@ -87,7 +91,7 @@ def self.meal_generator(number)
 end
 	def self.get_random_recipe
 		#change id column to recipe_id so it has consistent naming to last week meals
-		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level, grain_id, protein_id").offset(rand(Recipe.count)).first
+		@random_recipe = Recipe.select("id as recipe_id, recipes.name as name, difficulty_level").offset(rand(Recipe.count)).first
 	end
 
 def self.compare_to_week(arr,item)

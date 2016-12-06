@@ -4,9 +4,7 @@ class Recipe < ApplicationRecord
 
 	validates :name, length: { minimum: 4 }, uniqueness: true
 	
-	belongs_to :grain, optional: true
-
-	belongs_to :protein, optional: true
+	validates :user_id, presence: true
 
 	has_many :meals, inverse_of: :recipe
 
@@ -15,6 +13,8 @@ class Recipe < ApplicationRecord
 	has_many :ingredients, through: :recipe_ingredients
 
 	default_scope -> { order(:name) }
+
+	scope :current_user_recipes, ->(current_user) {where(user_id: current_user.id)}
 
 	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where(id: id).pluck('meals.meal_date') }
 

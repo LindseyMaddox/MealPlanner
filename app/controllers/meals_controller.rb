@@ -1,12 +1,13 @@
 class MealsController < ApplicationController
 	def index
-		@meals = Meal.meal_order.date_filter(params[:date_filter])
+		@meals = Meal.meal_order.date_filter(params[:date_filter]).current_user_meals(current_user)
 		#last week, 7 days before date to 14 days before date
 		@time_period = {"last week" => 7, "two weeks ago" => 14}
 	end
 
 	def planner
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
+		#@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)	 #once planner code updated
 		@this_week_meals = Meal.meal_generator(params[:number_of_meals])		
 		@grains = Grain.all							   
 	end

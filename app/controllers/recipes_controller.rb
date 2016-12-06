@@ -1,7 +1,7 @@
 class RecipesController < ApplicationController
 
 	def index
-		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15)
+		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)
 	end
 
 	def show
@@ -26,6 +26,8 @@ class RecipesController < ApplicationController
 
 	def create
 	    @recipe = Recipe.new(recipe_params)
+
+	    @recipe = current_user.recipes.build(recipe_params)
 
 
 	    respond_to do |format|
