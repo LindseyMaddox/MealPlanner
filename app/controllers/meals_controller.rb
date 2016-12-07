@@ -29,6 +29,9 @@ class MealsController < ApplicationController
 		
 		 @meal = Meal.new(meal_params)
 
+		 @meal = current_user.meals.build(meal_params)
+
+
 		 #still need to figure out where to redirect when posting from ajax
 	    
 	    respond_to do |format|
