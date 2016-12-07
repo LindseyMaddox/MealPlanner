@@ -1,6 +1,6 @@
 class Meal < ApplicationRecord
 	belongs_to :recipe, inverse_of: :meals
-
+	belongs_to :user
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago
 

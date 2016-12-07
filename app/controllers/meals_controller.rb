@@ -25,11 +25,9 @@ class MealsController < ApplicationController
 	end
 
 	def create
-		
-		 @meal = Meal.new(meal_params)
 
-		 #still need to figure out where to redirect when posting from ajax
-	    
+		 @meal = current_user.meals.build(meal_params)
+
 	    respond_to do |format|
 	      if @meal.save
 	        format.html { redirect_to @meal, notice: 'meal was successfully created.' }
@@ -60,6 +58,6 @@ class MealsController < ApplicationController
 	private
 
 	def meal_params
-      params.require(:meal).permit(:recipe_id, :meal_date)
+      params.require(:meal).permit(:recipe_id, :meal_date, :user_id)
     end
 end
