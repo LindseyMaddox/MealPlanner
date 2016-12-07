@@ -87,7 +87,7 @@ def self.meal_generator(number)
 end
 	def self.get_random_recipe
 		#change id column to recipe_id so it has consistent naming to last week meals
-		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level, grain_id, protein_id").offset(rand(Recipe.count)).first
+		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level").offset(rand(Recipe.count)).first
 	end
 
 def self.compare_to_week(arr,item)
