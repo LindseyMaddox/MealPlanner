@@ -1,7 +1,10 @@
 class RecipesController < ApplicationController
+  before_action :logged_in_user
+ # before_action :correct_user
 
 	def index
-		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15)
+		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)
+	
 	end
 
 	def show

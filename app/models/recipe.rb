@@ -18,6 +18,8 @@ class Recipe < ApplicationRecord
 
 	default_scope -> { order(:name) }
 
+	scope :current_user_recipes, ->(current_user) {where(user_id: current_user.id)}
+
 	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where(id: id).pluck('meals.meal_date') }
 
 
