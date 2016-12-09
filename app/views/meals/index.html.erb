@@ -17,7 +17,8 @@
               <div class="col-sm-12">
                 <% @time_period.each_pair do |text, number| %>
                   <li>
-                    <%= link_to "#{text}", meals_path(date_filter: number), class: 'label label-primary' %>
+                    <%= link_to "#{text}", meals_path(date_filter: number, current_user: current_user.id), class: 'label label-primary' %>
+                    <%=  hidden_field_tag :user_id, value: current_user.id %>
                   </li>
                 <% end %>
               </div>

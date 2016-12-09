@@ -1,20 +1,12 @@
 class Meal < ApplicationRecord
 	belongs_to :recipe, inverse_of: :meals
 	belongs_to :user
+
+#scope :current_user_meals, ->(user) { where('user_id = ?', current_user.id).order(:meal_date) }
+
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
 #For now, let's assume last week is between yesterday and 7 days ago
 
-scope :date_filter, ->(number){
-			n = number.to_i
- 			start_date = (n + 1).days.ago #since it's beginning and end need to start 1 earlier
- 			end_date = (n - 6).days.ago #1 day ago 7-6
- 		if number.present? && n >= 7
- 	 		where(meal_date: start_date..end_date )
- 	 	elsif number.present? && n < 7
- 	 		 where(meal_date: start_date..1.days.ago )
- 	    else
- 	    	where(meal_date: 8.days.ago..1.days.ago ) 
- 	    end } 
 
 	    scope :number_of_meals, ->(number) {
 	    	if number.present?
@@ -27,8 +19,20 @@ scope :date_filter, ->(number){
 
 	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
 
-	    scope :meal_order, -> {order(:meal_date)}
+	    scope :meal_order, -> { order(:meal_date)}
 
+def self.date_filter(number, current_user)
+	n = number.to_i
+ 	start_date = (n + 1).days.ago #since it's beginning and end need to start 1 earlier
+ 	end_date = (n - 6).days.ago #1 day ago 7-6
+
+ 	if  n >= 7
+ 	 	self.where(meal_date: start_date..end_date).where(
+ 	 		'user_id =?', current_user.id)
+ 	else
+ 	 	self.where(meal_date: start_date..1.days.ago ).where('user_id = ?', current_user.id)
+ 	end 
+end
 
 def self.meal_generator(number)
 

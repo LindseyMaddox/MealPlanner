@@ -28,7 +28,7 @@ class RecipesController < ApplicationController
 	end
 
 	def create
-	    @recipe = Recipe.new(recipe_params)
+	     @recipe = current_user.recipes.build(recipe_params)
 
 
 	    respond_to do |format|
@@ -60,7 +60,7 @@ class RecipesController < ApplicationController
 
 	private
 	def recipe_params
-      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] })
+      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id)
     end
 
 

@@ -2,7 +2,9 @@ class MealsController < ApplicationController
 	before_action :logged_in_user
 	
 	def index
-		@meals = Meal.meal_order.date_filter(params[:date_filter])
+		number = params[:date_filter] || 7
+		@meals = Meal.date_filter(number, current_user)
+
 		#last week, 7 days before date to 14 days before date
 		@time_period = {"last week" => 7, "two weeks ago" => 14}
 	end

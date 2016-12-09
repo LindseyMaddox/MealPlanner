@@ -10,4 +10,5 @@ class Ingredient < ApplicationRecord
 	def titleize
 		self.name = name.titleize
 	end
+	
 end
