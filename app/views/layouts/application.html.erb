@@ -10,10 +10,10 @@
      <nav class="navbar navbar-static-top">
       <a class="navbar-brand" href="#">Meal Planner</a>
       <ul class="nav navbar-nav pull-xs-right">
-        <li class="nav-item active">
-          <%= link_to "Home",   root_path %>
-        </li>
         <% if logged_in? %>
+          <li class="nav-item active">
+            <%= link_to "Home",   root_path %>
+          </li>
           <li class="dropdown nav-item active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               Recipes <b class="caret"></b>

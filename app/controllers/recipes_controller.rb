@@ -1,7 +1,10 @@
 class RecipesController < ApplicationController
+  before_action :logged_in_user
+ # before_action :correct_user
 
 	def index
 		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)
+
 	end
 
 	def show
@@ -25,7 +28,7 @@ class RecipesController < ApplicationController
 	end
 
 	def create
-	    @recipe = Recipe.new(recipe_params)
+	     @recipe = current_user.recipes.build(recipe_params)
 
 	    @recipe = current_user.recipes.build(recipe_params)
 
@@ -59,7 +62,7 @@ class RecipesController < ApplicationController
 
 	private
 	def recipe_params
-      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] })
+      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id)
     end
 
 

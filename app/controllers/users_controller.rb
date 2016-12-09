@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
-  before_action :logged_in_user, only: [:edit, :update, :destroy]
-  before_action :correct_user,   only: [:edit, :update]
+  before_filter :correct_user
 
   #may create admin column later which would have access to index and edit/destroy for any user
   def show
@@ -42,24 +41,5 @@ class UsersController < ApplicationController
   def user_params
   	params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
-
-   # Before filters
-
-
-     # Confirms the correct user.
-  def correct_user
-    @user = User.find(params[:id])
-    redirect_to(root_url) unless current_user?(@user)
-  end
-
-  # Confirms a logged-in user.
-    def logged_in_user
-      unless logged_in?
-        #store location for friendly forwarding after login
-        store_location
-        flash[:danger] = "Please log in."
-        redirect_to login_url
-      end
-    end
 
 end

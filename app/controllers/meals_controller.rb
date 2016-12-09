@@ -1,14 +1,19 @@
 class MealsController < ApplicationController
+	before_action :logged_in_user
+	
 	def index
-		@meals = Meal.meal_order.date_filter(params[:date_filter]).current_user_meals(current_user)
+		number = params[:date_filter] || 7
+		@meals = Meal.date_filter(number, current_user)
+
 		#last week, 7 days before date to 14 days before date
 		@time_period = {"last week" => 7, "two weeks ago" => 14}
 	end
 
 	def planner
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
-		#@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)	 #once planner code updated
-		@this_week_meals = Meal.meal_generator(params[:number_of_meals])		
+
+		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)
+		#@random_recipe = Meal.get_random_recipe(current_user)		
 		@grains = Grain.all							   
 	end
 
@@ -26,14 +31,9 @@ class MealsController < ApplicationController
 	end
 
 	def create
-		
-		 @meal = Meal.new(meal_params)
 
 		 @meal = current_user.meals.build(meal_params)
 
-
-		 #still need to figure out where to redirect when posting from ajax
-	    
 	    respond_to do |format|
 	      if @meal.save
 	        format.html { redirect_to @meal, notice: 'meal was successfully created.' }
@@ -64,6 +64,6 @@ class MealsController < ApplicationController
 	private
 
 	def meal_params
-      params.require(:meal).permit(:recipe_id, :meal_date)
+      params.require(:meal).permit(:recipe_id, :meal_date, :user_id)
     end
 end
