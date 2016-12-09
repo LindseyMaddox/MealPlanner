@@ -17,7 +17,7 @@ class Meal < ApplicationRecord
 	    	number
 	    }
 
-	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
+	    scope :last_week_meals, ->(current_user) {where(meal_date: 8.days.ago..1.days.ago ).where('user_id = ?', current_user.id).to_a }
 
 	    scope :meal_order, -> { order(:meal_date)}
 
@@ -34,7 +34,7 @@ def self.date_filter(number, current_user)
  	end 
 end
 
-def self.meal_generator(number)
+def self.meal_generator(number, current_user)
 
 #don't forget the direction from which you are coming joins must start from the has many side
 #e.g. Recipe has_many :meals --> Recipe.joins(:meals)
@@ -42,7 +42,7 @@ def self.meal_generator(number)
 #create a meal plan for next X days 
 	meals_requested = self.number_of_meals(number)
 
-	@last_week_meals = self.last_week_meals
+	@last_week_meals = self.last_week_meals(current_user)
 
 	@this_week_meals = []
 
@@ -50,48 +50,52 @@ def self.meal_generator(number)
 	
 	#make it time out if it tries to many times. Probably base it on the length of recipes table
 
-	while(@this_week_meals.length < meals_requested)
+	 while(@this_week_meals.length < meals_requested)
 		
-		rando_recipe = self.get_random_recipe
+	 	rando_recipe = self.get_random_recipe(current_user)
 
-		#if they don't have anything on file for last week, go ahead and return false
-		if @last_week_meals.empty?
-			lw_match = false
-		else
-			lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
-		end
+	# 	#if they don't have anything on file for last week, go ahead and return false
+	 	if @last_week_meals.empty?
+	 		lw_match = false
+	 	else
+	 		lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+	 	end
 
 
-		# we really only want to check each criteria if the criteria before it is met
-		#first check for matches with last week and this week
-		#then check for grain and protein counts
+	# 	# we really only want to check each criteria if the criteria before it is met
+	# 	#first check for matches with last week and this week
+	# 	#then check for grain and protein counts
 		
-		if lw_match == true
-			next
-		elsif @this_week_meals.empty?
-			#tw_match = false we can actually add without checking anything else
-			#but we also want to move on to the next item
-			add_to_list(@this_week_meals, rando_recipe)
-		else
-			tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
-		end
+	 	if lw_match == true
+	 		next
+	 	elsif @this_week_meals.empty?
+	 		#tw_match = false we can actually add without checking anything else
+	# 		#but we also want to move on to the next item
+	 		add_to_list(@this_week_meals, rando_recipe)
+	 	else
+	 		tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
+	 	end
 
-	#account for nil values with ingredients
-		if tw_match == false && rando_recipe.ingredients = []
-			add_to_list(@this_week_meals, rando_recipe)
-		 elsif tw_match == false 
-			recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
-		 else
-		 	next
-		 end
+	# #account for nil values with ingredients
+	 	if tw_match == false && rando_recipe.ingredients = []
+	 		add_to_list(@this_week_meals, rando_recipe)
+	 	 elsif tw_match == false 
+	 		recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
+	 	 else
+	 	 	next
+	 	 end
+	#add_to_list(@this_week_meals, rando_recipe)
 
 	end
 
 	@this_week_meals	
 end
-	def self.get_random_recipe
+	def self.get_random_recipe(current_user)
 		#change id column to recipe_id so it has consistent naming to last week meals
-		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level").offset(rand(Recipe.count)).first
+		
+		current_user_options = Recipe.select("id as recipe_id, name, difficulty_level").merge(Recipe.current_user_recipes(current_user))
+		random_number = rand(current_user_options.length)
+		@random_recipe = current_user_options[random_number]
 	end
 
 def self.compare_to_week(arr,item)

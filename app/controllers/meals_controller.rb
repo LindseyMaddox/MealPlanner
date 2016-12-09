@@ -11,7 +11,8 @@ class MealsController < ApplicationController
 
 	def planner
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
-		@this_week_meals = Meal.meal_generator(params[:number_of_meals])		
+		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)
+		#@random_recipe = Meal.get_random_recipe(current_user)		
 		@grains = Grain.all							   
 	end
 
