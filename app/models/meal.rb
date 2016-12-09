@@ -70,8 +70,8 @@ def self.meal_generator(number, current_user)
 	 	end
 	# 	# we really only want to check each criteria if the criteria before it is met
 	# 	#first check for matches with last week and this week
-	# 	#then check for grain and protein counts
-		
+	# 	#then check for ingredient counts
+	
 	 	if lw_match == true
 	 		next
 	 	elsif @this_week_meals.empty?

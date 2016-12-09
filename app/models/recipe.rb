@@ -9,8 +9,6 @@ class Recipe < ApplicationRecord
 
 	belongs_to :grain, optional: true
 
-	belongs_to :protein, optional: true
-
 	belongs_to :user
 
 	has_many :meals, inverse_of: :recipe
