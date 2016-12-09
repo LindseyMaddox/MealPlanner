@@ -2,8 +2,8 @@ class Recipe < ApplicationRecord
 
 	before_validation :titleize
 
-	validates :name, length: { minimum: 4 }, uniqueness: true
-	
+	validates :name, length: { minimum: 4 }, uniqueness: { scope: :user_id}
+
 	belongs_to :grain, optional: true
 
 	belongs_to :protein, optional: true

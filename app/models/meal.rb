@@ -2,6 +2,11 @@ class Meal < ApplicationRecord
 	belongs_to :recipe, inverse_of: :meals
 	belongs_to :user
 
+	#prevent same meal from being planned more than once on same date
+	#recipe_id is already specific to a user so don't need to validate based on that
+	validates :recipe_id, uniqueness: {scope: :meal_date,
+	 message: "can only occur once per date"}
+
 #scope :current_user_meals, ->(user) { where('user_id = ?', current_user.id).order(:meal_date) }
 
 #in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
