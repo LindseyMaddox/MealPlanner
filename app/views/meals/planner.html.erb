@@ -9,10 +9,11 @@
   <div class="col-sm-3"></div>
   <div class="col-sm-6 meal-suggestions">
     <% @this_week_meals.each do |meal| %>
-      <div class="row meal">
-        <div class="col-sm-6">
+      <div class="row">
+        <div class="col-sm-6 meal">
           <%= link_to meal.name, recipe_path(meal.recipe_id) %>
-           <%=  hidden_field_tag :recipe_id, value: meal.recipe_id %>
+           <%=  hidden_field_tag(:recipe_id, meal.recipe_id, class: 'recipe-id') %>
+           <%=  hidden_field_tag(:user_id, current_user.id, class: 'user-id') %>
         </div>
       </div>
     <% end %>
@@ -78,49 +79,46 @@ $(function () {
 
 
     saveButton.on("click", function() {
-        var hiddenElements = $( "body" ).find( ":hidden" ).not( "script" );
 
      var date = new Date(Date.now());
      var dataArr = [];
-       // for now, doing regex to get the id val
 
-        
-       for(var i=0; i<hiddenElements.length; i++){
-        var tempHash = {}
-        var val = hiddenElements[i].value;
-       // get the value only. returns an array, so get the first index of that array
-        var recipeId = val.match(/\d+/g)[0];
-        
-     //   date is getting reset every time, so you only need to add 1
+ var meals = $("body").find('.meal');
+ for(var u = 0; u < meals.length; u++){
+  var tempHash = {}
+ 
+  // date is getting reset every time, so you only need to add 1
         date.setDate(date.getDate() + 1);
         var month = Number(date.getMonth()) + 1
            if(month < 10){
              month = "0" + month;
            }
         var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
-        tempHash["recipe_id"] = recipeId;
-        tempHash["meal_date"] = dateDbFormat;
+         userID = meals[u].children.user_id.value;
+  recipeID = meals[u].children.recipe_id.value;
+  tempHash["recipe_id"] = recipeID;
+  tempHash["user_id"] = userID;
+  tempHash["meal_date"] = dateDbFormat;
+ dataArr.push(tempHash);
+ }
 
-       
-         dataArr.push(tempHash);
-       }
       
-       $.ajax({
-            url:'/meals/batch_create',
-             type: 'POST',
-             dataType: 'json',
-             contentType: 'application/json',
-             data: JSON.stringify(dataArr),
-              headers: {
-               'X-Transaction': 'POST Example',
-               'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-             },
-         //    success handled by the controller
-            error: function (jqXHR, textStatus, errorThrown) {
-             //     may want to do flash instead
-                 alert("could not save this meal");
-             }
-         });
+        $.ajax({
+             url:'/meals/batch_create',
+              type: 'POST',
+              dataType: 'json',
+              contentType: 'application/json',
+              data: JSON.stringify(dataArr),
+               headers: {
+                'X-Transaction': 'POST Example',
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+              },
+          //    success handled by the controller
+                error: function (jqXHR, textStatus, errorThrown) {
+              //     may want to do flash instead
+                  alert("could not save this meal");
+              }
+          });
     });
 
 });
