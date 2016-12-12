@@ -7,8 +7,6 @@ class Recipe < ApplicationRecord
 
 	validates :name, length: { minimum: 4 }, uniqueness: { scope: :user_id}
 
-	belongs_to :grain, optional: true
-
 	belongs_to :user
 
 	has_many :meals, inverse_of: :recipe
@@ -20,14 +18,6 @@ class Recipe < ApplicationRecord
 	scope :current_user_recipes, ->(current_user) {where('user_id = ?', current_user.id).order(:name)}
 
 	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where('recipes.id =?', id).pluck('meals.meal_date') }
-
-	scope :grain_requests, ->(grain_id) { 
-    	if grain_id.present?
-      		Recipe.where('grain_id = ?', grain_id ) 
-      	else
-      		Recipe.all
-    	end 
-    }
 
     #need to abstract
 	protected
