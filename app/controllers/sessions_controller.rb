@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
       log_in user
       #base persistent sessions on user checkbox selection on login
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-      redirect_back_or user
+      redirect_back_or user 
     else
       flash.now[:danger] = 'Invalid email/password combination' 
       render 'new'

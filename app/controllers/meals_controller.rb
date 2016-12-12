@@ -47,6 +47,7 @@ class MealsController < ApplicationController
 	end
 
   def batch_create 
+  	#binding.pry
     # call the batch create method within the meal plan model
     success = Meal.batch_create(request.raw_post)
     # return an appropriate response
