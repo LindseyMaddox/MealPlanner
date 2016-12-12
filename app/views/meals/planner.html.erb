@@ -45,32 +45,14 @@
     </div>
   </div>
 </br>
-</br>
-<div class="row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6">Filter by grain:</div>
-</div>
-<div class="row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6">
-     <% @grains.each do |grain| %>
-      <% unless grain == @grains.last %>
-       <%= link_to grain.name, planner_meals_path(grain_requests: grain.id) %>,
-      <% else %>
-        <%= link_to grain.name, planner_meals_path(grain_requests: grain.id) %>
-      <% end %>
-    <% end %>
-  </div>
-</div>
   <%# Need to figure out appropriate layout for this section %>
-  <%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+  <%#</br><div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
 
     <%# 
     It is impossible to have more than 3 items with a value of 2 or higher, so you only
     need 3 conditions. 
     
  %>
-</br>
 <div class="row">
   <div class="col-sm-4"></div>
   <div class="col-sm-3">

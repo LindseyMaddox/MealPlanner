@@ -4,7 +4,7 @@ class Ingredient < ApplicationRecord
 	has_many :recipe_ingredients
 	has_many :recipes, through: :recipe_ingredients
 
-	default_scope -> { order(:name) }
+	scope :name_order, -> { order(:name) }
 	
 	protected
 	def titleize

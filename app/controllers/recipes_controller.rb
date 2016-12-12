@@ -30,9 +30,6 @@ class RecipesController < ApplicationController
 	def create
 	     @recipe = current_user.recipes.build(recipe_params)
 
-	    @recipe = current_user.recipes.build(recipe_params)
-
-
 	    respond_to do |format|
 	      if @recipe.save
 	        format.html { redirect_to recipes_path, notice: 'recipe was successfully created.' }

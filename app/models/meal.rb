@@ -90,8 +90,6 @@ def self.meal_generator(number, current_user)
 	 	 else
 	 	 	next
 	 	 end
-	#add_to_list(@this_week_meals, rando_recipe)
-
 	end
 
 	@this_week_meals	

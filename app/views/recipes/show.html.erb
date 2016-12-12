@@ -1,15 +1,39 @@
 <div class="row">
   <div class="col-sm-4"></div>
-  <div class="col-sm-6">
-  		<% if @times_eaten.empty? %>
-  	  		You have not yet made <em><%= @recipe.name %></em>.
-  	  	<% else %>
-  	  		<em><%= @recipe.name %></em> was last eaten on <%= @times_eaten.last %>.
-  	  	<% end %>
+  <div class="col-sm-6"><h4><%= @recipe.name %>
   </div>
 </div>
 <div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-6">
+  		<% if @times_eaten.empty? %>
+  	  		You have not yet made this recipe.
+  	  	<% else %>
+  	  		Last eaten on <%= @times_eaten.last %>.
+  	  	<% end %>
+  </div>
+</div>
+</br>
+<div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-6">
+      <% x = 1 %>
+      <% unless @recipe.ingredients.empty? %> Main ingredients: 
+          <% @recipe.ingredients.each do |ingredient| %>
+              <% if x != @recipe.ingredients.length %>
+                <%= ingredient.name %>,
+              <% else %>
+                <%= ingredient.name %>
+              <% end %>
+              <% x += 1 %>
+          <% end %>
+      <% end %>
+  </div>
+</div>
+</br>
+<div class="row">
 	<div class="col-sm-4"></div>
+    <div class="col-sm-4"><footer><%= link_to 'Edit Recipe', edit_recipe_path(@recipe) %></footer></div>
 	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
 </div>
 </br>

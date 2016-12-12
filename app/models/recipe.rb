@@ -17,10 +17,7 @@ class Recipe < ApplicationRecord
 	
 	has_many :ingredients, through: :recipe_ingredients
 
-	default_scope -> { order(:name) }
-
-
-	scope :current_user_recipes, ->(current_user) {where('user_id = ?', current_user.id)}
+	scope :current_user_recipes, ->(current_user) {where('user_id = ?', current_user.id).order(:name)}
 
 	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where('recipes.id =?', id).pluck('meals.meal_date') }
 
@@ -31,6 +28,7 @@ class Recipe < ApplicationRecord
       		Recipe.all
     	end 
     }
+
     #need to abstract
 	protected
 	def titleize

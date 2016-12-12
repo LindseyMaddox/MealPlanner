@@ -23,7 +23,7 @@
         <%= f.number_field :difficulty_level, max: 5, min: 0 %>
       </div>
    <label><strong>Ingredients</strong></label>
- <% Ingredient.all.each do |ingredient| %>
+ <% Ingredient.all.order(:name).each do |ingredient| %>
    <div class="field check-ingredient">
        <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id %> <%= ingredient.name %>
      </div>

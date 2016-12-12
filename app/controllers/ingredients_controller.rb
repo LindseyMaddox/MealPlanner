@@ -1,9 +1,10 @@
 class IngredientsController < ApplicationController
 	before_action :set_ingredient, only: [:show, :edit, :update, :destroy]
-	 before_action :logged_in_user
-	 
+	before_action :logged_in_user
+	before_action :admin_user,     only: [:new, :edit, :update, :destroy]
+
 	def index
-		@ingredients = Ingredient.paginate(:page => params[:page], :per_page => 15)
+		@ingredients = Ingredient.paginate(:page => params[:page], :per_page => 15).name_order
 	end
 
 	def show
@@ -58,4 +59,11 @@ class IngredientsController < ApplicationController
     def set_ingredient
     	@ingredient = Ingredient.find(params[:id])
 	end
+
+	def admin_user
+	    unless current_user.admin?
+	       redirect_to(root_url)
+	       flash[:danger] = "You must be an administrator to access this page. Please contact customer support if you would like to suggest changes to the ingredients list"
+	    end
+  end
 end
