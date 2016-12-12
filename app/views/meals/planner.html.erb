@@ -20,7 +20,7 @@
   </div>
   <div class="col-sm-3">
     <div class="row">
-       <div class="col-sm-12"> <strong>Filter by Date</strong></div>
+       <div class="col-sm-12"> <strong>Number of Suggestions</strong></div>
           <div class="col-sm-12">
               <% @number_of_meals.each_pair do |text, number| %>
                 <li>
@@ -57,7 +57,7 @@
     need 3 conditions. 
     
  %>
-
+</br>
 <div class="row">
   <div class="col-sm-4"></div>
   <div class="col-sm-3">
@@ -126,6 +126,5 @@ $(function () {
 </script>
 <div class="row">
   <div class="col-sm-3"></div>
-  <div class="col-sm-2"><%= link_to "home", recipes_path %></div>
   <div class="col-sm-3"><%= link_to "See Last Week's Meals", meals_path(date_filter: 7) %></div>
 </div>
