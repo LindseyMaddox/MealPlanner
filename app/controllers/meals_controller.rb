@@ -3,7 +3,7 @@ class MealsController < ApplicationController
 	
 	def index
 		number = params[:date_filter] || 7
-		@meals = Meal.date_filter(number, current_user)
+		@meals = Meal.date_filter(number, current_user).meal_order
 
 		#last week, 7 days before date to 14 days before date
 		@time_period = {"last week" => 7, "two weeks ago" => 14}
@@ -14,7 +14,7 @@ class MealsController < ApplicationController
 
 		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)
 		#@random_recipe = Meal.get_random_recipe(current_user)		
-		@grains = Grain.all							   
+						   
 	end
 
 	def show

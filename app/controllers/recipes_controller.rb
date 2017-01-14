@@ -10,8 +10,6 @@ class RecipesController < ApplicationController
 	def show
 		@recipe = Recipe.find(params[:id])
 		@times_eaten = Recipe.times_eaten(params[:id])
-		@grains = Grain.all
-		@recipes_with_grain = Recipe.grain_requests(params[:grain_requests])
 	end
 
 	def new
