@@ -15,14 +15,17 @@
   </div>
 </div>
 <div class = "row">
-  <div class="col-sm-3"></div>
+  <div class="col-sm-3"><%= check_box_tag 'test',"meal-selected-test", false, class: "test" %></div> 
   <div class="col-sm-6 meal-suggestions">
     <% @this_week_meals.each do |meal| %>
       <div class="row meal">
-        <div class="col-sm-5">
+        <div class="col-sm-1">
+         <%= check_box_tag 'meal-selection',"meal-selected", false, class: "select-meal" %>
+        </div>
+        <div class="col-sm-4">
            <%= link_to meal.name, recipe_path(meal.recipe_id) %>
         </div>
-        <div class="col-sm-7">
+        <div class="col-sm-5">
            <%= text_field_tag(:meal, value = "Select Date", id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %>
            <%=  hidden_field_tag(:recipe_id, meal.recipe_id, class: 'recipe-id') %>
            <%=  hidden_field_tag(:user_id, current_user.id, class: 'user-id') %>
@@ -57,7 +60,7 @@
   <div class="col-sm-4"></div>
   <div class="col-sm-3">
     <button class="btn btn-success save">
-      Save Meal Plan
+      Save Selected Meals
     </button>
   </div>
 </div>
@@ -70,50 +73,66 @@ $('.meal-date').datepicker({
  
     var saveButton = $('.save');
 
-
-//currently basing date on tomorrow + 1 for each new recipe
-   
-   var date = new Date(Date.now());
-
-
-
     saveButton.on("click", function() {
 
+
 var dataArr = []
- $('.meal').each(function(){
-  var tempHash = {}
-  //trying to traverse down so we can use the new styling
-  //and put the new styling on angellist :)
-  var mealDate = $(this).find(".meal-date").datepicker("getDate");
-  var userID = $(this).find(".user-id").val();
-  var recipeID = $(this).find(".recipe-id").val();
+//$(this).find("input:checked") -> then get val
+//$(this).find(".select-meal:first").is(':checked')
+//$(this).find(".select-meal").is(':checked')
+//$(this).find(".select-meal");
 
-  tempHash["recipe_id"] = recipeID;
-  tempHash["user_id"] = userID;
-  tempHash["meal_date"] = mealDate;
-dataArr.push(tempHash);
- });
- 
+// var test = $(".test");
+// var smTest = $(".select-meal").is(':checked');
+// console.log("test is " + smTest);
+// console.log(test.is(':checked'));
+//console.log(test.prop("checked"));
+     $('.meal').each(function(){
 
-      
-      $.ajax({
-             url:'/meals/batch_create',
-              type: 'POST',
-              dataType: 'json',
-              contentType: 'application/json',
-              data: JSON.stringify(dataArr),
-               headers: {
-                'X-Transaction': 'POST Example',
-                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-              },
-          //    success handled by the controller
-                error: function (jqXHR, textStatus, errorThrown) {
-              //     may want to do flash instead
-                  alert("could not save this meal");
-              }
-          });
-    });
+      var isChecked = $(this).find(".select-meal").is(':checked');
 
+      if(isChecked == true){ 
+        var recipeID = $(this).find(".recipe-id").val();
+        console.log("meal is checked for recipe " + recipeID);
+         var tempHash = {}
+
+       var mealDate = $(this).find(".meal-date").datepicker("getDate");
+       var userID = $(this).find(".user-id").val();
+       var recipeID = $(this).find(".recipe-id").val();
+
+         tempHash["recipe_id"] = recipeID;
+         tempHash["user_id"] = userID;
+         tempHash["meal_date"] = mealDate;
+         dataArr.push(tempHash);
+     }
+
+     }); //end of meal loop
+
+        //don't post to db if user hasn't selected any meals
+        if(dataArr.length == 0){
+          alert("please check boxes for meals you want to add");
+        } else {
+              $.ajax({
+              url:'/meals/batch_create',
+               type: 'POST',
+               dataType: 'json',
+               contentType: 'application/json',
+               data: JSON.stringify(dataArr),
+                headers: {
+                 'X-Transaction': 'POST Example',
+                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+               },
+           //    success handled by the controller
+                 error: function (jqXHR, textStatus, errorThrown) {
+               //     may want to do flash instead
+                   alert("could not save this meal");
+               }
+           });
+        }
+  }); //end of click event
+
+        
+   
 });
 
 </script>
