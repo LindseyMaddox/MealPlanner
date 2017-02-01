@@ -22,12 +22,17 @@
         <%= f.label :difficulty_level %><br />
         <%= f.number_field :difficulty_level, max: 5, min: 0 %>
       </div>
+
    <label><strong>Ingredients</strong></label>
- <% Ingredient.all.order(:name).each do |ingredient| %>
-   <div class="field check-ingredient">
-       <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id %> <%= ingredient.name %>
-     </div>
-<% end %>
+   <% Ingredient.all.order(:name).each do |ingredient| %>
+        <div class="field check-ingredient">
+           <% if @recipe.ingredients.count > 0 && @recipe.ingredients.include?(ingredient) %>
+                 <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id, {:checked => "checked"} %><%= ingredient.name %>
+          <% else %>
+                   <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id %> <%= ingredient.name %>
+          <% end %>
+        </div>
+      <% end %>
     </br>
       <div class="actions">
         <%= f.submit class: 'btn btn-primary' %>
