@@ -55,6 +55,12 @@ def self.meal_generator(number, current_user)
 	ingredients_hash = {}
 	
 	#make it time out if it tries too many times. 
+
+	#if request is > meals, change rm to recipes.length to avoid infinite loop
+	if meals_requested > recipes.length
+		meals_requested = recipes.length
+	end
+
 	 while(@this_week_meals.length < meals_requested)
 
 	 	rando_recipe = self.get_random_recipe(current_user)
