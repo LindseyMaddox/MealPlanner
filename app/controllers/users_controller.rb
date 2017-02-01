@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   before_filter :correct_user
 
-  #may create admin column later which would have access to index and edit/destroy for any user
-  def show
+  #later may allow some access to admins who are not the user
+   def show
     @user = User.find(params[:id])
   end
 

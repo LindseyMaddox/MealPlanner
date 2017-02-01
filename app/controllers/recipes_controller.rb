@@ -1,6 +1,6 @@
 class RecipesController < ApplicationController
   before_action :logged_in_user
- # before_action :correct_user
+ # before_action :correct_user TO EVALUATE
 
 	def index
 		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)

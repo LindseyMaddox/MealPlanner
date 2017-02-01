@@ -19,7 +19,6 @@ class Recipe < ApplicationRecord
 
 	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where('recipes.id =?', id).pluck('meals.meal_date') }
 
-    #need to abstract
 	protected
 	def titleize
 		self.name = name.titleize

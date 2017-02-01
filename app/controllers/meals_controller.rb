@@ -13,9 +13,7 @@ class MealsController < ApplicationController
 		@todays_date = Date.today
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
 
-		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)
-		#@random_recipe = Meal.get_random_recipe(current_user)		
-						   
+		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)				   
 	end
 
 	def show
@@ -48,7 +46,6 @@ class MealsController < ApplicationController
 	end
 
   def batch_create 
-  	#binding.pry
     # call the batch create method within the meal plan model
     success = Meal.batch_create(request.raw_post)
     # return an appropriate response
