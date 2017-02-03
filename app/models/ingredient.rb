@@ -5,6 +5,8 @@ class Ingredient < ApplicationRecord
 	
 	has_many :recipes, through: :recipe_ingredients
 
+	belongs_to :food_group
+
 	protected
 	def titleize
 		self.name = name.titleize
