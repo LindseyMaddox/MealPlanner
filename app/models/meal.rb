@@ -57,8 +57,9 @@ def self.meal_generator(number, current_user)
 	#make it time out if it tries too many times. 
 
 	#if request is > meals, change rm to recipes.length to avoid infinite loop
-	if meals_requested > recipes.length
-		meals_requested = recipes.length
+	recipe_count = Recipe.all.count
+	if meals_requested > recipe_count
+		meals_requested = recipe_count
 	end
 
 	 while(@this_week_meals.length < meals_requested)
@@ -150,16 +151,24 @@ end
 	  # begin exception handling
 	  begin
 	    # begin a transaction on the  mp model
+	    count = 0
 	    Meal.transaction do
 	      # for each student record in the passed json
 	      meal_values.each do |meal_hash|
 	        # create a new student
-	        Meal.create!(meal_hash)
+	       @meal =  Meal.create!(meal_hash)
+	        if @meal.persisted?
+	        	count +=1
+	        end
 	      end # json.parse
 	    end # transaction
 	  rescue
 	    # do nothing
 	  end  # exception handling
+	  if count == meal_values.length
+	  	success = true
+	  end
+	  success
 	end  # batch_create
 
 end
