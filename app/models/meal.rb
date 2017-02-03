@@ -57,7 +57,7 @@ def self.meal_generator(number, current_user)
 	#make it time out if it tries too many times. 
 
 	#if request is > meals, change rm to recipes.length to avoid infinite loop
-	recipe_count = Recipe.all.count
+	recipe_count = Recipe.where('user_id = ?', 2).count
 	if meals_requested > recipe_count
 		meals_requested = recipe_count
 	end
