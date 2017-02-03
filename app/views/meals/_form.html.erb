@@ -16,7 +16,7 @@
         <div class="field">
            <%= f.label :recipe %>
             <br />
-            <%= f.collection_select :recipe_id, Recipe.order(:name), :id, :name %>
+            <%= f.collection_select :recipe_id, @recipes, :id, :name %>
         </div>
         <div class="field">
             <%= f.label :date %>

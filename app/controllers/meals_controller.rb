@@ -22,6 +22,7 @@ class MealsController < ApplicationController
 	
 	def new
 		@meal = Meal.new
+		@recipes = Recipe.current_user_recipes(current_user)
 
 		respond_to do |format|
 	      format.html # new.html.erb
@@ -49,6 +50,7 @@ class MealsController < ApplicationController
     # call the batch create method within the meal plan model
     success = Meal.batch_create(request.raw_post)
     # return an appropriate response
+
     respond_to do |format|
 	    if success
 	    	format.html { redirect_to meals_path, notice: 'recommendations were successfully
