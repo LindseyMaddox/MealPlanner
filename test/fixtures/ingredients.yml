@@ -2,8 +2,10 @@
 
 one:
   name: MyString
-  type: 
+  food_group_id: MyString
+  integer: MyString
 
 two:
   name: MyString
-  type: 
+  food_group_id: MyString
+  integer: MyString
