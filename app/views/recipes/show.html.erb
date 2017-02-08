@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-4"></div>
-  <div class="col-sm-6"><h4><%= @recipe.name %>
+  <div class="col-sm-6"><h4><%= @recipe.name %></h4>
   </div>
 </div>
 <div class="row">
@@ -32,8 +32,67 @@
 </div>
 </br>
 <div class="row">
-	<div class="col-sm-4"></div>
-    <div class="col-sm-4"><footer><%= link_to 'Edit Recipe', edit_recipe_path(@recipe) %></footer></div>
-	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
-</div>
-</br>
+  <div class="col-sm-4"></div>
+  <div class="col-sm-4" id= "set-active-status">
+    <% if @recipe.active? %>
+      <button class="btn btn-danger">
+          Remove from Meal Suggestions
+      </button> 
+      <% else %>
+        <button class="btn btn-success">
+          Add to Meal Suggestions
+      </button> 
+    <% end %> 
+    <%=  hidden_field_tag(:recipe_id, @recipe.id, class: 'recipe-id') %>
+  </div>
+  <div class="row">
+  	<div class="col-sm-4"></div>
+      <div class="col-sm-4"><footer><%= link_to 'Edit Recipe', edit_recipe_path(@recipe) %></footer></div>
+  	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
+  </div>
+<script type="text/javascript">
+
+$(function () {
+
+
+    $('button').on("click", function() {
+
+      var klass = ($(this).attr('class'));
+      
+      var isActive = true;
+      
+      if(klass=="btn btn-danger"){
+          isActive = false;
+      }
+      var recipeID = $(".recipe-id").val();
+
+      var attributesHash = {};
+
+      attributesHash["active"] = isActive;
+
+      var recipe = {recipe: attributesHash};
+
+              $.ajax({
+                 url:'/recipes/' + recipeID,
+                  type: 'PATCH',
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  data:  JSON.stringify(recipe),
+                   headers: {
+                    'X-Transaction': 'POST Example',
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                  },
+           //    success handled by the controller
+                  error: function (jqXHR, textStatus, errorThrown) {
+           //     //     may want to do flash instead
+                    if(errorThrown){console.log("could not update recipe");}
+               }
+            });
+
+  }); //end of click event
+
+        
+   
+});
+
+</script>

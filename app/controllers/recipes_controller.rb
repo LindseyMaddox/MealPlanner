@@ -42,12 +42,14 @@ class RecipesController < ApplicationController
 
 
 	def update
+
 	    @recipe = Recipe.find(params[:id])
 
 	    respond_to do |format|
 	      if @recipe.update(recipe_params)
 	        format.html { redirect_to @recipe, notice: 'recipe was successfully updated.' }
 	        format.json { head :no_content }
+	        format.js
 	      else
 	        format.html { render action: "edit" }
 	        format.json { render json: @recipe.errors, status: :unprocessable_entity }
@@ -57,7 +59,7 @@ class RecipesController < ApplicationController
 
 	private
 	def recipe_params
-      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id)
+      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id, :active)
     end
 
 
