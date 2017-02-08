@@ -1,0 +1,2 @@
+id = <%= escape_javascript @recipe.id.to_s %>;
+$("body").load('/recipes/' + id + '#set-active-status');

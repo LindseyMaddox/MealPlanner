@@ -75,17 +75,18 @@ $(function () {
               $.ajax({
                  url:'/recipes/' + recipeID,
                   type: 'PATCH',
-                  dataType: 'json',
+                  dataType: 'script',
                   contentType: 'application/json',
                   data:  JSON.stringify(recipe),
                    headers: {
                     'X-Transaction': 'POST Example',
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                   },
-           //    success handled by the controller
+               success: function(data){
+               },
                   error: function (jqXHR, textStatus, errorThrown) {
            //     //     may want to do flash instead
-                    if(errorThrown){console.log("could not update recipe");}
+                    console.log("there was an error with your update");
                }
             });
 
