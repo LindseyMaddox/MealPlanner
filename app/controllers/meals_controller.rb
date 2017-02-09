@@ -52,12 +52,13 @@ class MealsController < ApplicationController
 #still not 100% on how to whitelist the params correctly
     params[:meals].each do |meal|
     	hash = {}
-
-    	 hash[:recipe_id] = meal[":recipe_id"]
-    	 hash[:meal_date] = meal[":meal_date"]
-    	 hash[:user_id] = meal[":user_id"]
-
-    	@meal = Meal.create!(hash)
+    	#manually create the hash since checked is included in params
+    	if meal.has_key?("checked")
+	    	 hash[:recipe_id] = meal["recipe_id"]
+	    	 hash[:meal_date] = meal["meal_date"]
+	    	 hash[:user_id] = meal["user_id"]
+	    	 @meal = Meal.create!(hash)
+	    end
     end
 
     respond_to do |format|
@@ -75,8 +76,5 @@ class MealsController < ApplicationController
 	def meal_params
       params.require(:meal).permit(:recipe_id, :meal_date, :user_id)
     end
-    #not sure if this would be relevant
- #   def batch_meal_params
-  #  	params.require(:meals).permit([{ :meal => [:recipe_id, :meal_date, :user_id] }])
-   # end
+
 end
