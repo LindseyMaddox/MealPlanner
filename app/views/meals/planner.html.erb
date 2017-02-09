@@ -24,15 +24,15 @@
 	    <% date = (@todays_date + count.days).to_s %>
 	      <div class="row meal">
 	        <div class="col-sm-1">
-	      <!-- <%=  check_box_tag(:meal,"temp", false, class: 'recipe-id', name: "meals[meal]") %> -->
+	      		<%=  check_box_tag("meals[][checked]", "add", false, class: 'meal-selection') %>
 	        </div>
 	        <div class="col-sm-4">
 	           <%= link_to meal.name, recipe_path(meal.recipe_id) %> 
 	        </div>
 	        <div class="col-sm-5">
-	          <%= text_field_tag("meals[][:meal_date]", value = date, id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %> 
-	           <%=  hidden_field_tag("meals[][:recipe_id]", meal.recipe_id, class: 'recipe-id') %>
-			   <%=  hidden_field_tag("meals[][:user_id]", current_user.id, class: 'user-id') %>
+	          <%= text_field_tag("meals[][meal_date]", value = date, id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %>
+	          <%=  hidden_field_tag("meals[][recipe_id]", meal.recipe_id, class: 'recipe-id') %>
+			  <%=  hidden_field_tag("meals[][user_id]", current_user.id, class: 'user-id') %>
 	        </div>
 	      </div>
 	    </br>
@@ -74,6 +74,7 @@ $(function () {
     $(this).find('meal-date').datepicker('setDate', new Date());
     count +=1;
   });
+
   });
 
 </script>

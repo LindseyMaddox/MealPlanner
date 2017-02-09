@@ -50,19 +50,10 @@ class MealsController < ApplicationController
 
   def batch_create 
 #still not 100% on how to whitelist the params correctly
-    params[:meals].each do |meal|
-    	hash = {}
-    	#manually create the hash since checked is included in params
-    	if meal.has_key?("checked")
-	    	 hash[:recipe_id] = meal["recipe_id"]
-	    	 hash[:meal_date] = meal["meal_date"]
-	    	 hash[:user_id] = meal["user_id"]
-	    	 @meal = Meal.create!(hash)
-	    end
-    end
+	success = Meal.batch_create(params[:meals])
 
     respond_to do |format|
-	    if @meal.save #just last one now
+	    if success
 		  format.html { redirect_to meals_path, notice: 'meal plan was successfully created.' }
 	      format.json { render json: {success: 'meal plans added'}, status: :created }
 	    else

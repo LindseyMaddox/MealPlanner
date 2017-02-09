@@ -151,30 +151,22 @@ def self.check_amount(arr,hsh, item_list)
 	max	
 end
 
-	def self.batch_create(post_content)
-		binding.pry
-		meal_values = CGI::parse(post_content)
+	def self.batch_create(meal_values)
 	  # begin exception handling
 	  begin
 	    # begin a transaction on the  mp model
-	    count = 0
 	    Meal.transaction do
 	      # for each student record in the passed json
 	      meal_values.each do |meal_hash|
 	        # create a new student
-	       @meal =  Meal.create!(meal_hash)
-	        if @meal.persisted?
-	        	count +=1
-	        end
+	        if meal_hash.has_key?("checked")
+	       		@meal =  Meal.create!(meal_hash)
+	       	end
 	      end # json.parse
 	    end # transaction
 	  rescue
-	    # do nothing
+	    Rails.logger.info("Did not create batch records");
 	  end  # exception handling
-	  if count == meal_values.length
-	  	success = true
-	  end
-	  success
 	end  # batch_create
 
 end
