@@ -57,9 +57,10 @@ def self.meal_generator(number, current_user)
 	#make it time out if it tries too many times. 
 
 	#if request is > meals, change rm to recipes.length to avoid infinite loop
-	recipe_count = Recipe.where('user_id = ?', current_user).count
-	if meals_requested > recipe_count
-		meals_requested = recipe_count
+	active_recipe_count = Recipe.current_user_active_recipes(current_user).count
+	
+	if meals_requested > active_recipe_count
+		meals_requested = active_recipe_count
 	end
 
 	 while(@this_week_meals.length < meals_requested)
@@ -100,9 +101,9 @@ def self.meal_generator(number, current_user)
 end
 	def self.get_random_recipe(current_user)
 		#change id column to recipe_id so it has consistent naming to last week meals
-
-		current_user_options = Recipe.select("id as recipe_id, name, difficulty_level").merge(Recipe.current_user_recipes(current_user))
-		random_number = rand(current_user_options.length)
+	
+		current_user_options = Recipe.select("id as recipe_id, name, difficulty_level").merge(Recipe.current_user_active_recipes(current_user))
+	    random_number = rand(current_user_options.length)
 		@random_recipe = current_user_options[random_number]
 	end
 

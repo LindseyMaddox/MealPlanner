@@ -17,7 +17,14 @@ class Recipe < ApplicationRecord
 
 	scope :current_user_recipes, ->(current_user) {where('user_id = ?', current_user.id).order(:name)}
 
+	scope :active_recipes, -> {where(active:true)}
+
 	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where('recipes.id =?', id).pluck('meals.meal_date') }
+
+
+	def self.current_user_active_recipes(current_user)
+		current_user_recipes(current_user).active_recipes
+	end
 
 	protected
 	def titleize
