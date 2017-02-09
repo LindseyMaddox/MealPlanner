@@ -30,12 +30,8 @@ class RecipesController < ApplicationController
 
 	    respond_to do |format|
 	      if @recipe.save
-	       # format.html { redirect_to recipes_path, notice: 'recipe was successfully created.' }
-	       # format.json { render json: @recipe, status: :created, recipe: @recipe }
-	        format.js
-	        #console.log('name = <%= escape_javascript @recipe %>')
-#console.log('id = <%= escape_javascript @recipe.id %>');
-
+	        format.html { redirect_to recipes_path, notice: 'recipe was successfully created.' }
+	        format.json { render json: @recipe, status: :created, recipe: @recipe }
 	      else
 	        format.html { render action: "new" }
 	        format.json { render json: @recipe.errors, status: :unprocessable_entity }

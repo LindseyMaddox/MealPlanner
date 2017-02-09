@@ -13,6 +13,8 @@ class MealsController < ApplicationController
 		@todays_date = Date.today
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
 
+		@mr = Meal.number_of_meals(params[:number_of_meals])
+
 		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)				   
 	end
 
@@ -47,14 +49,20 @@ class MealsController < ApplicationController
 	end
 
   def batch_create 
-    # call the batch create method within the meal plan model
-    success = Meal.batch_create(request.raw_post)
-    # return an appropriate response
+#still not 100% on how to whitelist the params correctly
+    params[:meals].each do |meal|
+    	hash = {}
+
+    	 hash[:recipe_id] = meal[":recipe_id"]
+    	 hash[:meal_date] = meal[":meal_date"]
+    	 hash[:user_id] = meal[":user_id"]
+
+    	@meal = Meal.create!(hash)
+    end
 
     respond_to do |format|
-	    if success
-	    	format.html { redirect_to meals_path, notice: 'recommendations were successfully
-	            	 added' }
+	    if @meal.save #just last one now
+		  format.html { redirect_to meals_path, notice: 'meal plan was successfully created.' }
 	      format.json { render json: {success: 'meal plans added'}, status: :created }
 	    else
 	     format.json { render json: {failed: 'meal plans not added'}, status: :unprocessable_entity }
@@ -67,4 +75,8 @@ class MealsController < ApplicationController
 	def meal_params
       params.require(:meal).permit(:recipe_id, :meal_date, :user_id)
     end
+    #not sure if this would be relevant
+ #   def batch_meal_params
+  #  	params.require(:meals).permit([{ :meal => [:recipe_id, :meal_date, :user_id] }])
+   # end
 end

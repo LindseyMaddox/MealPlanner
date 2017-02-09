@@ -1,3 +1,4 @@
+<%= form_tag("/meals/batch_create", method: "post") do  %>
 <div class = "row">
   <div class="col-sm-3"></div>
   <div class="col-sm-6 heading">  
@@ -9,33 +10,34 @@
   <div class="col-sm-3"></div>
   <div class="col-sm-6">
     <div class="row">
-      <div class="col-sm-5"><h5>Recipe</h5></div>
+      <div class="col-sm-5"><h5><%= @mr %></h5></div>
       <div class="col-sm-7"><h5>Date</h5></div>
     </div>
   </div>
 </div>
+
 <div class = "row">
   <div class="col-sm-3"></div> 
   <div class="col-sm-6 meal-suggestions">
     <% count = 0 %>
     <% @this_week_meals.each do |meal| %>
-    <% date = (@todays_date + count.days).to_s %>
-      <div class="row meal">
-        <div class="col-sm-1">
-         <%= check_box_tag 'meal-selection',"meal-selected", false, class: "select-meal" %>
-        </div>
-        <div class="col-sm-4">
-           <%= link_to meal.name, recipe_path(meal.recipe_id) %>
-        </div>
-        <div class="col-sm-5">
-           <%= text_field_tag(:meal, value = date, id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %>
-           <%=  hidden_field_tag(:recipe_id, meal.recipe_id, class: 'recipe-id') %>
-           <%=  hidden_field_tag(:user_id, current_user.id, class: 'user-id') %>
-        </div>
-      </div>
-    </br>
-    <% count += 1 %>
-    <% end %>
+	    <% date = (@todays_date + count.days).to_s %>
+	      <div class="row meal">
+	        <div class="col-sm-1">
+	      <!-- <%=  check_box_tag(:meal,"temp", false, class: 'recipe-id', name: "meals[meal]") %> -->
+	        </div>
+	        <div class="col-sm-4">
+	           <%= link_to meal.name, recipe_path(meal.recipe_id) %> 
+	        </div>
+	        <div class="col-sm-5">
+	          <%= text_field_tag("meals[][:meal_date]", value = date, id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %> 
+	           <%=  hidden_field_tag("meals[][:recipe_id]", meal.recipe_id, class: 'recipe-id') %>
+			   <%=  hidden_field_tag("meals[][:user_id]", current_user.id, class: 'user-id') %>
+	        </div>
+	      </div>
+	    </br>
+	    <% count += 1 %>
+   <% end %> 
   </div>
   <div class="col-sm-3">
     <div class="row">
@@ -55,12 +57,10 @@
 <div class="row">
   <div class="col-sm-4"></div>
   <div class="col-sm-3">
-    <button class="btn btn-success save">
-      Save Selected Meals
-    </button>
+    <%= submit_tag "Save Selected Meals", class: 'btn btn-primary' %>
   </div>
 </div>
-</br>
+<% end %> <!-- end of form -->
 <script type="text/javascript">
 
 $(function () {
@@ -74,62 +74,10 @@ $(function () {
     $(this).find('meal-date').datepicker('setDate', new Date());
     count +=1;
   });
- 
-    var saveButton = $('.save');
-
-    saveButton.on("click", function() {
-
-
-var dataArr = []
-
-     $('.meal').each(function(){
-
-      var isChecked = $(this).find(".select-meal").is(':checked');
-
-      if(isChecked == true){ 
-        var recipeID = $(this).find(".recipe-id").val();
-         var tempHash = {}
-
-       var mealDate = $(this).find(".meal-date").datepicker("getDate");
-       var userID = $(this).find(".user-id").val();
-       var recipeID = $(this).find(".recipe-id").val();
-
-         tempHash["recipe_id"] = recipeID;
-         tempHash["user_id"] = userID;
-         tempHash["meal_date"] = mealDate;
-         dataArr.push(tempHash);
-     }
-
-     }); //end of meal loop
-
-        //don't post to db if user hasn't selected any meals
-        if(dataArr.length == 0){
-          alert("please check boxes for meals you want to add");
-        } else {
-               $.ajax({
-               url:'/meals/batch_create',
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(dataArr),
-                 headers: {
-                  'X-Transaction': 'POST Example',
-                  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-                },
-           //    success handled by the controller
-                 error: function (jqXHR, textStatus, errorThrown) {
-               //     may want to do flash instead
-                   alert("could not save this meal");
-              }
-           });
-        }
-  }); //end of click event
-
-        
-   
-});
+  });
 
 </script>
+</br>
 <div class="row">
   <div class="col-sm-3"></div>
   <div class="col-sm-3"><%= link_to "See Last Week's Meals", meals_path(date_filter: 7) %></div>

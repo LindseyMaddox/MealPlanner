@@ -1,4 +1,6 @@
 class Meal < ApplicationRecord
+	require 'cgi'
+
 	belongs_to :recipe, inverse_of: :meals
 	belongs_to :user
 
@@ -54,48 +56,50 @@ def self.meal_generator(number, current_user)
 
 	ingredients_hash = {}
 	
-	#make it time out if it tries too many times. 
+	# #make it time out if it tries too many times. 
 
-	#if request is > meals, change rm to recipes.length to avoid infinite loop
-	active_recipe_count = Recipe.current_user_active_recipes(current_user).count
+	# #if request is > meals, change rm to recipes.length to avoid infinite loop
 	
-	if meals_requested > active_recipe_count
-		meals_requested = active_recipe_count
-	end
-
-	 while(@this_week_meals.length < meals_requested)
-
-	 	rando_recipe = self.get_random_recipe(current_user)
-
-	# 	#if they don't have anything on file for last week, go ahead and return false
-	 	if @last_week_meals.empty?
-	 		lw_match = false
-	 	else
-	 		lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
-	 	end
-	# 	# we really only want to check each criteria if the criteria before it is met
-	# 	#first check for matches with last week and this week
-	# 	#then check for ingredient counts
+	 active_recipe_count = Recipe.current_user_active_recipes(current_user).count
 	
-	 	if lw_match == true
-	 		next
-	 	elsif @this_week_meals.empty?
-	 		#tw_match = false we can actually add without checking anything else
-	# 		#but we also want to move on to the next item
-	 		add_to_list(@this_week_meals, rando_recipe)
-	 	else
-	 		tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
-	 	end
+	 if meals_requested > active_recipe_count
+	 	meals_requested = active_recipe_count
+	 end
 
-	# #account for nil values with ingredients
-	 	if tw_match == false && rando_recipe.ingredients = []
+	  while(@this_week_meals.length < meals_requested)
+
+	  	rando_recipe = self.get_random_recipe(current_user)
+	  	#got 1 more than requested with only this much
+
+	# # 	#if they don't have anything on file for last week, go ahead and return false
+	#  	if @last_week_meals.empty?
+	#  		lw_match = false
+	#  	else
+	#  		lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+	#  	end
+	# # 	# we really only want to check each criteria if the criteria before it is met
+	# # 	#first check for matches with last week and this week
+	# # 	#then check for ingredient counts
+	
+	#  	if lw_match == true
+	#  		next
+	#  	elsif @this_week_meals.empty?
+	#  		#tw_match = false we can actually add without checking anything else
+	# # 		#but we also want to move on to the next item
+	#  		add_to_list(@this_week_meals, rando_recipe)
+	#  	else
+	#  		tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
+	#  	end
+
+	# # #account for nil values with ingredients
+	#  	if tw_match == false && rando_recipe.ingredients = []
 	 		add_to_list(@this_week_meals, rando_recipe)
-	 	 elsif tw_match == false 
-	 		recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
-	 	 else
-	 	 	next
-	 	 end
-	end
+	#  	 elsif tw_match == false 
+	#  		recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
+	#  	 else
+	#  	 	next
+	#  	 end
+	 end
 
 	@this_week_meals	
 end
@@ -148,7 +152,8 @@ def self.check_amount(arr,hsh, item_list)
 end
 
 	def self.batch_create(post_content)
-		meal_values = JSON.parse(post_content)
+		binding.pry
+		meal_values = CGI::parse(post_content)
 	  # begin exception handling
 	  begin
 	    # begin a transaction on the  mp model
