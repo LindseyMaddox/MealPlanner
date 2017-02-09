@@ -35,11 +35,11 @@
   <div class="col-sm-4"></div>
   <div class="col-sm-4" id= "set-active-status">
     <% if @recipe.active? %>
-      <button class="btn btn-danger">
+      <button class="btn btn-danger" id ="make-inactive">
           Remove from Meal Suggestions
       </button> 
       <% else %>
-        <button class="btn btn-success">
+        <button class="btn btn-success" id="activate">
           Add to Meal Suggestions
       </button> 
     <% end %> 
@@ -53,31 +53,35 @@
 <script type="text/javascript">
 
 $(function () {
-
-
-    $('button').on("click", function() {
-
-      var klass = ($(this).attr('class'));
       
-      var isActive = true;
-      
-      if(klass=="btn btn-danger"){
-          isActive = false;
-      }
       var recipeID = $(".recipe-id").val();
 
       var attributesHash = {};
+
+    $( "body" ).on( "click", "button", function() {
+
+      var klass = $(this).attr('class');
+      var isActive = true;
+
+      if(klass =="btn btn-danger"){
+        isActive = false;
+      }
 
       attributesHash["active"] = isActive;
 
       var recipe = {recipe: attributesHash};
 
+      runUpdate(recipe);
+
+    });
+
+    function runUpdate(recipeHash){
               $.ajax({
                  url:'/recipes/' + recipeID,
                   type: 'PATCH',
                   dataType: 'script',
                   contentType: 'application/json',
-                  data:  JSON.stringify(recipe),
+                  data:  JSON.stringify(recipeHash),
                    headers: {
                     'X-Transaction': 'POST Example',
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -90,10 +94,8 @@ $(function () {
                }
             });
 
-  }); //end of click event
+  } //end of function
 
-        
-   
 });
 
 </script>
