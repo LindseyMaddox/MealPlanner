@@ -45,11 +45,13 @@
     <% end %> 
     <%=  hidden_field_tag(:recipe_id, @recipe.id, class: 'recipe-id') %>
   </div>
-  <div class="row">
-  	<div class="col-sm-4"></div>
-      <div class="col-sm-4"><footer><%= link_to 'Edit Recipe', edit_recipe_path(@recipe) %></footer></div>
-  	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
-  </div>
+</div>
+</br>
+<div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-2"><footer><%= link_to 'Edit Recipe', edit_recipe_path(@recipe) %></footer></div>
+  <div class="col-sm-2"><footer><%= link_to 'Back', recipes_path %></footer></div>
+</div>
 <script type="text/javascript">
 
 $(function () {

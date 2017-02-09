@@ -13,8 +13,6 @@ class MealsController < ApplicationController
 		@todays_date = Date.today
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
 
-		@mr = Meal.number_of_meals(params[:number_of_meals])
-
 		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)				   
 	end
 

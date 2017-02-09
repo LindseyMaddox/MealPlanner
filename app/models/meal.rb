@@ -69,39 +69,41 @@ def self.meal_generator(number, current_user)
 	  while(@this_week_meals.length < meals_requested)
 
 	  	rando_recipe = self.get_random_recipe(current_user)
-	  	#got 1 more than requested with only this much
-
-	# # 	#if they don't have anything on file for last week, go ahead and return false
-	#  	if @last_week_meals.empty?
-	#  		lw_match = false
-	#  	else
-	#  		lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
-	#  	end
-	# # 	# we really only want to check each criteria if the criteria before it is met
-	# # 	#first check for matches with last week and this week
-	# # 	#then check for ingredient counts
+	  	
+	  		#if they don't have anything on file for last week, go ahead and return false
+	  	if @last_week_meals.empty?
+	  		lw_match = false
+	  	else
+	  		lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+	  	end
+			#we really only want to check each criteria if the criteria before it is met
+			#first check for matches with last week and this week
+			#then check for ingredient counts
 	
-	#  	if lw_match == true
-	#  		next
-	#  	elsif @this_week_meals.empty?
-	#  		#tw_match = false we can actually add without checking anything else
-	# # 		#but we also want to move on to the next item
-	#  		add_to_list(@this_week_meals, rando_recipe)
-	#  	else
-	#  		tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
-	#  	end
+	  	if lw_match == true
+	  		next
+	  	elsif @this_week_meals.empty?
+	  		#tw_match = false we can actually add without checking anything else
+			#but we also want to move on to the next item
+	  		add_to_list(@this_week_meals, rando_recipe)
+	  	else
+	  		tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
+	  	end
 
-	# # #account for nil values with ingredients
-	#  	if tw_match == false && rando_recipe.ingredients = []
+	 	#account for nil values with ingredients
+	  	if tw_match == false && rando_recipe.ingredients = []
+
 	 		add_to_list(@this_week_meals, rando_recipe)
-	#  	 elsif tw_match == false 
-	#  		recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
-	#  	 else
-	#  	 	next
-	#  	 end
+	  	 elsif tw_match == false 
+	  		recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
+	  	 else
+	  	 	next
+	  	 end
+	 Rails.logger.info("Adding recipe to list");
 	 end
-
+	Rails.logger.info("list has #{@this_week_meals.length} items");
 	@this_week_meals	
+
 end
 	def self.get_random_recipe(current_user)
 		#change id column to recipe_id so it has consistent naming to last week meals
