@@ -7,6 +7,8 @@ class Ingredient < ApplicationRecord
 
 	belongs_to :food_group
 
+	validates :name, uniqueness: { case_sensitive: false }
+
 	protected
 	def titleize
 		self.name = name.titleize
