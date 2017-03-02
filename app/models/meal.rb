@@ -1,5 +1,5 @@
 class Meal < ApplicationRecord
-	require 'cgi'
+	# require 'cgi'
 
 	belongs_to :recipe, inverse_of: :meals
 	belongs_to :user
@@ -63,6 +63,7 @@ def self.meal_generator(number, current_user)
 	 active_recipe_count = Recipe.current_user_active_recipes(current_user).count
 	
 	 if meals_requested > active_recipe_count
+	 	Rails.logger.info("Requested recipes of #{meals_requested} is higher than active recipe count of #{active_recipe_count}, so resetting query");
 	 	meals_requested = active_recipe_count
 	 end
 
@@ -99,9 +100,7 @@ def self.meal_generator(number, current_user)
 	  	 else
 	  	 	next
 	  	 end
-	 Rails.logger.info("Adding recipe to list");
 	 end
-	Rails.logger.info("list has #{@this_week_meals.length} items");
 	@this_week_meals	
 
 end
@@ -158,12 +157,8 @@ end
 	  begin
 	    # begin a transaction on the  mp model
 	    Meal.transaction do
-	      # for each student record in the passed json
 	      meal_values.each do |meal_hash|
-	        # create a new student
-	        if meal_hash.has_key?("checked")
-	       		@meal =  Meal.create!(meal_hash)
-	       	end
+	       	@meal =  Meal.create!(meal_hash)
 	      end # json.parse
 	    end # transaction
 	  rescue
