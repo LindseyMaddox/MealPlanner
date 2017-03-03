@@ -34,6 +34,9 @@
         </div>
       <% end %>
     </br>
+     <div class="field">
+        <%= f.check_box :active, checked: @recipe.new_record? || @recipe.active? %>  <%= f.label :active %>
+      </div>
       <div class="actions">
         <%= f.submit class: 'btn btn-primary' %>
       </div>
