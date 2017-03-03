@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :correct_user
+  before_filter :correct_user, only: [:show, :edit, :update, :destroy]
 
   #later may allow some access to admins who are not the user
    def show
