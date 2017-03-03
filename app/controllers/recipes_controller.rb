@@ -13,6 +13,8 @@ class RecipesController < ApplicationController
 	end
 
 	def new
+		@food_groups = FoodGroup.order(:name)
+		@ingredients = Ingredient.order(:name)
 		@recipe = Recipe.new
 
 		respond_to do |format|

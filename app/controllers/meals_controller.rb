@@ -48,30 +48,29 @@ class MealsController < ApplicationController
 
   def batch_create 
 #still not 100% on how to whitelist the params correctly
-	meal_list = []
+	 meal_list = []
 
-	#only send meals to the meal model transaction that are checked
-	params[:meals].each do |meal|
-		hsh = {}
-     	#manually create the hash to be processed by model
- 		if meal.has_key?("checked")
- 	    	 hsh[:recipe_id] = meal["recipe_id"]
- 	    	 hsh[:meal_date] = meal["meal_date"]
- 	    	 hsh[:user_id] = meal["user_id"]
- 	    	 meal_list.push(hsh)
- 		end
-	end
-	
-	success = Meal.batch_create(meal_list)
+	# #only send meals to the meal model transaction that are checked
+	 params[:meals].each do |meal|
+	 	hsh = {}
+      	#manually create the hash to be processed by model
+  		if meal.has_key?("checked")
+  	    	  hsh[:recipe_id] = meal["recipe_id"]
+  	    	  hsh[:meal_date] = meal["meal_date"]
+  	    	  hsh[:user_id] = meal["user_id"]
+  	    	  meal_list.push(hsh)
+  		end
+	 end
+	 success  = Meal.batch_create(meal_list)
 
-    respond_to do |format|
+	   respond_to do |format|
 	    if success
 		  format.html { redirect_to meals_path, notice: 'meal plan was successfully created.' }
 	      format.json { render json: {success: 'meal plans added'}, status: :created }
 	    else
 	     format.json { render json: {failed: 'meal plans not added'}, status: :unprocessable_entity }
 	    end
-	end
+	   end
   end
 
 	private

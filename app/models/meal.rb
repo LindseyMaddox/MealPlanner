@@ -157,6 +157,7 @@ end
 	  begin
 	    # begin a transaction on the  mp model
 	    Meal.transaction do
+	    	success = false
 	      meal_values.each do |meal_hash|
 	       	@meal =  Meal.create!(meal_hash)
 	      end # json.parse
