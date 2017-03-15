@@ -22,4 +22,11 @@ private
         redirect_to login_url
       end
     end
+
+    def evaluate_auth_and_redirect(user_id)
+      if current_user.id != user_id.user_id
+        flash[:notice] = 'You do not have access to this part of the site' 
+        redirect_to(root_url)
+      end
+    end
 end

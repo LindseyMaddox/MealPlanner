@@ -1,9 +1,9 @@
 class MealsController < ApplicationController
 	before_action :logged_in_user
-	
+	before_action :correct_user_meals, only: :show
 	def index
 		number = params[:date_filter] || 7
-		@meals = Meal.date_filter(number, current_user).meal_order
+		@meals = Meal.date_filter(number,current_user).meal_order
 
 		#last week, 7 days before date to 14 days before date
 		@time_period = {"last week" => 7, "two weeks ago" => 14}
@@ -13,7 +13,7 @@ class MealsController < ApplicationController
 		@todays_date = Date.today
 		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
 
-		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)				   
+		@this_week_meals = Meal.meal_generator(params[:number_of_meals],current_user)				   
 	end
 
 	def show
@@ -78,5 +78,15 @@ class MealsController < ApplicationController
 	def meal_params
       params.require(:meal).permit(:recipe_id, :meal_date, :user_id)
     end
+
+   def correct_user_meals
+    	id = params[:id]
+    	sql = "Select user_id from recipes where user_id = id"
+    	@user_id = Meal.select(:user_id).find(params[:id])
+    	if current_user.id != @user_id.user_id
+    		flash.now[:danger] = 'You do not have access to this part of the site' 
+    		redirect_to(root_url)
+    	end
+  end
 
 end

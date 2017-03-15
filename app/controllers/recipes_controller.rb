@@ -1,6 +1,7 @@
 class RecipesController < ApplicationController
   before_action :logged_in_user
- # before_action :correct_user TO EVALUATE
+  before_action :correct_user_recipes, only: [:show, :edit, :update, :destroy]
+
 
 	def index
 		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)
@@ -63,5 +64,11 @@ class RecipesController < ApplicationController
       params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id, :active)
     end
 
+    def correct_user_recipes
+    	id = params[:id]
+    	sql = "Select user_id from recipes where user_id = id"
+    	@user_id = Recipe.select(:user_id).find(params[:id])
+    	evaluate_auth_and_redirect(@user_id)
+  end
 
 end
