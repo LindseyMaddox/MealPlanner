@@ -83,10 +83,7 @@ class MealsController < ApplicationController
     	id = params[:id]
     	sql = "Select user_id from recipes where user_id = id"
     	@user_id = Meal.select(:user_id).find(params[:id])
-    	if current_user.id != @user_id.user_id
-    		flash.now[:danger] = 'You do not have access to this part of the site' 
-    		redirect_to(root_url)
-    	end
+    	evaluate_auth_and_redirect(@user_id)
   end
 
 end
