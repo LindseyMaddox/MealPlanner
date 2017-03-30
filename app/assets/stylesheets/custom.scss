@@ -2,10 +2,11 @@
 	font-style: italic;
 }
 
-navbar {
+#navbar-mp {
 	font-weight: bold;
 	background-color: #f2f2f2;
-	margin-bottom: 15px;
+	margin-bottom: 25px;
+	padding-bottom: 20px;
 }
 
 #error_explanation {
@@ -27,4 +28,8 @@ navbar {
 
 .alert-notice {
 	background-color: #ccddff;
+}
+.align-items-end {
+	padding: 15px 5px 5px 0;
+	text-align: left;
 }

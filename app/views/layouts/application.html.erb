@@ -7,13 +7,13 @@
     <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %> <%= javascript_include_tag "application", "data-turbolinks-track" => true %> </head>
 
   <body>
-     <nav class="navbar navbar-toggleable-md navbar-light bg-faded navbar-static-top">
+     <nav id="navbar-mp" class="navbar navbar-toggleable-md navbar-light bg-faded navbar-static-top">
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand" href="#">Meal Planner</a>
       <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav align-items-end">
           <% if logged_in? %>
             <li class="nav-item active">
               <%= link_to "Home",   root_path %>
