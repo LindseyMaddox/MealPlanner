@@ -1,36 +1,35 @@
 <%= form_tag("/meals/batch_create", method: "post") do  %>
 <div class = "row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6 heading">  
+  <div class="col-10 offset-1 col-6 offset-md-3 heading">  
     <h4>This Week's Meal suggestions are:</h4>
   </div>
 </div>
 </br> 
 <div class="row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6">
+  <div class="col-10 offset-1 col-md-6 offset-md-3">
     <div class="row">
-      <div class="col-sm-1"></div>
-      <div class="col-sm-4"><h5><%= Recipe %></h5></div>
-      <div class="col-sm-7"><h5>Date</h5></div>
+      <div class="col-2 offset-1">Recipe</div>
+      <div class="col-7 offset-2">Date</div>
     </div>
+    <!-- <div class="row">
+      <div class="col-4"><h5><%= Recipe %></h5></div>
+      <div class="col-7"><h5>Date</h5></div>
+    </div> -->
   </div>
 </div>
-
 <div class = "row">
-  <div class="col-sm-3"></div> 
-  <div class="col-sm-6 meal-suggestions">
+  <div class="col-10 offset-1 col-md-6 offset-md-3 meal-suggestions">
     <% count = 0 %>
     <% @this_week_meals.each do |meal| %>
 	    <% date = (@todays_date + count.days).to_s %>
 	      <div class="row meal">
-	        <div class="col-sm-1">
+	        <div class="col-2 col-sm-1">
 	      		<%=  check_box_tag("meals[][checked]", "add", false, class: 'meal-selection') %>
 	        </div>
-	        <div class="col-sm-4">
+	        <div class="col-4">
 	           <%= link_to meal.name, recipe_path(meal.recipe_id) %> 
 	        </div>
-	        <div class="col-sm-5">
+	        <div class="col-5">
 	          <%= text_field_tag("meals[][meal_date]", value = date, id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %>
 	          <%=  hidden_field_tag("meals[][recipe_id]", meal.recipe_id, class: 'recipe-id') %>
 			  <%=  hidden_field_tag("meals[][user_id]", current_user.id, class: 'user-id') %>
@@ -40,10 +39,10 @@
 	    <% count += 1 %>
    <% end %> 
   </div>
-  <div class="col-sm-3">
+ <div class="col-12 col-md-3">
     <div class="row">
-       <div class="col-sm-12"> <strong>Number of Suggestions</strong></div>
-          <div class="col-sm-12">
+       <div class="col-12"> <strong>Number of Suggestions</strong></div>
+          <div class="col-12">
               <% @number_of_meals.each_pair do |text, number| %>
                 <li>
                   <%= link_to "#{text}", planner_meals_path(number_of_meals: number), class: 'label label-primary' %>
@@ -54,10 +53,8 @@
     </div>
   </div>
 </br>
-
 <div class="row">
-  <div class="col-sm-4"></div>
-  <div class="col-sm-3">
+  <div class="col-10 offset-1 col-md-3 offset-md-4">
     <%= submit_tag "Save Selected Meals", class: 'btn btn-primary' %>
   </div>
 </div>
@@ -81,6 +78,5 @@ $(function () {
 </script>
 </br>
 <div class="row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-3"><%= link_to "See Last Week's Meals", meals_path(date_filter: 7) %></div>
+  <div class="col-10 offset-1 col-md-3 offset-md-3"><%= link_to "See Last Week's Meals", meals_path(date_filter: 7) %></div>
 </div>

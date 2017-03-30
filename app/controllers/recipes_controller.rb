@@ -25,6 +25,8 @@ class RecipesController < ApplicationController
 	end
 
 	def edit
+		@food_groups = FoodGroup.order(:name)
+		@ingredients = Ingredient.order(:name)
 		@recipe = Recipe.find(params[:id])
 	end
 

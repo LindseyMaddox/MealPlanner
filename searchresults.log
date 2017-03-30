@@ -1,0 +1,2461 @@
+class Meal < ApplicationRecord
+	belongs_to :recipe, inverse_of: :meals
+	belongs_to :user
+
+	#prevent same meal from being planned more than once on same date
+	#recipe_id is already specific to a user so don't need to validate based on that
+	validates :recipe_id, uniqueness: {scope: :meal_date,
+	 message: "can only occur once per date"}
+
+#scope :current_user_meals, ->(user) { where('user_id = ?', current_user.id).order(:meal_date) }
+
+	validates :user_id, presence: true
+
+#in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
+#For now, let's assume last week is between yesterday and 7 days ago
+
+
+	    scope :number_of_meals, ->(number) {
+	    	if number.present?
+	    		number = number.to_i
+	    	else
+	    		number = 7
+	    	end
+	    	number
+	    }
+
+<<<<<<< HEAD
+
+	    scope :current_user_meals, ->(current_user) {where(user_id: current_user.id)}
+
+	    scope :last_week_meals, -> {where(meal_date: 8.days.ago..1.days.ago ).to_a }
+=======
+	    scope :last_week_meals, ->(current_user) {where(meal_date: 8.days.ago..1.days.ago ).where('user_id = ?', current_user.id).to_a }
+
+	    scope :meal_order, -> { order(:meal_date)}
+>>>>>>> user-specific-filtering
+
+def self.date_filter(number, current_user)
+	n = number.to_i
+ 	start_date = (n + 1).days.ago #since it's beginning and end need to start 1 earlier
+ 	end_date = (n - 6).days.ago #1 day ago 7-6
+
+ 	if  n >= 7
+ 	 	self.where(meal_date: start_date..end_date).where(
+ 	 		'user_id =?', current_user.id)
+ 	else
+ 	 	self.where(meal_date: start_date..1.days.ago ).where('user_id = ?', current_user.id)
+ 	end 
+end
+
+<<<<<<< HEAD
+def self.meal_generator(number)
+=======
+def self.meal_generator(number, current_user)
+
+>>>>>>> user-specific-filtering
+#don't forget the direction from which you are coming joins must start from the has many side
+#e.g. Recipe has_many :meals --> Recipe.joins(:meals)
+
+#create a meal plan for next X days 
+	meals_requested = self.number_of_meals(number)
+
+	@last_week_meals = self.last_week_meals(current_user)
+
+	@this_week_meals = []
+
+	ingredients_hash = {}
+	
+	#make it time out if it tries to many times. Probably base it on the length of recipes table
+
+	 while(@this_week_meals.length < meals_requested)
+		
+<<<<<<< HEAD
+		rando_recipe = self.get_random_recipe
+		
+		#if they don't have anything on file for last week, go ahead and return false
+		if @last_week_meals.empty?
+			lw_match = false
+		else
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+		end
+=======
+	 	rando_recipe = self.get_random_recipe(current_user)
+
+	# 	#if they don't have anything on file for last week, go ahead and return false
+	 	if @last_week_meals.empty?
+	 		lw_match = false
+	 	else
+	 		lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+	 	end
+>>>>>>> user-specific-filtering
+
+
+	# 	# we really only want to check each criteria if the criteria before it is met
+	# 	#first check for matches with last week and this week
+	# 	#then check for grain and protein counts
+		
+	 	if lw_match == true
+	 		next
+	 	elsif @this_week_meals.empty?
+	 		#tw_match = false we can actually add without checking anything else
+	# 		#but we also want to move on to the next item
+	 		add_to_list(@this_week_meals, rando_recipe)
+	 	else
+	 		tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
+	 	end
+
+	# #account for nil values with ingredients
+	 	if tw_match == false && rando_recipe.ingredients = []
+	 		add_to_list(@this_week_meals, rando_recipe)
+	 	 elsif tw_match == false 
+	 		recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
+	 	 else
+	 	 	next
+	 	 end
+	#add_to_list(@this_week_meals, rando_recipe)
+
+	end
+
+	@this_week_meals	
+end
+	def self.get_random_recipe(current_user)
+		#change id column to recipe_id so it has consistent naming to last week meals
+<<<<<<< HEAD
+		@random_recipe = Recipe.select("id as recipe_id, recipes.name as name, difficulty_level").offset(rand(Recipe.count)).first
+=======
+		
+		current_user_options = Recipe.select("id as recipe_id, name, difficulty_level").merge(Recipe.current_user_recipes(current_user))
+		random_number = rand(current_user_options.length)
+		@random_recipe = current_user_options[random_number]
+>>>>>>> user-specific-filtering
+	end
+
+def self.compare_to_week(arr,item)
+	match = true
+	arr.each do |a|
+
+		if(a.recipe_id == item.recipe_id)
+			break
+		elsif(a.recipe_id != item.recipe_id && arr.index(a) == arr.index(arr.last))
+			match = false
+		else
+			next
+		end
+	end
+	match
+end
+
+def self.add_to_list(arr, item)
+	arr.push(item)
+end
+
+
+
+def self.check_amount(arr,hsh, item_list)
+	#example method with arguments
+	#check_amount(@this_week_meals,recipe_hash, rando_recipe.ingredients)
+		
+	max = false
+	item_list.each do |item|
+		if hsh.has_key?(item) && hsh.values_at(item)[0]< 3
+			hsh[item] = hsh[item]  + 1
+			#max is still false so don't need to add anything
+		elsif hsh.has_key?(item) 
+			max = true
+		else
+			#max is still false so don't need to mention. just set the type to 1
+			hsh[item] = 1
+		end
+	end
+	max	
+end
+
+	def self.batch_create(post_content)
+		meal_values = JSON.parse(post_content)
+	  # begin exception handling
+	  begin
+	    # begin a transaction on the  mp model
+	    Meal.transaction do
+	      # for each student record in the passed json
+	      meal_values.each do |meal_hash|
+	        # create a new student
+	        Meal.create!(meal_hash)
+	      end # json.parse
+	    end # transaction
+	  rescue
+	    # do nothing
+	  end  # exception handling
+	end  # batch_create
+
+endcommit 087119e0f506f849c70a7990641322afb2d9caab
+Merge: 36459d0 315cc7e
+Author: Lindsey Maddox <llmaddox@gmail.com>
+Date:   Mon Nov 21 14:44:17 2016 -0500
+
+    WIP on additional-filtering: 36459d0 Example using grain requests on recipe show page
+
+diff --cc app/controllers/meal_plans_controller.rb
+index ac71316,ac71316..c4a6a6d
+--- a/app/controllers/meal_plans_controller.rb
++++ b/app/controllers/meal_plans_controller.rb
+@@@ -8,7 -8,7 +8,8 @@@ class MealPlansController < Application
+  
+  	def planner
+  		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
+--		@this_week_meals = MealPlan.meal_plan_generator(params[:number_of_meals])								   
+++		@this_week_meals = MealPlan.meal_plan_generator(params[:number_of_meals])		
+++		@grains = Grain.all							   
+  	end
+  
+  	def show
+diff --cc app/controllers/recipes_controller.rb
+index 45decfa,45decfa..fd3bd2c
+--- a/app/controllers/recipes_controller.rb
++++ b/app/controllers/recipes_controller.rb
+@@@ -7,6 -7,6 +7,8 @@@ class RecipesController < ApplicationCo
+  	def show
+  		@recipe = Recipe.find(params[:id])
+  		@times_eaten = Recipe.times_eaten(params[:id])
+++		@grains = Grain.all
+++		@recipes_with_grain = Recipe.grain_requests(params[:grain_requests])
+  	end
+  
+  	def new
+diff --cc app/models/meal_plan.rb
+index 3d8a62c,3d8a62c..40f0bf9
+--- a/app/models/meal_plan.rb
++++ b/app/models/meal_plan.rb
+@@@ -29,6 -29,6 +29,7 @@@ scope :date_filter, ->(number)
+  
+  	    scope :meal_order, -> {order(:meal_date)}
+  
+++
+  def self.meal_plan_generator(number)
+  
+  #don't forget the direction from which you are coming joins must start from the has many side
+@@@ -48,18 -48,18 +49,13 @@@
+  
+  	while(@this_week_meals.length < meals_requested)
+  		
+--		#random recipe is pulling from the recipe table, so recipe id is just ID
+  		rando_recipe = self.get_random_recipe
+--		
+--		#this is dumb. should set up differently
+--		lw_string = "lw"
+--		tw_string = "tw"
+  
+  		#if they don't have anything on file for last week, go ahead and return false
+  		if @last_week_meals.empty?
+  			lw_match = false
+  		else
+--			lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
+++			lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+  		end
+  
+  
+@@@ -74,7 -74,7 +70,7 @@@
+  			#but we also want to move on to the next item
+  			add_to_list(@this_week_meals, rando_recipe)
+  		else
+--			tw_match = self.compare_to_week(@this_week_meals, rando_recipe,tw_string)
+++			tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
+  		end
+  
+  		if(tw_match == false)
+@@@ -99,31 -99,31 +95,18 @@@
+  
+  	@this_week_meals	
+  end
+++	def self.get_random_recipe
+++		#change id column to recipe_id so it has consistent naming to last week meals
+++		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level, grain_id, protein_id").offset(rand(Recipe.count)).first
+++	end
+  
+--def self.get_random_recipe
+--	@random_recipe = Recipe.offset(rand(Recipe.count)).first
+--end
+--#item uses recipe.id
+--#this week's meal uses recipe.id while last week's has recipe_id
+--#for now using two methods
+--
+--
+--def self.compare_to_week(arr,item,week)
+++def self.compare_to_week(arr,item)
+  	match = true
+--	item_id_val = item.id
+  	arr.each do |a|
+  
+--		#the recipe id is in a different location if it's already in meal plans
+--		#we may want to go back and map the ids or something (in the original or another earlier method) so that it is the same for both
+--		if(week == "tw")
+--			a_id_val = a.id
+--		else
+--			a_id_val = a.recipe_id
+--		end
+--
+--		if(a_id_val == item_id_val)
+++		if(a.recipe_id == item.recipe_id)
+  			break
+--		elsif(a_id_val != item_id_val && arr.index(a) == arr.index(arr.last))
+++		elsif(a.recipe_id != item.recipe_id && arr.index(a) == arr.index(arr.last))
+  			match = false
+  		else
+  			next
+@@@ -136,7 -136,7 +119,6 @@@ def self.add_to_list(arr, item
+  	arr.push(item)
+  end
+  
+--#this isn't working now, so will just stuff the main method
+  def self.check_component_part(arr,component_hash, type)
+  	#example method with arguments
+  	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
+diff --cc app/models/recipe.rb
+index 5e79a27,5e79a27..51e15cc
+--- a/app/models/recipe.rb
++++ b/app/models/recipe.rb
+@@@ -14,6 -14,6 +14,15 @@@ class Recipe < ApplicationRecor
+  
+  	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+  
+++
+++	scope :grain_requests, ->(grain_id) { 
+++    	if grain_id.present?
+++      		Recipe.where('grain_id = ?', grain_id ) 
+++      	else
+++      		Recipe.all
+++    	end 
+++    }
+++
+  	protected
+  	def titleize
+  		self.name = name.titleize
+diff --cc app/views/meal_plans/planner.html.erb
+index cea84e8,cea84e8..82f989c
+--- a/app/views/meal_plans/planner.html.erb
++++ b/app/views/meal_plans/planner.html.erb
+@@@ -22,31 -22,31 +22,43 @@@
+      <% @this_week_meals.each do |meal| %>
+        <div class="row meal">
+          <div class="col-sm-6">
+--          <%= link_to meal.name, meal %>
+--           <%=  hidden_field_tag :recipe_id, value: meal.id %>
+++          <%= link_to meal.name, recipe_path(meal.recipe_id) %>
+++           <%=  hidden_field_tag :recipe_id, value: meal.recipe_id %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+--     <div class="col-sm-3">
+--          <div class="row">
+--              <div class="col-sm-12">
+--                <strong>Filter by Date</strong>
+--              </div>
+--              <div class="col-sm-12">
+--                <% @number_of_meals.each_pair do |text, number| %>
+--                  <li>
+--                   <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
+--                  </li>
+--                <% end %>
+--              </div>
+++  <div class="col-sm-3">
+++    <div class="row">
+++       <div class="col-sm-12"> <strong>Filter by Date</strong></div>
+++          <div class="col-sm-12">
+++              <% @number_of_meals.each_pair do |text, number| %>
+++                <li>
+++                  <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
+++                </li>
+++              <% end %>
+            </div>
+--      </div>
+--</div>
+++        </div>
+++    </div>
+++  </div>
+  </br>
+  </br>
+  <div class="row">
+--  <div class="col-sm-4"></div>
+++  <div class="col-sm-3"></div>
+++  <div class="col-sm-6">Filter by grain:</div>
+++</div>
+++<div class="row">
+++  <div class="col-sm-3"></div>
+++  <div class="col-sm-6">
+++     <% @grains.each do |grain| %>
+++      <% unless grain == @grains.last %>
+++       <%= link_to grain.name, planner_meal_plans_path(grain_requests: grain.id) %>,
+++      <% else %>
+++        <%= link_to grain.name, planner_meal_plans_path(grain_requests: grain.id) %>
+++      <% end %>
+++    <% end %>
+++  </div>
+++</div>
+    <%# Need to figure out appropriate layout for this section %>
+    <%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+  
+@@@ -56,9 -56,9 +68,6 @@@
+      
+   %>
+  
+--</div>
+--
+--
+  <div class="row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-3">
+diff --cc app/views/meal_plans/show.html.erb
+index 178f722,178f722..3c1ce37
+--- a/app/views/meal_plans/show.html.erb
++++ b/app/views/meal_plans/show.html.erb
+@@@ -9,4 -9,4 +9,3 @@@
+    	   You ate <%= @meal_plan.recipe.name %> on <%= @meal_plan.meal_date %>.</div>
+    	 <% end %>
+  </div>
+--</br>
+
+commit 26b2014b579fcfe26c8508f178681758caafeb53
+Merge: c8d4459 eb8c5a8
+Author: Lindsey Maddox <llmaddox@gmail.com>
+Date:   Thu Feb 2 10:12:07 2017 -0500
+
+    WIP on master: c8d4459 Reset meals requested to recipes length if it's greater than
+
+diff --cc app/models/ingredient.rb
+index 336cae4,336cae4..68a0384
+--- a/app/models/ingredient.rb
++++ b/app/models/ingredient.rb
+@@@ -3,6 -3,6 +3,7 @@@ class Ingredient < ApplicationRecor
+  
+  	has_many :recipe_ingredients
+  	has_many :recipes, through: :recipe_ingredients
+++	belongs_to :food_group
+  
+  	scope :name_order, -> { order(:name) }
+  	
+diff --cc db/schema.rb
+index be9a6e3,be9a6e3..3359272
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@@ -10,11 -10,11 +10,24 @@@
+  #
+  # It's strongly recommended that you check this file into your version control system.
+  
+--ActiveRecord::Schema.define(version: 20161212212708) do
+++ActiveRecord::Schema.define(version: 20170202144746) do
+++
+++  create_table "food_groups", force: :cascade do |t|
+++    t.string   "name"
+++    t.datetime "created_at", null: false
+++    t.datetime "updated_at", null: false
+++  end
+++
+++  create_table "food_properties", force: :cascade do |t|
+++    t.string   "name"
+++    t.integer  "food_group_id"
+++    t.datetime "created_at",    null: false
+++    t.datetime "updated_at",    null: false
+++  end
+  
+    create_table "ingredients", force: :cascade do |t|
+--    t.string "name"
+--    t.string "food_group"
+++    t.string  "name"
+++    t.integer "food_group_id"
+    end
+  
+    create_table "meals", force: :cascade do |t|
+Meal Planner App ...AKA one less decision parents have to make
+One of the most exhausting things about being a parent is the number of decisions you have to make. After a long day, deciding what to make for dinner is almost as taxing as making the dinner itself!
+What if you had an app that stored all of your favorite meals and offered you suggestions for what to make each week?
+<<<<<<< HEAD
+
+MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken! 
+
+New features coming:
+--Ability to set the difficulty level, grain type, or protein of your meal recommendation.
+=======
+MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken!
+>>>>>>> advanced-version
+
+New features coming: Ability to set the difficulty level, grain type, or protein of your meal recommendation.class MealPlan < ApplicationRecord
+	belongs_to :recipe, inverse_of: :meal_plans
+
+#in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
+#For now, let's assume last week is between yesterday and 7 days ago
+		scope :date_filter, ->(number){
+			#convert to integer
+			number = number.to_i
+			start_date = (number + 1).days.ago #since it's beginning and end need to start 1 earlier
+			end_date = (number - 6).days.ago #1 day ago 7-6
+		if number.present? && number >= 7
+	 		where(meal_date: start_date..end_date ) 
+<<<<<<< HEAD
+	    elsif number.present? && number < 7
+	    	#if number is < 7, you want to end with yesterday
+	    	where(meal_date: start_date..1.days.ago)
+	    	#figure out how to reference the other scope below instead of repeating
+	    else
+	    	where(meal_date: 8.days.ago..1.days.ago ) 
+=======
+	    else
+	   	 where(meal_date: 8.days.ago..1.days.ago ) 
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+	    end } 
+
+	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
+
+	    scope :meal_order, -> {order(:meal_date)}
+
+<<<<<<< HEAD
+def self.meal_plan_generator(number)
+=======
+def self.set_date_options
+	current_date_user = Date.today.strftime("%m/%d/%Y")
+	current_date_db = Date.today.strftime("%Y/%m/%d")
+	@date_options = {}
+	@date_options[current_date_user] = current_date_db
+
+	(1..7).each do |x|
+		date_user = x.days.from_now.strftime("%m/%d/%Y")
+		date_db = x.days.from_now.strftime("%Y/%m/%d")
+		@date_options[date_user] = date_db
+	end
+	@date_options
+end
+
+def self.meal_plan_generator
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+
+#don't forget the direction from which you are coming joins must start from the has many side
+#e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
+
+	@last_week_meals = self.last_week_meals
+
+	@this_week_meals = []
+
+	while @this_week_meals.length < 1
+	#random recipe is pulling from the recipe table, so recipe id is just ID
+		rando_recipe = self.get_random_recipe
+		
+		#this is dumb. should set up differently
+		lw_string = "lw"
+		tw_string = "tw"
+
+		#if they don't have anything on file for last week, go ahead and return false
+		if @last_week_meals.empty?
+			lw_match = false
+		else
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
+		end
+<<<<<<< HEAD
+
+=======
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+
+		# we really only want to check each criteria if the criteria before it is met
+		#first check for matches with last week and this week
+		#then check for grain and protein counts
+		
+		if lw_match == true
+			next
+		else
+			add_to_list(@this_week_meals, rando_recipe)
+		end
+
+		#could add code here to specify difficulty level, grain type, etc.
+	end
+	@this_week_meals	
+end
+
+def self.get_random_recipe
+	@random_recipe = Recipe.offset(rand(Recipe.count)).first
+end
+#item uses recipe.id
+#this week's meal uses recipe.id while last week's has recipe_id
+#for now using two methods
+
+
+def self.compare_to_week(arr,item,week)
+	match = true
+	item_id_val = item.id
+	arr.each do |a|
+
+		#the recipe id is in a different location if it's already in meal plans
+		#we may want to go back and map the ids or something (in the original or another earlier method) so that it is the same for both
+		if(week == "tw")
+			a_id_val = a.id
+		else
+			a_id_val = a.recipe_id
+		end
+
+		if(a_id_val == item_id_val)
+			break
+		elsif(a_id_val != item_id_val && arr.index(a) == arr.index(arr.last))
+			match = false
+		else
+			next
+		end
+	end
+	match
+end
+
+def self.add_to_list(arr, item)
+	arr.push(item)
+end
+
+#future reference
+def self.check_component_part(arr,component_hash, type)
+	#example method with arguments
+	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
+		
+	max = false
+		if component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3
+			component_hash[type] = component_hash[type]  + 1
+			#grain_max is still false so don't need to add anything
+		elsif component_hash.has_key?(type) 
+			max = true
+		else
+			#grain_max is still false so don't need to mention. just set the type to 1
+			component_hash[type] = 1
+		end
+
+	max	
+end
+<<<<<<< HEAD
+
+	def self.batch_create(post_content)
+		#get rid of the extra "meal_plan" key
+		meal_values = JSON.parse(post_content)
+	  # begin exception handling
+	  begin
+	    # begin a transaction on the  mp model
+	    MealPlan.transaction do
+	      # for each student record in the passed json
+	      meal_values.each do |meal_hash|
+	        # create a new student
+	        MealPlan.create!(meal_hash)
+	      end # json.parse
+	    end # transaction
+	  rescue
+	    # do nothing
+	  end  # exception handling
+	end  # batch_create
+=======
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+
+end
+class MealPlan < ApplicationRecord
+	belongs_to :recipe, inverse_of: :meal_plans
+
+#in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
+#For now, let's assume last week is between yesterday and 7 days ago
+		scope :date_filter, ->(number){
+			#convert to integer
+			number = number.to_i
+			start_date = (number + 1).days.ago #since it's beginning and end need to start 1 earlier
+			end_date = (number - 6).days.ago #1 day ago 7-6
+		if number.present? && number >= 7
+	 		where(meal_date: start_date..end_date ) 
+<<<<<<< HEAD
+	    else
+	   	 where(meal_date: 8.days.ago..1.days.ago ) 
+=======
+	    elsif number.present? && number < 7
+	    	#if number is < 7, you want to end with yesterday
+	    	where(meal_date: start_date..1.days.ago)
+	    	#figure out how to reference the other scope below instead of repeating
+	    else
+	    	where(meal_date: 8.days.ago..1.days.ago ) 
+>>>>>>> advanced-version
+	    end } 
+
+	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
+
+	    scope :meal_order, -> {order(:meal_date)}
+
+<<<<<<< HEAD
+def self.set_date_options
+	current_date_user = Date.today.strftime("%m/%d/%Y")
+	current_date_db = Date.today.strftime("%Y/%m/%d")
+	@date_options = {}
+	@date_options[current_date_user] = current_date_db
+
+	(1..7).each do |x|
+		date_user = x.days.from_now.strftime("%m/%d/%Y")
+		date_db = x.days.from_now.strftime("%Y/%m/%d")
+		@date_options[date_user] = date_db
+	end
+	@date_options
+end
+
+def self.meal_plan_generator
+=======
+def self.meal_plan_generator(number)
+>>>>>>> advanced-version
+
+#don't forget the direction from which you are coming joins must start from the has many side
+#e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
+
+	@last_week_meals = self.last_week_meals
+
+	@this_week_meals = []
+
+	while @this_week_meals.length < 1
+	#random recipe is pulling from the recipe table, so recipe id is just ID
+		rando_recipe = self.get_random_recipe
+		
+		#this is dumb. should set up differently
+		lw_string = "lw"
+		tw_string = "tw"
+
+		#if they don't have anything on file for last week, go ahead and return false
+		if @last_week_meals.empty?
+			lw_match = false
+		else
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
+		end
+<<<<<<< HEAD
+=======
+
+>>>>>>> advanced-version
+
+		# we really only want to check each criteria if the criteria before it is met
+		#first check for matches with last week and this week
+		#then check for grain and protein counts
+		
+		if lw_match == true
+			next
+		else
+			add_to_list(@this_week_meals, rando_recipe)
+		end
+
+		#could add code here to specify difficulty level, grain type, etc.
+	end
+	@this_week_meals	
+end
+
+def self.get_random_recipe
+	@random_recipe = Recipe.offset(rand(Recipe.count)).first
+end
+#item uses recipe.id
+#this week's meal uses recipe.id while last week's has recipe_id
+#for now using two methods
+
+
+def self.compare_to_week(arr,item,week)
+	match = true
+	item_id_val = item.id
+	arr.each do |a|
+
+		#the recipe id is in a different location if it's already in meal plans
+		#we may want to go back and map the ids or something (in the original or another earlier method) so that it is the same for both
+		if(week == "tw")
+			a_id_val = a.id
+		else
+			a_id_val = a.recipe_id
+		end
+
+		if(a_id_val == item_id_val)
+			break
+		elsif(a_id_val != item_id_val && arr.index(a) == arr.index(arr.last))
+			match = false
+		else
+			next
+		end
+	end
+	match
+end
+
+def self.add_to_list(arr, item)
+	arr.push(item)
+end
+
+#future reference
+def self.check_component_part(arr,component_hash, type)
+	#example method with arguments
+	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
+		
+	max = false
+		if component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3
+			component_hash[type] = component_hash[type]  + 1
+			#grain_max is still false so don't need to add anything
+		elsif component_hash.has_key?(type) 
+			max = true
+		else
+			#grain_max is still false so don't need to mention. just set the type to 1
+			component_hash[type] = 1
+		end
+
+	max	
+end
+<<<<<<< HEAD
+=======
+
+	def self.batch_create(post_content)
+		#get rid of the extra "meal_plan" key
+		meal_values = JSON.parse(post_content)
+	  # begin exception handling
+	  begin
+	    # begin a transaction on the  mp model
+	    MealPlan.transaction do
+	      # for each student record in the passed json
+	      meal_values.each do |meal_hash|
+	        # create a new student
+	        MealPlan.create!(meal_hash)
+	      end # json.parse
+	    end # transaction
+	  rescue
+	    # do nothing
+	  end  # exception handling
+	end  # batch_create
+>>>>>>> advanced-version
+
+end
+class MealPlansController < ApplicationController
+	def index
+<<<<<<< HEAD
+
+=======
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+		@meal_plans = MealPlan.meal_order.date_filter(params[:date_filter])
+		#last week, 7 days before date to 14 days before date
+		@time_period = {"last week" => 7, "two weeks ago" => 14}
+	end
+
+	def planner
+		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
+<<<<<<< HEAD
+		@this_week_meals = MealPlan.meal_plan_generator(params[:number_of_meals])								   
+=======
+		@this_week_meals = MealPlan.meal_plan_generator
+		@date_options = MealPlan.set_date_options
+
+		@meal_plan = MealPlan.new
+	
+		respond_to do |format|
+	      format.html # new.html.erb
+	      format.json { render json: @meal_plan }
+	    end							   
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+	end
+
+	def show
+		@meal_plan = MealPlan.find(params[:id])
+	end
+	
+	def new
+		@meal_plan = MealPlan.new
+	
+
+		respond_to do |format|
+	      format.html # new.html.erb
+	      format.json { render json: @meal_plan }
+	    end
+	end
+
+	def create
+		 @meal_plan = MealPlan.new(meal_plan_params)
+
+	    respond_to do |format|
+	      if @meal_plan.save
+	        format.html { redirect_to @meal_plan, notice: 'meal_plan was successfully created.' }
+	        format.json { render json: @meal_plan, status: :created, meal_plan: @meal_plan }
+	        format.js
+	      else
+	        format.html { render action: "new" }
+	        format.json { render json: @meal_plan.errors, status: :unprocessable_entity }
+	      end
+	    end
+	end
+
+<<<<<<< HEAD
+  def batch_create 
+    # call the batch create method within the meal plan model
+    success = MealPlan.batch_create(request.raw_post)
+    # return an appropriate response
+    respond_to do |format|
+	    if success
+	    	format.html { redirect_to meal_plans_path, notice: 'recommendations were successfully
+	            	 added' }
+	      format.json { render json: {success: 'meal plans added'}, status: :created }
+	    else
+	     format.json { render json: {failed: 'meal plans not added'}, status: :unprocessable_entity }
+	    end
+	end
+  end
+
+	private
+
+=======
+ 
+	private
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+	def meal_plan_params
+      params.require(:meal_plan).permit(:recipe_id, :meal_date)
+    end
+end
+class Recipe < ApplicationRecord
+
+	before_validation :titleize
+
+<<<<<<< HEAD
+	validates :name, length: { minimum: 4 }, uniqueness: true
+	
+	validates :user_id, presence: true
+=======
+	validates :name, length: { minimum: 4 }, uniqueness: { scope: :user_id}
+
+	belongs_to :grain, optional: true
+
+	belongs_to :protein, optional: true
+>>>>>>> user-specific-filtering
+
+	belongs_to :user
+
+	has_many :meals, inverse_of: :recipe
+
+	has_many :recipe_ingredients
+	
+	has_many :ingredients, through: :recipe_ingredients
+
+	default_scope -> { order(:name) }
+
+<<<<<<< HEAD
+	scope :current_user_recipes, ->(current_user) {where(user_id: current_user.id)}
+
+	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where(id: id).pluck('meals.meal_date') }
+=======
+	scope :current_user_recipes, ->(current_user) {where('user_id = ?', current_user.id)}
+
+	scope :times_eaten, -> (id){ joins(:meals).merge(Meal.meal_order).where('id =?', id).pluck('meals.meal_date') }
+>>>>>>> user-specific-filtering
+
+
+	scope :grain_requests, ->(grain_id) { 
+    	if grain_id.present?
+      		Recipe.where('grain_id = ?', grain_id ) 
+      	else
+      		Recipe.all
+    	end 
+    }
+    #need to abstract
+	protected
+	def titleize
+		self.name = name.titleize
+	end
+end
+class RecipesController < ApplicationController
+  before_action :logged_in_user
+ # before_action :correct_user
+
+	def index
+		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)
+<<<<<<< HEAD
+=======
+	
+>>>>>>> user-specific-filtering
+	end
+
+	def show
+		@recipe = Recipe.find(params[:id])
+		@times_eaten = Recipe.times_eaten(params[:id])
+		@grains = Grain.all
+		@recipes_with_grain = Recipe.grain_requests(params[:grain_requests])
+	end
+
+	def new
+		@recipe = Recipe.new
+
+		respond_to do |format|
+	      format.html # new.html.erb
+	      format.json { render json: @recipe }
+	    end
+	end
+
+	def edit
+		@recipe = Recipe.find(params[:id])
+	end
+
+	def create
+	     @recipe = current_user.recipes.build(recipe_params)
+
+	    @recipe = current_user.recipes.build(recipe_params)
+
+
+	    respond_to do |format|
+	      if @recipe.save
+	        format.html { redirect_to recipes_path, notice: 'recipe was successfully created.' }
+	        format.json { render json: @recipe, status: :created, recipe: @recipe }
+	        format.js
+	      else
+	        format.html { render action: "new" }
+	        format.json { render json: @recipe.errors, status: :unprocessable_entity }
+	      end
+	    end
+	end
+
+
+	def update
+	    @recipe = Recipe.find(params[:id])
+
+	    respond_to do |format|
+	      if @recipe.update(recipe_params)
+	        format.html { redirect_to @recipe, notice: 'recipe was successfully updated.' }
+	        format.json { head :no_content }
+	      else
+	        format.html { render action: "edit" }
+	        format.json { render json: @recipe.errors, status: :unprocessable_entity }
+	      end
+	    end
+	end
+
+	private
+	def recipe_params
+      params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id)
+    end
+
+
+end<%= render 'shared/navbar' %>
+<%= render 'shared/recipe_link.html.erb' %>
+<%= form_for @meal_plan, url: {action: "create"} do |f| %>
+<div class = "row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 heading">	
+<<<<<<< HEAD
+		Your meal suggestion:
+	</div>
+</div>
+</br>
+=======
+		<h4>This Week's Meal suggestions are:</h4>
+	</div>
+</div>
+</br>
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="row subheading">
+      <div class="col-sm-6">Meal</div>
+    </div>
+  </div>
+</div>  
+>>>>>>> advanced-version
+<div class = "row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 meal-suggestions">
+    <% @this_week_meals.each do |meal| %>
+<<<<<<< HEAD
+		  <div class="row meal">
+        <%=  f.hidden_field :recipe_id, value: meal.id %>
+        <div class="col-sm-8"><%= link_to meal.name, meal %></div> 
+=======
+      <div class="row meal">
+        <div class="col-sm-6">
+          <%= link_to meal.name, meal %>
+           <%=  hidden_field_tag :recipe_id, value: meal.id %>
+        </div>
+>>>>>>> advanced-version
+		  </div>
+		<% end %>
+  </div>
+</div>
+</br>
+
+<div class="row">
+<<<<<<< HEAD
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6"> Select date for meal: </div>
+</div>
+=======
+	<div class="col-sm-4"></div>
+	<%# Need to figure out appropriate layout for this section %>
+	<%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+
+    <%# 
+    It is impossible to have more than 3 items with a value of 2 or higher, so you only
+    need 3 conditions. 
+    
+ %>
+
+</div>
+
+
+>>>>>>> advanced-version
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+   <% @date_options.each_pair do |user,db| %>
+        <label class="form-check-inline">
+          <div class="col-sm-3">
+            <%= f.radio_button :meal_date, db %>
+            <%= f.label(:date_date, user) %>
+         </div>
+         
+        </label>
+    <% end %>
+  </div>
+</div>
+</br> 
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+		<button class="btn btn-success save">
+			Save Meal
+		</button>
+  </div>
+</div>
+<<<<<<< HEAD
+<% end %>
+
+</div>
+</br>
+=======
+</br>
+<script type="text/javascript"> 
+$(function () {
+    var saveButton = $('.save');
+
+
+//currently basing date on tomorrow + 1 for each new recipe
+   
+   var date = new Date(Date.now());
+
+
+
+    saveButton.on("click", function() {
+        var hiddenElements = $( "body" ).find( ":hidden" ).not( "script" );
+
+     var date = new Date(Date.now());
+     var dataArr = [];
+       // for now, doing regex to get the id val
+
+        
+       for(var i=0; i<hiddenElements.length; i++){
+        var tempHash = {}
+        var val = hiddenElements[i].value;
+       // get the value only. returns an array, so get the first index of that array
+        var recipeId = val.match(/\d+/g)[0];
+        
+     //   date is getting reset every time, so you only need to add 1
+        date.setDate(date.getDate() + 1);
+        var month = Number(date.getMonth()) + 1
+           if(month < 10){
+             month = "0" + month;
+           }
+        var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
+        tempHash["recipe_id"] = recipeId;
+        tempHash["meal_date"] = dateDbFormat;
+
+       
+         dataArr.push(tempHash);
+       }
+      
+       $.ajax({
+            url:'/meal_plans/batch_create',
+             type: 'POST',
+             dataType: 'json',
+             contentType: 'application/json',
+             data: JSON.stringify(dataArr),
+              headers: {
+               'X-Transaction': 'POST Example',
+               'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+             },
+         //    success handled by the controller
+            error: function (jqXHR, textStatus, errorThrown) {
+             //     may want to do flash instead
+                 alert("could not save this meal");
+             }
+         });
+    });
+
+});
+>>>>>>> advanced-version
+
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-2"><%= link_to "home", recipes_path %></div>
+	<div class="col-sm-3"><%= link_to "See Last Week's Meals", meal_plans_path(date_filter: 7) %></div>
+</div>class Recipe < ApplicationRecord
+
+	before_validation :titleize
+
+	validates :name, length: { minimum: 4 }, uniqueness: true
+	
+	belongs_to :grain
+
+	belongs_to :protein
+
+	has_many :meal_plans, inverse_of: :recipe
+
+	default_scope -> { order(:name) }
+
+	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+
+<<<<<<< HEAD
+=======
+	default_scope -> { order(:name) }
+
+	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+
+>>>>>>> advanced-version
+	protected
+	def titleize
+		self.name = name.titleize
+	end
+end
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# you'll amass, the slower it'll run and the greater likelihood for issues).
+#
+# It's strongly recommended that you check this file into your version control system.
+
+<<<<<<< HEAD
+ActiveRecord::Schema.define(version: 20161206185821) do
+=======
+ActiveRecord::Schema.define(version: 20161209141546) do
+>>>>>>> user-specific-filtering
+
+  create_table "grains", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.string "name"
+    t.string "food_group"
+  end
+
+  create_table "meals", force: :cascade do |t|
+    t.integer  "recipe_id"
+    t.date     "meal_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "user_id"
+    t.index ["recipe_id", "meal_date"], name: "index_meals_on_recipe_id_and_meal_date", unique: true
+  end
+
+  create_table "proteins", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "recipe_ingredients", force: :cascade do |t|
+    t.integer  "recipe_id"
+    t.integer  "ingredient_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  create_table "recipes", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "difficulty_level"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.integer  "user_id"
+<<<<<<< HEAD
+=======
+    t.index ["name", "user_id"], name: "index_recipes_on_name_and_user_id", unique: true
+>>>>>>> user-specific-filtering
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "name"
+    t.string   "password_digest"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "email"
+    t.string   "remember_digest"
+  end
+
+end
+<%= render 'shared/navbar' %>
+<%= render 'shared/side_links' %>
+<div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-6">
+<<<<<<< HEAD
+  	  	<em><%= @recipe.name %></em> was last eaten on <%= @times_eaten.last %>.
+  </div>
+</div>
+</br>
+<div class="row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
+</div>
+=======
+  		<% if @times_eaten.empty? %>
+  	  		You have not yet made <em><%= @recipe.name %></em>.
+  	  	<% else %>
+  	  		<em><%= @recipe.name %></em> was last eaten on <%= @times_eaten.last %>.
+  	  	<% end %>
+  </div>
+</div>
+>>>>>>> advanced-version
+</br>
+<div class="row">
+	<div class="col-sm-4"></div>
+	<div class="col-sm-4"><footer><%= link_to 'Back', recipes_path %></footer></div>
+</div>
+</br><div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6 heading">  
+    <h4>This Week's Meal suggestions are:</h4>
+  </div>
+</div>
+</br> 
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6 meal-suggestions">
+    <% @this_week_meals.each do |meal| %>
+      <div class="row">
+        <div class="col-sm-6 meal">
+           <%= link_to meal.name, recipe_path(meal.recipe_id) %>
+           <%= text_field_tag(:meal, value = nil, id: "meal-date" + meal.recipe_id.to_s, class: 'meal-date') %>
+           <%=  hidden_field_tag(:recipe_id, meal.recipe_id, class: 'recipe-id') %>
+           <%=  hidden_field_tag(:user_id, current_user.id, class: 'user-id') %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-sm-3">
+    <div class="row">
+       <div class="col-sm-12"> <strong>Number of Suggestions</strong></div>
+          <div class="col-sm-12">
+              <% @number_of_meals.each_pair do |text, number| %>
+                <li>
+                  <%= link_to "#{text}", planner_meals_path(number_of_meals: number), class: 'label label-primary' %>
+                </li>
+              <% end %>
+          </div>
+        </div>
+    </div>
+  </div>
+</br>
+</br>
+<!-- <div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">Filter by grain:</div>
+</div>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+     <% @grains.each do |grain| %>
+      <% unless grain == @grains.last %>
+       <%= link_to grain.name, planner_meals_path(grain_requests: grain.id) %>,
+      <% else %>
+        <%= link_to grain.name, planner_meals_path(grain_requests: grain.id) %>
+      <% end %>
+    <% end %>
+  </div>
+</div> -->
+  <%# Need to figure out appropriate layout for this section %>
+  <%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+
+    <%# 
+    It is impossible to have more than 3 items with a value of 2 or higher, so you only
+    need 3 conditions. 
+    
+ %>
+</br>
+<div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-3">
+    <button class="btn btn-success save">
+      Save Meal Plan
+    </button>
+  </div>
+</div>
+</br>
+<script type="text/javascript">
+$(function () {
+$('.meal-date').datepicker({
+ // dateFormat: "yy-mm-dd"
+});
+ 
+    var saveButton = $('.save');
+
+
+//currently basing date on tomorrow + 1 for each new recipe
+   
+   var date = new Date(Date.now());
+
+
+
+    saveButton.on("click", function() {
+
+var dataArr = []
+ $('.meal').each(function(){
+  var tempHash = {}
+  var mealDate = $(this).find(".meal-date").datepicker("getDate");
+  var userID = $(this).find(".user-id").val();
+  var recipeID = $(this).find(".recipe-id").val();
+
+  tempHash["recipe_id"] = recipeID;
+  tempHash["user_id"] = userID;
+  tempHash["meal_date"] = mealDate;
+dataArr.push(tempHash);
+ });
+ 
+
+      
+        $.ajax({
+             url:'/meals/batch_create',
+              type: 'POST',
+              dataType: 'json',
+              contentType: 'application/json',
+              data: JSON.stringify(dataArr),
+               headers: {
+                'X-Transaction': 'POST Example',
+                'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+              },
+          //    success handled by the controller
+                error: function (jqXHR, textStatus, errorThrown) {
+              //     may want to do flash instead
+                  alert("could not save this meal");
+              }
+          });
+    });
+
+});
+
+</script>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-3"><%= link_to "See Last Week's Meals", meals_path(date_filter: 7) %></div>
+</div><%= render 'shared/navbar' %>
+<%= render 'shared/side_links' %>
+<div class="row">
+<<<<<<< HEAD
+     <div class="col-sm-3"></div>
+     <div class="col-sm-8">
+
+        <% @recipes.each do |recipe| %>
+         	<li><%= link_to recipe.name, recipe_path(recipe) %></li>
+         <% end %>
+         <%= will_paginate(@recipes) %>
+     </div>
+=======
+          <div class="col-sm-3"></div>
+          <div class="col-sm-8">
+          <% @recipes.each do |recipe| %>
+          <li><%= link_to recipe.name, recipe_path(recipe) %></li>
+          <% end %>
+          <%= will_paginate %>
+          </div>
+
+>>>>>>> advanced-version
+</div>class MealPlansController < ApplicationController
+	def index
+<<<<<<< HEAD
+=======
+
+>>>>>>> advanced-version
+		@meal_plans = MealPlan.meal_order.date_filter(params[:date_filter])
+		#last week, 7 days before date to 14 days before date
+		@time_period = {"last week" => 7, "two weeks ago" => 14}
+	end
+
+	def planner
+		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
+<<<<<<< HEAD
+		@this_week_meals = MealPlan.meal_plan_generator
+		@date_options = MealPlan.set_date_options
+
+		@meal_plan = MealPlan.new
+	
+		respond_to do |format|
+	      format.html # new.html.erb
+	      format.json { render json: @meal_plan }
+	    end							   
+=======
+		@this_week_meals = MealPlan.meal_plan_generator(params[:number_of_meals])								   
+>>>>>>> advanced-version
+	end
+
+	def show
+		@meal_plan = MealPlan.find(params[:id])
+	end
+	
+	def new
+		@meal_plan = MealPlan.new
+	
+
+		respond_to do |format|
+	      format.html # new.html.erb
+	      format.json { render json: @meal_plan }
+	    end
+	end
+
+	def create
+		 @meal_plan = MealPlan.new(meal_plan_params)
+
+	    respond_to do |format|
+	      if @meal_plan.save
+	        format.html { redirect_to @meal_plan, notice: 'meal_plan was successfully created.' }
+	        format.json { render json: @meal_plan, status: :created, meal_plan: @meal_plan }
+	        format.js
+	      else
+	        format.html { render action: "new" }
+	        format.json { render json: @meal_plan.errors, status: :unprocessable_entity }
+	      end
+	    end
+	end
+
+<<<<<<< HEAD
+ 
+	private
+=======
+  def batch_create 
+    # call the batch create method within the meal plan model
+    success = MealPlan.batch_create(request.raw_post)
+    # return an appropriate response
+    respond_to do |format|
+	    if success
+	    	format.html { redirect_to meal_plans_path, notice: 'recommendations were successfully
+	            	 added' }
+	      format.json { render json: {success: 'meal plans added'}, status: :created }
+	    else
+	     format.json { render json: {failed: 'meal plans not added'}, status: :unprocessable_entity }
+	    end
+	end
+  end
+
+	private
+
+>>>>>>> advanced-version
+	def meal_plan_params
+      params.require(:meal_plan).permit(:recipe_id, :meal_date)
+    end
+end
+class Meal < ApplicationRecord
+	belongs_to :recipe, inverse_of: :meals
+
+	validates :user_id, presence: true
+
+#in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
+#For now, let's assume last week is between yesterday and 7 days ago
+
+scope :date_filter, ->(number){
+			n = number.to_i
+ 			start_date = (n + 1).days.ago #since it's beginning and end need to start 1 earlier
+ 			end_date = (n - 6).days.ago #1 day ago 7-6
+ 		if number.present? && n >= 7
+ 	 		where(meal_date: start_date..end_date )
+ 	 	elsif number.present? && n < 7
+ 	 		 where(meal_date: start_date..1.days.ago )
+ 	    else
+ 	    	where(meal_date: 8.days.ago..1.days.ago ) 
+ 	    end } 
+
+	    scope :number_of_meals, ->(number) {
+	    	if number.present?
+	    		number = number.to_i
+	    	else
+	    		number = 7
+	    	end
+	    	number
+	    }
+
+
+	    scope :current_user_meals, ->(current_user) {where(user_id: current_user.id)}
+
+	    scope :last_week_meals, -> {where(meal_date: 8.days.ago..1.days.ago ).to_a }
+
+	    scope :meal_order, -> {order(:meal_date)}
+
+
+def self.meal_generator(number)
+#don't forget the direction from which you are coming joins must start from the has many side
+#e.g. Recipe has_many :meals --> Recipe.joins(:meals)
+
+#create a meal plan for next X days 
+	meals_requested = self.number_of_meals(number)
+
+	@last_week_meals = self.last_week_meals
+
+	@this_week_meals = []
+
+	ingredients_hash = {}
+	
+	#make it time out if it tries to many times. Probably base it on the length of recipes table
+
+	while(@this_week_meals.length < meals_requested)
+		
+		rando_recipe = self.get_random_recipe
+		
+		#if they don't have anything on file for last week, go ahead and return false
+		if @last_week_meals.empty?
+			lw_match = false
+		else
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe)
+		end
+
+
+		# we really only want to check each criteria if the criteria before it is met
+		#first check for matches with last week and this week
+		#then check for grain and protein counts
+		
+		if lw_match == true
+			next
+		elsif @this_week_meals.empty?
+			#tw_match = false we can actually add without checking anything else
+			#but we also want to move on to the next item
+			add_to_list(@this_week_meals, rando_recipe)
+		else
+			tw_match = self.compare_to_week(@this_week_meals, rando_recipe)
+		end
+
+	#account for nil values with ingredients
+		if tw_match == false && rando_recipe.ingredients = []
+			add_to_list(@this_week_meals, rando_recipe)
+		 elsif tw_match == false 
+			recipe_max = self.check_amount(@this_week_meals,ingredient_hash, rando_recipe.ingredients)
+		 else
+		 	next
+		 end
+
+	end
+
+	@this_week_meals	
+end
+	def self.get_random_recipe
+		#change id column to recipe_id so it has consistent naming to last week meals
+<<<<<<< HEAD
+		@random_recipe = Recipe.select("id as recipe_id, recipes.name as name, difficulty_level").offset(rand(Recipe.count)).first
+=======
+		@random_recipe = Recipe.select("id as recipe_id, name, difficulty_level").offset(rand(Recipe.count)).first
+>>>>>>> user-specific-filtering
+	end
+
+def self.compare_to_week(arr,item)
+	match = true
+	arr.each do |a|
+
+		if(a.recipe_id == item.recipe_id)
+			break
+		elsif(a.recipe_id != item.recipe_id && arr.index(a) == arr.index(arr.last))
+			match = false
+		else
+			next
+		end
+	end
+	match
+end
+
+def self.add_to_list(arr, item)
+	arr.push(item)
+end
+
+
+
+def self.check_amount(arr,hsh, item_list)
+	#example method with arguments
+	#check_amount(@this_week_meals,recipe_hash, rando_recipe.ingredients)
+		
+	max = false
+	item_list.each do |item|
+		if hsh.has_key?(item) && hsh.values_at(item)[0]< 3
+			hsh[item] = hsh[item]  + 1
+			#max is still false so don't need to add anything
+		elsif hsh.has_key?(item) 
+			max = true
+		else
+			#max is still false so don't need to mention. just set the type to 1
+			hsh[item] = 1
+		end
+	end
+	max	
+end
+
+	def self.batch_create(post_content)
+		meal_values = JSON.parse(post_content)
+	  # begin exception handling
+	  begin
+	    # begin a transaction on the  mp model
+	    Meal.transaction do
+	      # for each student record in the passed json
+	      meal_values.each do |meal_hash|
+	        # create a new student
+	        Meal.create!(meal_hash)
+	      end # json.parse
+	    end # transaction
+	  rescue
+	    # do nothing
+	  end  # exception handling
+	end  # batch_create
+
+endclass Recipe < ApplicationRecord
+
+	before_validation :titleize
+
+	validates :name, length: { minimum: 4 }, uniqueness: true
+	
+	belongs_to :grain
+
+	belongs_to :protein
+
+	has_many :meal_plans, inverse_of: :recipe
+
+	default_scope -> { order(:name) }
+
+	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+
+<<<<<<< HEAD
+	default_scope -> { order(:name) }
+
+	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+
+=======
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+	protected
+	def titleize
+		self.name = name.titleize
+	end
+end
+Meal Planner App ...AKA one less decision parents have to make
+One of the most exhausting things about being a parent is the number of decisions you have to make. After a long day, deciding what to make for dinner is almost as taxing as making the dinner itself!
+What if you had an app that stored all of your favorite meals and offered you suggestions for what to make each week?
+<<<<<<< HEAD
+MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken!
+=======
+
+MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken! 
+
+New features coming:
+--Ability to set the difficulty level, grain type, or protein of your meal recommendation.
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+
+New features coming: Ability to set the difficulty level, grain type, or protein of your meal recommendation.class Recipe < ApplicationRecord
+
+	before_validation :titleize
+
+	validates :name, length: { minimum: 4 }, uniqueness: true
+	
+	belongs_to :grain
+
+	belongs_to :protein
+
+	has_many :meal_plans, inverse_of: :recipe
+
+	default_scope -> { order(:name) }
+
+	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+
+<<<<<<< HEAD
+	default_scope -> { order(:name) }
+
+	scope :times_eaten, -> (id){ joins(:meal_plans).merge(MealPlan.meal_order).where(id: id).pluck('meal_plans.meal_date') }
+
+=======
+>>>>>>> cd78288de70dc4675e05ee7c43a64558898275f9
+	protected
+	def titleize
+		self.name = name.titleize
+	end
+end
+<<<<<<< HEAD
+<%= render 'shared/side_links' %>
+    <div class="row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-8 blue">
+              <h3>
+                Hello, <%= current_user.name %>
+              </h3>
+      </div>
+    </div>
+=======
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-8"><h4>Recipes</h4></div>
+</div> 
+>>>>>>> user-specific-filtering
+<div class="row">
+          <div class="col-sm-3"></div>
+          <div class="col-sm-8">
+          <% @recipes.each do |recipe| %>
+          <li><%= link_to recipe.name, recipe_path(recipe) %></li>
+          <% end %>
+          <%= will_paginate %>
+          </div>
+
+</div><%= render 'shared/navbar' %>
+<%= render 'shared/recipe_link.html.erb' %>
+<%= form_for @meal_plan, url: {action: "create"} do |f| %>
+<div class = "row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 heading">	
+<<<<<<< HEAD
+		<h4>This Week's Meal suggestions are:</h4>
+	</div>
+</div>
+</br>
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="row subheading">
+      <div class="col-sm-6">Meal</div>
+    </div>
+  </div>
+</div>  
+=======
+		Your meal suggestion:
+	</div>
+</div>
+</br>
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+<div class = "row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 meal-suggestions">
+    <% @this_week_meals.each do |meal| %>
+<<<<<<< HEAD
+      <div class="row meal">
+        <div class="col-sm-6">
+          <%= link_to meal.name, meal %>
+           <%=  hidden_field_tag :recipe_id, value: meal.id %>
+        </div>
+=======
+		  <div class="row meal">
+        <%=  f.hidden_field :recipe_id, value: meal.id %>
+        <div class="col-sm-8"><%= link_to meal.name, meal %></div> 
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+		  </div>
+		<% end %>
+  </div>
+</div>
+</br>
+
+<div class="row">
+<<<<<<< HEAD
+	<div class="col-sm-4"></div>
+	<%# Need to figure out appropriate layout for this section %>
+	<%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+
+    <%# 
+    It is impossible to have more than 3 items with a value of 2 or higher, so you only
+    need 3 conditions. 
+    
+ %>
+
+</div>
+
+
+=======
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6"> Select date for meal: </div>
+</div>
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+   <% @date_options.each_pair do |user,db| %>
+        <label class="form-check-inline">
+          <div class="col-sm-3">
+            <%= f.radio_button :meal_date, db %>
+            <%= f.label(:date_date, user) %>
+         </div>
+         
+        </label>
+    <% end %>
+  </div>
+</div>
+</br> 
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+		<button class="btn btn-success save">
+			Save Meal
+		</button>
+  </div>
+</div>
+<<<<<<< HEAD
+</br>
+<script type="text/javascript"> 
+$(function () {
+    var saveButton = $('.save');
+
+
+//currently basing date on tomorrow + 1 for each new recipe
+   
+   var date = new Date(Date.now());
+
+
+
+    saveButton.on("click", function() {
+        var hiddenElements = $( "body" ).find( ":hidden" ).not( "script" );
+
+     var date = new Date(Date.now());
+     var dataArr = [];
+       // for now, doing regex to get the id val
+
+        
+       for(var i=0; i<hiddenElements.length; i++){
+        var tempHash = {}
+        var val = hiddenElements[i].value;
+       // get the value only. returns an array, so get the first index of that array
+        var recipeId = val.match(/\d+/g)[0];
+        
+     //   date is getting reset every time, so you only need to add 1
+        date.setDate(date.getDate() + 1);
+        var month = Number(date.getMonth()) + 1
+           if(month < 10){
+             month = "0" + month;
+           }
+        var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
+        tempHash["recipe_id"] = recipeId;
+        tempHash["meal_date"] = dateDbFormat;
+
+       
+         dataArr.push(tempHash);
+       }
+      
+       $.ajax({
+            url:'/meal_plans/batch_create',
+             type: 'POST',
+             dataType: 'json',
+             contentType: 'application/json',
+             data: JSON.stringify(dataArr),
+              headers: {
+               'X-Transaction': 'POST Example',
+               'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+             },
+         //    success handled by the controller
+            error: function (jqXHR, textStatus, errorThrown) {
+             //     may want to do flash instead
+                 alert("could not save this meal");
+             }
+         });
+    });
+
+});
+=======
+<% end %>
+
+</div>
+</br>
+>>>>>>> aa3f31b70dd2d18ba9a6042ddef9ca09249eaa34
+
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-2"><%= link_to "home", recipes_path %></div>
+	<div class="col-sm-3"><%= link_to "See Last Week's Meals", meal_plans_path(date_filter: 7) %></div>
+</div>class MealPlan < ApplicationRecord
+	belongs_to :recipe, inverse_of: :meal_plans
+
+#in controller @time_period = {"last week" => 7, "two weeks ago" => 14}
+#For now, let's assume last week is between yesterday and 7 days ago
+		scope :date_filter, ->(number){
+			#convert to integer
+			number = number.to_i
+			start_date = (number + 1).days.ago #since it's beginning and end need to start 1 earlier
+			end_date = (number - 6).days.ago #1 day ago 7-6
+		if number.present? && number >= 7
+	 		where(meal_date: start_date..end_date ) 
+	    elsif number.present? && number < 7
+	    	#if number is < 7, you want to end with yesterday
+	    	where(meal_date: start_date..1.days.ago)
+	    	#figure out how to reference the other scope below instead of repeating
+	    else
+	    	where(meal_date: 8.days.ago..1.days.ago ) 
+	    end } 
+
+	    scope :number_of_meals, ->(number) {
+	    	if number.present?
+	    		number = number.to_i
+	    	else
+	    		number = 7
+	    	end
+	    	number
+	    }
+
+	    scope :last_week_meals, ->{where(meal_date: 8.days.ago..1.days.ago ).to_a }
+
+	    scope :meal_order, -> {order(:meal_date)}
+
+def self.meal_plan_generator(number)
+
+#don't forget the direction from which you are coming joins must start from the has many side
+#e.g. Recipe has_many :meal_plans --> Recipe.joins(:meal_plans)
+
+#create a meal plan for next X days 
+	meals_requested = self.number_of_meals(number)
+
+	@last_week_meals = self.last_week_meals
+
+	@this_week_meals = []
+
+	grain_counts = {}
+	protein_counts = {}
+	
+	#make it time out if it tries to many times. Probably base it on the length of recipes table
+
+	while(@this_week_meals.length < meals_requested)
+		
+		#random recipe is pulling from the recipe table, so recipe id is just ID
+		rando_recipe = self.get_random_recipe
+		
+		#this is dumb. should set up differently
+		lw_string = "lw"
+		tw_string = "tw"
+
+		#if they don't have anything on file for last week, go ahead and return false
+		if @last_week_meals.empty?
+			lw_match = false
+		else
+			lw_match = self.compare_to_week(@last_week_meals,rando_recipe,lw_string)
+		end
+
+
+		# we really only want to check each criteria if the criteria before it is met
+		#first check for matches with last week and this week
+		#then check for grain and protein counts
+		
+		if lw_match == true
+			next
+		elsif @this_week_meals.empty?
+			#tw_match = false we can actually add without checking anything else
+			#but we also want to move on to the next item
+			add_to_list(@this_week_meals, rando_recipe)
+		else
+			tw_match = self.compare_to_week(@this_week_meals, rando_recipe,tw_string)
+		end
+
+		if(tw_match == false)
+			grain_max = self.check_component_part(@this_week_meals,grain_counts,rando_recipe.grain.name)
+		else
+			next
+		end
+
+		if(grain_max == false)
+			protein_max = self.check_component_part(@this_week_meals,protein_counts,rando_recipe.protein.name)
+		else
+			next
+		end
+
+		if(protein_max == false)
+			add_to_list(@this_week_meals,rando_recipe)
+		else
+			next
+		end
+
+	end
+
+	@this_week_meals	
+end
+
+def self.get_random_recipe
+	@random_recipe = Recipe.offset(rand(Recipe.count)).first
+end
+#item uses recipe.id
+#this week's meal uses recipe.id while last week's has recipe_id
+#for now using two methods
+
+
+def self.compare_to_week(arr,item,week)
+	match = true
+	item_id_val = item.id
+	arr.each do |a|
+
+		#the recipe id is in a different location if it's already in meal plans
+		#we may want to go back and map the ids or something (in the original or another earlier method) so that it is the same for both
+		if(week == "tw")
+			a_id_val = a.id
+		else
+			a_id_val = a.recipe_id
+		end
+
+		if(a_id_val == item_id_val)
+			break
+		elsif(a_id_val != item_id_val && arr.index(a) == arr.index(arr.last))
+			match = false
+		else
+			next
+		end
+	end
+	match
+end
+
+def self.add_to_list(arr, item)
+	arr.push(item)
+end
+
+#this isn't working now, so will just stuff the main method
+def self.check_component_part(arr,component_hash, type)
+	#example method with arguments
+	#check_component_part(@this_week_meals,rando_recipe,grain_counts,rando_recipe.grain.name)
+		
+	max = false
+		if component_hash.has_key?(type) && component_hash.values_at(type)[0]< 3
+			component_hash[type] = component_hash[type]  + 1
+			#grain_max is still false so don't need to add anything
+		elsif component_hash.has_key?(type) 
+			max = true
+		else
+			#grain_max is still false so don't need to mention. just set the type to 1
+			component_hash[type] = 1
+		end
+
+	max	
+end
+<<<<<<< HEAD
+
+	def self.batch_create(post_content)
+		#get rid of the extra "meal_plan" key
+		meal_values = JSON.parse(post_content)
+	  # begin exception handling
+	  begin
+	    # begin a transaction on the  mp model
+	    MealPlan.transaction do
+	      # for each student record in the passed json
+	      meal_values.each do |meal_hash|
+	        # create a new student
+	        MealPlan.create!(meal_hash)
+	      end # json.parse
+	    end # transaction
+	  rescue
+	    # do nothing
+	  end  # exception handling
+	end  # batch_create
+=======
+>>>>>>> cd78288de70dc4675e05ee7c43a64558898275f9
+
+	def self.batch_create(post_content)
+		#get rid of the extra "meal_plan" key
+		meal_values = JSON.parse(post_content)
+	  # begin exception handling
+	  begin
+	    # begin a transaction on the  mp model
+	    MealPlan.transaction do
+	      # for each student record in the passed json
+	      meal_values.each do |meal_hash|
+	        # create a new student
+	        MealPlan.create!(meal_hash)
+	      end # json.parse
+	    end # transaction
+	  rescue
+	    # do nothing
+	  end  # exception handling
+	end  # batch_create
+
+endclass MealsController < ApplicationController
+	before_action :logged_in_user
+	
+	def index
+<<<<<<< HEAD
+		@meals = Meal.meal_order.date_filter(params[:date_filter]).current_user_meals(current_user)
+=======
+		number = params[:date_filter] || 7
+		@meals = Meal.date_filter(number, current_user)
+
+>>>>>>> user-specific-filtering
+		#last week, 7 days before date to 14 days before date
+		@time_period = {"last week" => 7, "two weeks ago" => 14}
+	end
+
+	def planner
+		@number_of_meals = {"one meal" => 1, "five meals" => 5, "seven meals" => 7}
+<<<<<<< HEAD
+		#@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)	 #once planner code updated
+		@this_week_meals = Meal.meal_generator(params[:number_of_meals])		
+=======
+		@this_week_meals = Meal.meal_generator(params[:number_of_meals], current_user)
+		#@random_recipe = Meal.get_random_recipe(current_user)		
+>>>>>>> user-specific-filtering
+		@grains = Grain.all							   
+	end
+
+	def show
+		@meal = Meal.find(params[:id])
+	end
+	
+	def new
+		@meal = Meal.new
+
+		respond_to do |format|
+	      format.html # new.html.erb
+	      format.json { render json: @meal }
+	    end
+	end
+
+	def create
+
+		 @meal = current_user.meals.build(meal_params)
+
+<<<<<<< HEAD
+
+		 #still need to figure out where to redirect when posting from ajax
+	    
+=======
+>>>>>>> user-specific-filtering
+	    respond_to do |format|
+	      if @meal.save
+	        format.html { redirect_to @meal, notice: 'meal was successfully created.' }
+	        format.json { render json: @meal, status: :created, meal: @meal }
+	        format.js
+	      else
+	        format.html { render action: "new" }
+	        format.json { render json: @meal.errors, status: :unprocessable_entity }
+	      end
+	    end
+	end
+
+  def batch_create 
+    # call the batch create method within the meal plan model
+    success = Meal.batch_create(request.raw_post)
+    # return an appropriate response
+    respond_to do |format|
+	    if success
+	    	format.html { redirect_to meals_path, notice: 'recommendations were successfully
+	            	 added' }
+	      format.json { render json: {success: 'meal plans added'}, status: :created }
+	    else
+	     format.json { render json: {failed: 'meal plans not added'}, status: :unprocessable_entity }
+	    end
+	end
+  end
+
+	private
+
+	def meal_params
+      params.require(:meal).permit(:recipe_id, :meal_date, :user_id)
+    end
+end
+Meal Planner App ...AKA one less decision parents have to make
+One of the most exhausting things about being a parent is the number of decisions you have to make. After a long day, deciding what to make for dinner is almost as taxing as making the dinner itself!
+What if you had an app that stored all of your favorite meals and offered you suggestions for what to make each week?
+<<<<<<< HEAD
+MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken!
+=======
+
+MealPlanner (will) ensure you don't repeat meals from one week to the next and keeps you from ending up with 5 nights of chicken! 
+
+New features coming:
+--Ability to set the difficulty level, grain type, or protein of your meal recommendation.
+>>>>>>> cd78288de70dc4675e05ee7c43a64558898275f9
+
+New features coming: Ability to set the difficulty level, grain type, or protein of your meal recommendation.<%= render 'shared/navbar' %>
+<%= render 'shared/recipe_link.html.erb' %>
+
+<div class = "row">
+<<<<<<< HEAD
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 heading">	
+		<h4>This Week's Meal suggestions are:</h4>
+	</div>
+</div>
+</br>
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="row subheading">
+      <div class="col-sm-6">Meal</div>
+    </div>
+  </div>
+</div>  
+<div class = "row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6 meal-suggestions">
+=======
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6 heading">  
+    <h4>This Week's Meal suggestions are:</h4>
+  </div>
+</div>
+</br>
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="row subheading">
+      <div class="col-sm-6">Meal</div>
+    </div>
+  </div>
+</div>  
+<div class = "row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6 meal-suggestions">
+>>>>>>> cd78288de70dc4675e05ee7c43a64558898275f9
+    <% @this_week_meals.each do |meal| %>
+      <div class="row meal">
+        <div class="col-sm-6">
+          <%= link_to meal.name, meal %>
+           <%=  hidden_field_tag :recipe_id, value: meal.id %>
+        </div>
+<<<<<<< HEAD
+		  </div>
+		<% end %>
+=======
+      </div>
+    <% end %>
+>>>>>>> cd78288de70dc4675e05ee7c43a64558898275f9
+  </div>
+     <div class="col-sm-3">
+          <div class="row">
+              <div class="col-sm-12">
+                <strong>Filter by Date</strong>
+              </div>
+              <div class="col-sm-12">
+                <% @number_of_meals.each_pair do |text, number| %>
+                  <li>
+                   <%= link_to "#{text}", planner_meal_plans_path(number_of_meals: number), class: 'label label-primary' %>
+                  </li>
+                <% end %>
+              </div>
+          </div>
+      </div>
+</div>
+</br>
+</br>
+<div class="row">
+<<<<<<< HEAD
+	<div class="col-sm-4"></div>
+	<%# Need to figure out appropriate layout for this section %>
+	<%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+=======
+  <div class="col-sm-4"></div>
+  <%# Need to figure out appropriate layout for this section %>
+  <%#<div class="col-sm-3"><p>Summary: This week, you're making <% @difficult_items.length %><%#</div></p> %>
+>>>>>>> cd78288de70dc4675e05ee7c43a64558898275f9
+
+    <%# 
+    It is impossible to have more than 3 items with a value of 2 or higher, so you only
+    need 3 conditions. 
+    
+ %>
+
+</div>
+
+
+<div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-3">
+    <button class="btn btn-success save">
+      Save Meal Plan
+    </button>
+  </div>
+</div>
+</br>
+<script type="text/javascript"> 
+$(function () {
+    var saveButton = $('.save');
+
+
+//currently basing date on tomorrow + 1 for each new recipe
+   
+   var date = new Date(Date.now());
+
+
+
+    saveButton.on("click", function() {
+        var hiddenElements = $( "body" ).find( ":hidden" ).not( "script" );
+
+     var date = new Date(Date.now());
+     var dataArr = [];
+       // for now, doing regex to get the id val
+
+        
+       for(var i=0; i<hiddenElements.length; i++){
+        var tempHash = {}
+        var val = hiddenElements[i].value;
+       // get the value only. returns an array, so get the first index of that array
+        var recipeId = val.match(/\d+/g)[0];
+        
+     //   date is getting reset every time, so you only need to add 1
+        date.setDate(date.getDate() + 1);
+        var month = Number(date.getMonth()) + 1
+           if(month < 10){
+             month = "0" + month;
+           }
+        var dateDbFormat = date.getFullYear() + "-" + month + "-" + date.getDate();
+        tempHash["recipe_id"] = recipeId;
+        tempHash["meal_date"] = dateDbFormat;
+
+       
+         dataArr.push(tempHash);
+       }
+      
+       $.ajax({
+            url:'/meal_plans/batch_create',
+             type: 'POST',
+             dataType: 'json',
+             contentType: 'application/json',
+             data: JSON.stringify(dataArr),
+              headers: {
+               'X-Transaction': 'POST Example',
+               'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+             },
+         //    success handled by the controller
+            error: function (jqXHR, textStatus, errorThrown) {
+             //     may want to do flash instead
+                 alert("could not save this meal");
+             }
+         });
+    });
+
+});
+
+</script>
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-2"><%= link_to "home", recipes_path %></div>
+  <div class="col-sm-3"><%= link_to "See Last Week's Meals", meal_plans_path(date_filter: 7) %></div>
+</div>source 'https://rubygems.org'
+
+
+# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+# Use sqlite3 as the database for Active Record
+gem 'sqlite3'
+# Use Puma as the app server
+gem 'puma', '~> 3.0'
+# Use SCSS for stylesheets
+gem 'sass-rails', '~> 5.0'
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+# Use CoffeeScript for .coffee assets and views
+gem 'coffee-rails', '~> 4.2'
+# See https://github.com/rails/execjs#readme for more supported runtimes
+# gem 'therubyracer', platforms: :ruby
+gem 'bootstrap', '~> 4.0.0.alpha4'
+# Use jquery as the JavaScript library
+gem 'jquery-rails'
+# Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
+gem 'turbolinks', '~> 5'
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 2.5'
+# Use Redis adapter to run Action Cable in production
+# gem 'redis', '~> 3.0'
+# Use ActiveModel has_secure_password
+# gem 'bcrypt', '~> 3.1.7'
+#pagination
+gem 'will_paginate', '~> 3.1.0'
+gem 'pry'
+#pagination
+gem 'will_paginate', '~> 3.1.0'
+# Use Capistrano for deployment
+# gem 'capistrano-rails', group: :development
+
+group :development, :test do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platform: :mri
+end
+
+group :development do
+  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
+  gem 'web-console'
+  gem 'listen', '~> 3.0.5'
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
