@@ -7,6 +7,11 @@
 	background-color: #f2f2f2;
 	margin-bottom: 25px;
 	padding-bottom: 20px;
+	display: flex;
+}
+.nav-item {
+	padding-right: 10px;
+	font-size: 18px;
 }
 
 #error_explanation {
