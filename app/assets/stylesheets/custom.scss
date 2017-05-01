@@ -2,16 +2,17 @@
 	font-style: italic;
 }
 
-#navbar-mp {
+ #navbar-mp {
 	font-weight: bold;
-	background-color: #f2f2f2;
-	margin-bottom: 25px;
-	padding-bottom: 20px;
-	display: flex;
-}
+	background-color: #e3f2fd;
+	margin-bottom: 60px;
+} 
 .nav-item {
 	padding-right: 10px;
 	font-size: 18px;
+}
+.nav-link {
+	padding: 0;
 }
 
 #error_explanation {
@@ -34,7 +35,13 @@
 .alert-notice {
 	background-color: #ccddff;
 }
-.align-items-end {
-	padding: 15px 5px 5px 0;
-	text-align: left;
+
+.form-header {
+	padding-bottom: 25px;
+}
+.pagination {
+	margin: 1rem 0;
+}
+.pagination > .previous_page, .pagination > .current,.pagination > a {
+	padding-right: 5px;
 }

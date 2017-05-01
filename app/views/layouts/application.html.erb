@@ -4,68 +4,65 @@
     <title>MealPlanner</title>
     <%= csrf_meta_tags %>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-    <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %> <%= javascript_include_tag "application", "data-turbolinks-track" => true %> </head>
+    <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %> 
+</head>
 
   <body>
-     <nav id="navbar-mp" class="navbar navbar-toggleable-md navbar-light bg-faded navbar-static-top">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-      </button>
-      <div className="navbar-header">
-        <a class="navbar-brand" href="#">Meal Planner</a>
-      </div>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-        <ul class="navbar-nav align-items-end">
-          <% if logged_in? %>
-            <li class="nav-item active">
-              <%= link_to "Home",   root_path %>
+   <nav id="navbar-mp" class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Meal Planner</a>
+        </div>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+          <ul class="navbar-nav">
+            <% if logged_in? %>
+              <li class="nav-item active">
+                <%= link_to "Home", root_path, class: "nav-link" %>
+              </li>
+              <li class="nav-item active dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarRecipeDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Recipes
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarRecipeDropdownMenuLink">
+                  <%= link_to "Add New", new_recipe_path, class: "dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item active dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarMealsDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Meals
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarMealsDropdownMenuLink">
+                  <%= link_to "Add New", new_meal_path, class: "dropdown-item" %>
+                  <%= link_to "Recent Meals", meals_path, class: "dropdown-item" %>
+                  <%= link_to "Planner", planner_meals_path, class: "dropdown-item" %>
+               </div>
+              </li>
+               <li class="nav-item active dropdown">
+                  <a href="#" id="navbarAccountDropdownMenuLink" class="nav-link dropdown-toggle" data-toggle="dropdown"> Account </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarAccountDropdownMenuLink">
+                    <%= link_to "Settings", edit_user_path(current_user), class: "dropdown-item" %>
+                    <%= link_to "Log out", logout_path, method: "delete", class: "dropdown-item" %>
+                  </div>
             </li>
-            <li class="dropdown nav-item active">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Recipes <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <li><%= link_to "Add New", new_recipe_path %></li>
-              </ul>
-            </li>
-            <li class="dropdown nav-item active">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Meals <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <li><%= link_to "Add New", new_meal_path %></li>
-                <li class="divider"></li>
-                <li><%= link_to "Recent Meals", meals_path %></li>
-                <li class="divider"></li>
-                <li>
-                  <%= link_to "Planner", planner_meals_path %>
-                </li>
-              </ul>
-            </li>
-            <li class="dropdown nav-item active">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Account <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <li><%= link_to "Settings", edit_user_path(current_user) %></li>
-                <li class="divider"></li>
-                <li>
-                  <%= link_to "Log out", logout_path, method: "delete" %>
-                </li>
-              </ul>
-            </li>
-          <% else %>
-            <li><%= link_to "Log in", login_path %></li>
-          <% end %>
-        </ul>
-      </div>
+            <% else %>
+              <li><%= link_to "Log in", login_path, class: "nav-link" %></li>
+            <% end %>
+          </ul>
+        </div>
     </nav>
-
   	<% flash.each do |message_type, message| %>
         <div class="alert alert-<%= message_type %>"><%= message %></div>
     <% end %>
     <div class="container-fluid">
       <%= yield %>
     </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<!-- place down here to offset turbolinks behavior which stifles the bootstrap nav dropdowns -->
+
   </body>
+
 </html>
