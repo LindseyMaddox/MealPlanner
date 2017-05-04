@@ -24,8 +24,6 @@ class Meal < ApplicationRecord
 	    	number
 	    }
 
-	    scope :last_week_meals, ->(current_user) {where(meal_date: 8.days.ago..1.days.ago ).where('user_id = ?', current_user.id).to_a }
-
 	    scope :meal_order, -> { order(:meal_date)}
 
 def self.date_filter(number, current_user)
@@ -41,6 +39,12 @@ def self.date_filter(number, current_user)
  	end 
 end
 
+def self.last_week_active_meals(current_user)
+	sql = "Select meals.meal_date from meals inner join recipes on recipes.id = meals.recipe_id where(recipes.active = 't') and meals.meal_date between 8.days.ago and 1.days.ago and recipes.user_id = current_user.id"
+		
+		@last_week_meals = Recipe.joins(:meals).where("meals.meal_date" => 8.days.ago..1.days.ago ).
+	    	where('recipes.user_id = ?', current_user.id).where('recipes.active = ?', true).select("recipes.id as recipe_id").to_a
+end
 
 def self.meal_generator(number, current_user)
 
@@ -50,21 +54,20 @@ def self.meal_generator(number, current_user)
 #create a meal plan for next X days 
 	meals_requested = self.number_of_meals(number)
 
-	@last_week_meals = self.last_week_meals(current_user)
+	@last_week_meals = self.last_week_active_meals(current_user)
 
 	@this_week_meals = []
 
 	ingredients_hash = {}
 	
-	# #make it time out if it tries too many times. 
+	#you can only get the number of active meals - what you had last week that are active
+	#if request is >, change meals requested to that number to avoid infinite loop
+	#later we may need a more complex solution to account for user specific filtering
 
-	# #if request is > meals, change rm to recipes.length to avoid infinite loop
-	
 	 active_recipe_count = Recipe.current_user_active_recipes(current_user).count
 	
-	 if meals_requested > active_recipe_count
-	 	Rails.logger.info("Requested recipes of #{meals_requested} is higher than active recipe count of #{active_recipe_count}, so resetting query");
-	 	meals_requested = active_recipe_count
+	 if meals_requested > active_recipe_count - @last_week_meals.length
+	 	meals_requested = active_recipe_count - @last_week_meals.length
 	 end
 
 	  while(@this_week_meals.length < meals_requested)
