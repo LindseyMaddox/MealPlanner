@@ -1,0 +1,13 @@
+<div class="container">
+  	<div class="row">
+	    <div class="col-10 offset-1 col-md-8 chart-section">
+		  	<%= column_chart @difficulty_data, title: "Number of Active Recipes per Difficulty Level", xtitle: "Difficulty Level", ytitle: "Number of Recipes" %>
+	 	</div>
+	</div>
+	<div class="row">
+	    <div class="col-10 offset-1 col-md-8 chart-section">
+		  	<%= column_chart @ingredient_data, title: "Number of Active Recipes with Each Ingredient", xtitle: "Ingredient", ytitle: "Number of Recipes" %>
+	 	</div>
+	</div>
+</div>
+

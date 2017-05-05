@@ -6,12 +6,19 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'recipes#index'
 
-  resources :recipes
+  resources :recipes do
+    collection do
+      get 'charts'
+    end
+  end
 
   #probably will want to restrict the routes later
   resources :ingredients
 
 resources :meals do 
+  collection do
+      get 'charts'
+    end
    collection do
       get 'planner'
     end
