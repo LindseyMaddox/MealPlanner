@@ -15,5 +15,4 @@
 //= require bootstrap-sprockets 
 //= require turbolinks
 //= require jquery-ui.js
-//= require Chart.bundle
-//= require chartkick
+
