@@ -8,10 +8,10 @@
 				  </a>
 
 			  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-			    <a id="recipes-chart-link" class="dropdown-item" href="#">Recipes</a>
-			    <a id="difficulty-chart-link" class="dropdown-item" href="#">Difficulty Level</a>
-			    <a id="ingredients-chart-link" class="dropdown-item" href="#">Ingredients</a>
-			    <a id="food-groups-chart-link"class="dropdown-item" href="#">Food Groups</a>
+			    <a id="recipes-chart-link" class="dropdown-item chart-dropdown-item" href="#">Recipes</a>
+			    <a id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" href="#">Difficulty Level</a>
+			    <a id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" href="#">Ingredients</a>
+			    <a id="food-groups-chart-link"class="dropdown-item chart-dropdown-item" href="#">Food Groups</a>
 			  </div>
 			</div>
 				    	<div class="row chart-section">
@@ -38,18 +38,13 @@
 
 $(function () {
 
- $('.dropdown-item').on('click', function(event){
+ $('.chart-dropdown-item').on('click', function(event){
  	event.preventDefault();
  	let id = event.target.id;
-
  	getChart(id);
  	})
 
  	function getChart(chartLink){
-		// option use render. won't get locals this way
-
-		
-
 		if(chartLink == "recipes-chart-link"){		
 			$(".chart-section").html('<%= j column_chart  [{name: "Active", data: @last_month_active_recipe_data},
   {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
@@ -88,6 +83,5 @@ $(function () {
 	}
 
  });
-
 
 </script>
