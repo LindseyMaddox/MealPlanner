@@ -1,5 +1,5 @@
-
-  <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
+<div><%= chart %></div>
+ <div> <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
     {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
           tickAmount: 4,
           allowDecimals: false
@@ -13,6 +13,3 @@
   }, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals"
   			 %>
   	</div>
-  	    </div>
-  	</div>
-  		</div>
