@@ -1,22 +1,54 @@
 <div class="container">
+		<div class="row">
+	    	<div class="col-10 offset-1 col-md-8">
+	    		<h3> Meal Charts</h3>
+	    	</div>
+	    </div>
   	<div class="row">
 	    <div class="col-10 offset-1 col-md-8 chart-section">
-		  	<%= column_chart [ {name: "Active Recipes", data: @last_month_active_recipe_data }, { name: "Inactive Recipes", data: @last_month_inactive_recipe_data }], title: "Number of Times Recipe Used  - Last 30 Days", xtitle: "Recipe", ytitle: "Number of Meals" %>
+<%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
+  {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
+        tickAmount: 4,
+        allowDecimals: false
+    },  plotOptions: {
+            series: {
+
+               pointPadding: 0,
+                maxPointWidth: 50
+            }
+        }
+}, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", width: "600px", height: "300px" 
+			 %>
 	 	</div>
 	</div>
 	<div class="row">
 		    <div class="col-10 offset-1 col-md-8 chart-section">
-			  	<%= column_chart 	@difficulty_level_last_month , title: "Frequency of Recipes Used by Difficulty Level  - Last 30 Days", xtitle: "Difficulty Level", ytitle: "Number of Meals" %>
+			  	<%= column_chart 	@difficulty_level_last_month , library: {  yAxis: {
+        tickAmount: 4,
+        allowDecimals: false
+    }, plotOptions: {series: 
+                { maxPointWidth: 50 }}
+},title: "Frequency of Recipes Used by Difficulty Level  - Last 30 Days", xtitle: "Difficulty Level", ytitle: "Number of Meals" %>
 		 	</div>
 		</div>
 	<div class="row">
 		    <div class="col-10 offset-1 col-md-8 chart-section">
-			  	<%= column_chart 	@ingredient_data , title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Meals" %>
+			  	<%= column_chart 	@ingredient_data, library: {  yAxis: {
+        tickAmount: 4,
+        allowDecimals: false, plotOptions: {series: 
+                { maxPointWidth: 50 }}
+    }
+},title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Meals" %>
 		 	</div>
 		</div>
 			<div class="row">
 		    <div class="col-10 offset-1 col-md-8 chart-section">
-			  	<%= column_chart 	@food_group_data , title: "Frequency of Food Groups Used in Meals - Last 30 Days", xtitle: "Food Groups", ytitle: "Number of Meals" %>
+			  	<%= column_chart 	@food_group_data, library: {  yAxis: {
+        tickAmount: 4,
+        allowDecimals: false, plotOptions: {series: 
+                { maxPointWidth: 50 }}
+    }
+}, title: "Frequency of Food Groups Used in Meals - Last 30 Days", xtitle: "Food Groups", ytitle: "Number of Meals" %>
 		 	</div>
 		</div>
 </div>
