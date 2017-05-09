@@ -19,13 +19,11 @@
 				    	<div class="row chart-section">
 <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
   {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
-        tickAmount: 4,
         allowDecimals: false
     },  plotOptions: {
             series: {
-
                pointPadding: 0,
-                maxPointWidth: 50
+               maxPointWidth: 50
             }
         }
 }, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart"
