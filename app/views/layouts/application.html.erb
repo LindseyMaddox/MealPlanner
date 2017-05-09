@@ -29,7 +29,6 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarRecipeDropdownMenuLink">
                   <%= link_to "Add New", new_recipe_path, class: "dropdown-item" %>
-                  <%= link_to "Charts", charts_recipes_path, class: "dropdown-item" %>
                 </div>
               </li>
               <li class="nav-item active dropdown">
@@ -40,12 +39,12 @@
                   <%= link_to "Add New", new_meal_path, class: "dropdown-item" %>
                   <%= link_to "Recent Meals", meals_path, class: "dropdown-item" %>
                   <%= link_to "Planner", planner_meals_path, class: "dropdown-item" %>
-                  <%= link_to "Charts", charts_meals_path, class: "dropdown-item" %>
                </div>
               </li>
                <li class="nav-item active dropdown">
                   <a href="#" id="navbarAccountDropdownMenuLink" class="nav-link dropdown-toggle" data-toggle="dropdown"> Account </a>
                   <div class="dropdown-menu" aria-labelledby="navbarAccountDropdownMenuLink">
+                  <%= link_to "Charts", charts_path, class: "dropdown-item" %>
                     <%= link_to "Settings", edit_user_path(current_user), class: "dropdown-item" %>
                     <%= link_to "Log out", logout_path, method: "delete", class: "dropdown-item" %>
                   </div>

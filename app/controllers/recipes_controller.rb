@@ -61,11 +61,6 @@ class RecipesController < ApplicationController
 	    end
 	end
 
-	def charts
-		@difficulty_data = Recipe.where('user_id = ?', current_user.id).where('active = ?', true).group(:difficulty_level).count
-		@ingredient_data = Recipe.joins(:ingredients).where('user_id = ?', current_user.id).where('active = ?', true).group("ingredients.name").count
-	end
-
 	private
 	def recipe_params
       params.require(:recipe).permit(:name, :difficulty_level, { :ingredient_ids => [] }, :user_id, :active)
