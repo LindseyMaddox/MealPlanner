@@ -1,2 +1,2 @@
-id = <%= escape_javascript @recipe.id.to_s %>;
+id = <%= j @recipe.id.to_s %>;
 $("#set-active-status").load('/recipes/' + id + ' #set-active-status');

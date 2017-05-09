@@ -50,7 +50,7 @@ $(function () {
 		if(chartLink == "recipes-chart-link"){		
 			$(".chart-section").html('<%= j column_chart  [{name: "Active", data: @last_month_active_recipe_data},
   {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
-        tickAmount: 4,
+        tickInterval: 2,
         allowDecimals: false
     },  plotOptions: {
             series: {
