@@ -1,37 +1,33 @@
-<div class="container">
-	<div class="row">
-	    <div class="col-10 offset-1 col-md-8 chart-dashboard">
-	    	<div class="row chart-dashboard chart-dashboard-actions">
-	    		<div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
-				  <a class="btn btn-secondary dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="row">
+	<div class="col-12 col-md-9 offset-md-1 col-lg-8 chart-dashboard">
+	    <div class="row chart-dashboard chart-dashboard-actions">
+	    	<div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
+				<a class="btn btn-secondary dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				    Select Chart
-				  </a>
+				 </a>
 
-			  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 			    <a id="recipes-chart-link" class="dropdown-item chart-dropdown-item" href="#">Recipes in Meals</a>
 			    <a id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" href="#">Meal Difficulty Level</a>
 			    <a id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" href="#">Ingredients in Meals</a>
 			    <a id="food-groups-chart-link"class="dropdown-item chart-dropdown-item" href="#">Food Groups in Meals</a>
 			     <a id="recipe-ingredients-chart-link"class="dropdown-item chart-dropdown-item" href="#">Ingredients in Recipes</a>
 			    <a id="recipe-difficulty-chart-link"class="dropdown-item chart-dropdown-item" href="#">Difficulty Level of Recipes</a>
-			  </div>
 			</div>
-				    	<div class="row chart-section">
-<%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
-  {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
-        allowDecimals: false
-    },  plotOptions: {
-            series: {
-               pointPadding: 0,
-               maxPointWidth: 50
-            }
-        }
-}, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart"
-			 %>
-	</div>
-	    </div>
-	</div>
 		</div>
+		<div class="row chart-section">
+            <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
+              {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
+                    allowDecimals: false, tickInterval: 1, tickAmount: 3
+                },  plotOptions: {
+                        series: {
+                           pointPadding: 0,
+                           maxPointWidth: 50
+                        }
+                    }
+            }, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart"
+            			 %>
+	    </div>
 	</div>
 </div>
 <script type="text/javascript">
