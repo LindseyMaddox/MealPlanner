@@ -41,11 +41,11 @@
 $(function () {
 
  $('.chart-dropdown-item').on('click', function(event){
-    event.preventDefault();
-    alert("test");
-    let id = event.target.id;
-    getChart(id);
-    $(".dropdown").html("test for clicking on " + id);
+     event.stopImmediatePropagation();
+        let id = event.target.id;
+        getChart(id);
+ 
+  //  event.preventDefault();
     })
 
     function getChart(chartLink){
