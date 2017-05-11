@@ -25,10 +25,10 @@ Before testing link.
 $(function () {
 
  $('.thing').on('touchstart', function(event){
-    event.preventDefault();
+  //  event.preventDefault();
     let id = event.target.id;
     $('.chart-section').html("Now we've clicked on id " + id);
-
+alert("test fired");
     })
 
 
