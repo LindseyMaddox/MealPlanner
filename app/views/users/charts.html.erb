@@ -40,7 +40,7 @@
 
 $(function () {
 $('.chart-dropdown-item').on('touchstart', function(event){
-        
+        alert('you touched id ' + id);
         let id = event.target.id;
         getChart(id);
     })
