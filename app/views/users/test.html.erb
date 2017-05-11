@@ -25,9 +25,13 @@ Before testing link. Trying to change html
 $(function () {
 
  $('.thing').on('touchstart', function(event){
-    $('.chart-section').html("You changed something. It had the id of " + event.target.id);
+    let id = event.target.id
+    getChart(id);
     })
 
+    function getChart(id){
+        $('.chart-section').html("from the get chart function, you touched the element " + id);
+    }
 
  });
 
