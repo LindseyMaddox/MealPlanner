@@ -24,13 +24,18 @@ Before testing link.
 
 $(function () {
 
- $('.thing').on('click', function(event){
+ $('.thing').on('click touchstart', function(event){
     event.preventDefault();
     let id = event.target.id;
     $('.chart-section').html("Now we've clicked on id " + id);
 
     })
+ $('.thing').on('touchstart', function(event){
+    event.preventDefault();
+    let id = event.target.id;
+    $('.chart-section').html("Now we've clicked on id " + id);
 
+    })
 
 
  });
