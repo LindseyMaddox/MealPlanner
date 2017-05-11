@@ -39,7 +39,11 @@
 <script type="text/javascript">
 
 $(function () {
-
+$('.chart-dropdown-item').on('touchstart', function(event){
+        event.preventDefault();
+        let id = event.target.id;
+        getChart(id);
+    })
  $('.chart-dropdown-item').on('click', function(event){
     event.preventDefault();
 
