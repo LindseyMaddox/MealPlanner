@@ -13,7 +13,7 @@
                 <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>               
               </div>
             </div>
-            <div class="row chart-section">Before Click</div>
+            <div class="row chart-section">Before Screen loads/div>
         </div>
     </div>
         </div>
@@ -22,6 +22,7 @@
 <script type="text/javascript">
 $(function () {
     alert("test it worked at all");
+    $('.chart-section').html("Screen has loaded");
 
 $('.chart-dashboard').on('touchstart', function(event){
 
