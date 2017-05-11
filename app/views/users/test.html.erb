@@ -26,11 +26,9 @@ $(function () {
 
  $('.thing').on('click', function(event){
     event.preventDefault();
+    let id = event.target.id;
+    $('.chart-section').html("Now we've clicked on id " + id);
 
-    // event.stopImmediatePropagation();
-        let id = event.target.id;
-      alert("This is a test for " + id);
-  //  event.preventDefault();
     })
 
 
