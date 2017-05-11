@@ -20,6 +20,8 @@ resources :meals do
 
   get  '/signup',  to: 'users#new'
   get '/charts', to: 'users#charts'
+
+  get '/test', to: 'users#test'
   resources :users 
 
   get    '/login',   to: 'sessions#new'
