@@ -44,15 +44,15 @@ $('.chart-dropdown-item').on('touchstart', function(event){
         let id = event.target.id;
         getChart(id);
     })
- $('.chart-dropdown-item').on('click', function(event){
-    event.preventDefault();
+ // $('.chart-dropdown-item').on('click', function(event){
+ //    event.preventDefault();
 
-    // event.stopImmediatePropagation();
-        let id = event.target.id;
-        getChart(id);
+ //    // event.stopImmediatePropagation();
+ //        let id = event.target.id;
+ //        getChart(id);
  
-  //  event.preventDefault();
-    })
+ //  //  event.preventDefault();
+ //    })
 
     function getChart(chartLink){
         if(chartLink == "recipes-chart-link"){      
