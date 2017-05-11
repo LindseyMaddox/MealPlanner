@@ -10,51 +10,7 @@
 </head>
 
   <body>
-   <nav id="navbar-mp" class="navbar navbar-toggleable-sm navbar-light bg-faded">
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Meal Planner</a>
-        </div>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-          <ul class="navbar-nav">
-            <% if logged_in? %>
-              <li class="nav-item active">
-                <%= link_to "Home", root_path, class: "nav-link" %>
-              </li>
-              <li class="nav-item active dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarRecipeDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Recipes
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarRecipeDropdownMenuLink">
-                  <%= link_to "Add New", new_recipe_path, class: "dropdown-item" %>
-                </div>
-              </li>
-              <li class="nav-item active dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarMealsDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Meals
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarMealsDropdownMenuLink">
-                  <%= link_to "Add New", new_meal_path, class: "dropdown-item" %>
-                  <%= link_to "Recent Meals", meals_path, class: "dropdown-item" %>
-                  <%= link_to "Planner", planner_meals_path, class: "dropdown-item" %>
-               </div>
-              </li>
-               <li class="nav-item active dropdown">
-                  <a href="#" id="navbarAccountDropdownMenuLink" class="nav-link dropdown-toggle" data-toggle="dropdown"> Account </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarAccountDropdownMenuLink">
-                  <%= link_to "Charts", charts_path, class: "dropdown-item" %>
-                    <%= link_to "Settings", edit_user_path(current_user), class: "dropdown-item" %>
-                    <%= link_to "Log out", logout_path, method: "delete", class: "dropdown-item" %>
-                  </div>
-            </li>
-            <% else %>
-              <li><%= link_to "Log in", login_path, class: "nav-link" %></li>
-            <% end %>
-          </ul>
-        </div>
-    </nav>
+
   	<% flash.each do |message_type, message| %>
         <div class="alert alert-<%= message_type %>"><%= message %></div>
     <% end %>
