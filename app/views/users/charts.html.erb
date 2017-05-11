@@ -42,6 +42,7 @@ $(function () {
 
  $('.chart-dropdown-item').on('click', function(event){
     event.preventDefault();
+    alert("test");
     let id = event.target.id;
     getChart(id);
     $(".dropdown").html("test for clicking on " + id);
