@@ -41,7 +41,9 @@
 $(function () {
 
  $('.chart-dropdown-item').on('click', function(event){
-     event.stopImmediatePropagation();
+    event.preventDefault();
+
+    // event.stopImmediatePropagation();
         let id = event.target.id;
         getChart(id);
  
