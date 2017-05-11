@@ -1,29 +1,34 @@
-<div class="row">
-    <div class="col-10 offset-1 col-md-8 chart-dashboard">
-        <div class="row chart-dashboard-actions">
-            <div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
-                <a class="btn btn-secondary dropdown-toggle" href="#" id="dropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="container">
+    <div class="row">
+        <div class="col-10 offset-1 col-md-8 chart-dashboard">
+            <div class="row chart-dashboard-actions">
+                <div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
+                  <button class="btn btn-secondary dropdown-toggle" href="#" id="chartDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Select Chart
-                </a>
+                  </button>
 
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
-                    <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Meals</button>
-                    <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>               
-                </div>
+              <div class="dropdown-menu" aria-labelledby="chartDropdownMenuLink">
+                <button id="test-1" class="dropdown-item thing" type="button">Test One</button>
+                <button id="test-2" class="dropdown-item thing" type="button">Test Two</button>
+              </div>
             </div>
-            <div class="row chart-section">Before Screen loads</div>
+                        <div class="row chart-section">
+Before testing link.
+    </div>
+        </div>
+    </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+
 $(function () {
-    alert("test it worked at all");
-    $('.chart-section').html("Screen has loaded");
-
-$('.chart-dashboard').on('touchstart', function(event){
-
-        let id = event.target.id;
-        alert('you touched id ' + id);
+alert("hello!");
+ $('.thing').on('touchstart', function(event){
+  //  event.preventDefault();
+    let id = event.target.id;
+    $('.chart-section').html("Now we've clicked on id " + id);
+alert("test fired");
     })
 
 
