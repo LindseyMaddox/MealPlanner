@@ -1,34 +1,69 @@
 <div class="container">
     <div class="row">
-        <div id="testing-id" class="col-10 offset-1 col-md-8 chart-dashboard">
+        <div class="col-10 offset-1 col-md-8 chart-dashboard">
             <div class="row chart-dashboard-actions">
                 <div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
-                  <button class="btn btn-secondary dropdown-toggle" href="#" id="chartDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a class="btn btn-secondary dropdown-toggle" href="#" id="dropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Select Chart
-                  </button>
+                  </a>
 
-              <div class="dropdown-menu" aria-labelledby="chartDropdownMenuLink">
-                <button id="test-1" class="dropdown-item thing" type="button">Test One</button>
-                <button id="test-2" class="dropdown-item thing" type="button">Test Two</button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
+              
+                <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Meals</button>
+                <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>               
               </div>
             </div>
-                        <div class="row chart-section">
-Before testing link.
-    </div>
+                        <div class="row chart-section">Before Click</div>
         </div>
     </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-
 $(function () {
- $('.thing').on('touchstart', function(event){
-  //  event.preventDefault();
-    //let id = event.target.id;
-    $('.chart-section').html("Now we've clicked on id " + event.target.id);
+
+$('.chart-dropdown-item').on('touchstart', function(event){
+
+        let id = event.target.id;
+        alert('you touched id ' + id);
+        getChart(id);
     })
 
+    function getChart(chartLink){
+        if(chartLink =="food-groups-chart-link") {
+            $(".chart-section").html('<%= j column_chart @food_group_data, 
+                library: {  yAxis: {
+        tickAmount: 4,
+        allowDecimals: false
+    },  plotOptions: {
+            series: {
+               pointPadding: 0,
+                maxPointWidth: 50
+            }
+        }
+}, title: "Frequency of Food Groups Used in Meals - Last 30 Days", xtitle: "Food Groups", ytitle: "Number of Meals",  id: "meal-food-groups-chart" %>');
+        } else if(chartLink=="recipe-ingredients-chart-link"){
+                $(".chart-section").html('<%= j column_chart @ingredient_data, title: "Number of Active Recipes with Each Ingredient", xtitle: "Ingredient", ytitle: "Number of Recipes", library: {  yAxis: {
+        allowDecimals: false
+    },  plotOptions: {
+            series: {
+                maxPointWidth: 50
+            }
+        }
+}, id: "recipe-ingredients-chart" %>');
+        } else {
+            $(".chart-section").html('<%= j column_chart @difficulty_data, title: "Number of Active Recipes per Difficulty Level", xtitle: "Difficulty Level", ytitle: "Number of Recipes", library: {  yAxis: {
+        tickAmount: 4,
+        allowDecimals: false
+    },  plotOptions: {
+            series: {
+               pointPadding: 0,
+                maxPointWidth: 50
+            }
+        }
+}, id: "recipe-difficulty-chart" %>');
+        }
+    }
 
  });
 

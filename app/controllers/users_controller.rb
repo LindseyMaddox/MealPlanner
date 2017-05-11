@@ -16,6 +16,10 @@ class UsersController < ApplicationController
   end
 
   def test
+     @ingredient_data = Recipe.select("ingredients.name").joins(:ingredients).joins(:meals).where('meals.meal_date between ? and ?', 31.days.ago, 1.days.ago).where(user_id:1,active:true).group("ingredients.name").count
+    @food_group_data = FoodGroup.select("food_groups.name").joins(ingredients: [{recipes: :meals}]).where('meals.meal_date between ? and ?', 31.days.ago, 1.days.ago).
+    where('recipes.user_id = ? and recipes.active =?', 1, true).group("food_groups.name").count
+   
   end
 
   def new

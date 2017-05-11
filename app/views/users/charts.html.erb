@@ -39,21 +39,10 @@
 <script type="text/javascript">
 $(function () {
 
-$('.chart-dropdown-item').on('touchstart', function(event){
-
-        let id = event.target.id;
-        alert('you touched id ' + id);
-        getChart(id);
-    })
- // $('.chart-dropdown-item').on('click', function(event){
- //    event.preventDefault();
-
- //    // event.stopImmediatePropagation();
- //        let id = event.target.id;
- //        getChart(id);
- 
- //  //  event.preventDefault();
- //    })
+ $('.chart-dropdown-item').on('click', function(event){
+     let id = event.target.id;
+     getChart(id);
+  })
 
     function getChart(chartLink){
         if(chartLink == "recipes-chart-link"){      
