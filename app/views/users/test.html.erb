@@ -23,11 +23,10 @@ Before testing link.
 <script type="text/javascript">
 
 $(function () {
- $('.chart-dashboard').on('touchstart', function(event){
+ $('.dropdown-item').on('touchstart', function(event){
   //  event.preventDefault();
     //let id = event.target.id;
-   // $('.chart-section').html("Now we've clicked on id " + id);
-alert("test fired for chart dashboard. Let's ee if the id is available " + event.target.id);
+    $('.chart-section').html("Now we've clicked on id " + event.target.id);
     })
 
 
