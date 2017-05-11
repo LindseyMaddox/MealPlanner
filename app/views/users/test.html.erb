@@ -13,7 +13,7 @@
               </div>
             </div>
                         <div class="row chart-section">
-Before testing link. Trying to change html
+Try with semicolon
     </div>
         </div>
     </div>
@@ -27,11 +27,12 @@ $(function () {
  $('.thing').on('touchstart', function(event){
     let id = event.target.id
     getChart(id);
-    })
-
-    function getChart(id){
+    });
+     function getChart(id){
         $('.chart-section').html("from the get chart function, you touched the element " + id);
     }
+
+
 
  });
 
