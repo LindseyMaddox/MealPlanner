@@ -23,7 +23,10 @@ Before testing link.
 <script type="text/javascript">
 
 $(function () {
-alert("hello, test!");
+
+ $('body').on('touchstart', function(event){
+alert("test fired");
+    })
 
 
  });
