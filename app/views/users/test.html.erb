@@ -23,11 +23,11 @@ Before testing link.
 <script type="text/javascript">
 
 $(function () {
-
- $('.thing').on('touchstart', function(event){
+alert("hello!");
+ $('body').on('touchstart', function(event){
   //  event.preventDefault();
-    let id = event.target.id;
-    $('.chart-section').html("Now we've clicked on id " + id);
+    //let id = event.target.id;
+   // $('.chart-section').html("Now we've clicked on id " + id);
 alert("test fired");
     })
 
