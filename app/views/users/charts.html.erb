@@ -1,19 +1,20 @@
 <div class="row">
-	<div class="col-12 col-md-9 offset-md-1 col-lg-8 chart-dashboard">
+	<div class="col-12 col-md-9 offset-md-1 col-lg-6 offset-lg-2 chart-dashboard">
 	    <div class="row chart-dashboard chart-dashboard-actions">
 	    	<div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
 				<a class="btn btn-secondary dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				    Select Chart
 				 </a>
 
-			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-			    <a id="recipes-chart-link" class="dropdown-item chart-dropdown-item" href="#">Recipes in Meals</a>
-			    <a id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" href="#">Meal Difficulty Level</a>
-			    <a id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" href="#">Ingredients in Meals</a>
-			    <a id="food-groups-chart-link"class="dropdown-item chart-dropdown-item" href="#">Food Groups in Meals</a>
-			     <a id="recipe-ingredients-chart-link"class="dropdown-item chart-dropdown-item" href="#">Ingredients in Recipes</a>
-			    <a id="recipe-difficulty-chart-link"class="dropdown-item chart-dropdown-item" href="#">Difficulty Level of Recipes</a>
-			</div>
+    			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    			    <a id="recipes-chart-link" class="dropdown-item chart-dropdown-item" href="#">Recipes in Meals</a>
+    			    <a id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" href="#">Meal Difficulty Level</a>
+    			    <a id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" href="#">Ingredients in Meals</a>
+    			    <a id="food-groups-chart-link"class="dropdown-item chart-dropdown-item" href="#">Food Groups in Meals</a>
+    			     <a id="recipe-ingredients-chart-link"class="dropdown-item chart-dropdown-item" href="#">Ingredients in Recipes</a>
+    			    <a id="recipe-difficulty-chart-link"class="dropdown-item chart-dropdown-item" href="#">Difficulty Level of Recipes</a>
+    			</div>
+            </div>
 		</div>
 		<div class="row chart-section">
             <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
