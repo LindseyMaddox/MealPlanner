@@ -8,12 +8,12 @@
                   </a>
 
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
-                <button id="recipes-chart-link" class="dropdown-item chart-dropdown-item" href="#">Recipes in Meals</button>
-                <button id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" href="#">Meal Difficulty Level</button>
-                <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" href="#">Ingredients in Meals</button>
-                <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" href="#">Food Groups in Meals</button>
-                <button id="recipe-ingredients-chart-link" class="dropdown-item chart-dropdown-item" href="#">Ingredients in Recipes</button>
-                <button id="recipe-difficulty-chart-link" class="dropdown-item chart-dropdown-item" href="#">Difficulty Level of Recipes</button>
+                <button id="recipes-chart-link" class="dropdown-item chart-dropdown-item" type="button">Recipes in Meals</button>
+                <button id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Meal Difficulty Level</button>
+                <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Meals</button>
+                <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>
+                <button id="recipe-ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Recipes</button>
+                <button id="recipe-difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Difficulty Level of Recipes</button>
               </div>
             </div>
                         <div class="row chart-section">
@@ -37,11 +37,12 @@
     </div>
 </div>
 <script type="text/javascript">
-
 $(function () {
+
 $('.chart-dropdown-item').on('touchstart', function(event){
-        alert('you touched id ' + id);
+
         let id = event.target.id;
+        alert('you touched id ' + id);
         getChart(id);
     })
  // $('.chart-dropdown-item').on('click', function(event){
