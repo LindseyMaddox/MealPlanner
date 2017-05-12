@@ -38,6 +38,9 @@ $(function () {
  $('.chart-dropdown-item').on('touchstart', function(event){
     getChart(event.target.id);
     });
+  $('.chart-dropdown-item').on('click', function(event){
+    getChart(event.target.id);
+    });
 
  });
      function getChart(chartLink){
