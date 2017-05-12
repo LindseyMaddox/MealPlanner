@@ -15,7 +15,10 @@ class UsersController < ApplicationController
   
   end
 
-  def test  
+  def test 
+  @difficulty_data = Recipe.where('user_id = ?', current_user.id).where('active = ?', true).group(:difficulty_level).count
+    @ingredient_data = Recipe.joins(:ingredients).where('user_id = ?', current_user.id).where('active = ?', true).group("ingredients.name").count
+   
   end
 
   def new
