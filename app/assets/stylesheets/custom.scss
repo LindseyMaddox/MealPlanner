@@ -68,7 +68,7 @@
  /* iPads (landscape) ----------- */
 @media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
 	#recipes-chart, #meal-ingredients-chart,#recipe-ingredients-chart, #meal-difficulty-chart,#recipe-difficulty-chart, #meal-food-groups-chart {
-	margin: 30px 0 45px 60px;
+	margin: 30px 10px 35px 60px;
 	}
 	/*give more background padding than col-7 allows */
 	#chart-dashboard {

@@ -1,47 +1,50 @@
 <div class="row">
-    <div class="col-10 offset-1 col-md-8 chart-dashboard">
+    <div id="chart-dashboard" class="col-10 offset-1 col-md-9 offset-md-2 col-lg-7 chart-dashboard">
         <div class="row chart-dashboard-actions">
-            <div class="col-6 offset-3 col-md-3 offset-md-9 dropdown show">
-                <a class="btn btn-secondary dropdown-toggle" href="#" id="dropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="col-6 offset-3 col-md-3 offset-md-9 dropdown">
+                <button class="btn btn-secondary dropdown-toggle" href="#" id="chartDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Select Chart
-                </a>
+                </button>
 
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
-                    <button id="recipes-chart-link" class="dropdown-item chart-dropdown-item" type="button">Recipes in Meals</button>
-                    <button id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Meal Difficulty Level</button>
-                    <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Meals</button>
-                    <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>
-                    <button id="recipe-ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Recipes</button>
-                    <button id="recipe-difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Difficulty Level of Recipes</button>
-                </div>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
+                <button id="recipes-chart-link" class="dropdown-item chart-dropdown-item" type="button">Recipes in Meals</button>
+                <button id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Meal Difficulty Level</button>
+                <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Meals</button>
+                <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>
+                <button id="recipe-ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Recipes</button>
+                <button id="recipe-difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Difficulty Level of Recipes</button>
             </div>
-            <div class="row chart-section">
-                <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
-                  {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
+        </div>
+        <div class="row chart-section">
+            <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
+                {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  
+                    yAxis: {
                         tickAmount: 4,
                         allowDecimals: false
                     },  plotOptions: {
                             series: {
-
                                pointPadding: 0,
                                 maxPointWidth: 50
                             }
                         }
-                }, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart" %>
-            </div>
+                    }, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart" %>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+
 $(function () {
 
- $('.chart-dropdown-item').on('click', function(event){
-     let id = event.target.id;
-     getChart(id);
-  })
+ $('.chart-dropdown-item').on('touchstart', function(event){
+    getChart(event.target.id);
+    });
+  $('.chart-dropdown-item').on('click', function(event){
+    getChart(event.target.id);
+    });
 
-    function getChart(chartLink){
-        if(chartLink == "recipes-chart-link"){      
+ });
+     function getChart(chartLink){
+         if(chartLink == "recipes-chart-link"){      
             $(".chart-section").html('<%= j column_chart  [{name: "Active", data: @last_month_active_recipe_data},
   {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
         tickAmount: 4,
@@ -102,7 +105,5 @@ $(function () {
 }, id: "recipe-difficulty-chart" %>');
         }
     }
-
- });
 
 </script>
