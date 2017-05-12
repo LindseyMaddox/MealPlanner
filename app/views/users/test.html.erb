@@ -26,7 +26,9 @@ $(function () {
 
  $('.thing').on('touchstart', function(event){
     let id = event.target.id;
-    getChart(id);
+
+        $('.chart-section').html("test for id var, you touched the element " + id);
+   // getChart(id);
     });
 
  });
