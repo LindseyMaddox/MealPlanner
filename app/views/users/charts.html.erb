@@ -20,14 +20,13 @@
             <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
                 {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  
                     yAxis: {
-                        tickAmount: 3,
                         allowDecimals: false
                     },  plotOptions: {
                             series: {
                                pointPadding: 0,
                                 maxPointWidth: 50
                             }
-                        }
+                        },
                     }, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart" %>
         </div>
     </div>
@@ -48,7 +47,6 @@ $(function () {
          if(chartLink == "recipes-chart-link"){      
             $(".chart-section").html('<%= j column_chart  [{name: "Active", data: @last_month_active_recipe_data},
   {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
-        tickAmount: 4,
         allowDecimals: false
     },  plotOptions: {
             series: {
@@ -60,22 +58,19 @@ $(function () {
              %>');
         } else if(chartLink == "difficulty-chart-link"){
             $(".chart-section").html('<%= j column_chart    @difficulty_level_last_month , library: {  yAxis: {
-        tickAmount: 4,
         allowDecimals: false
     }, plotOptions: {series: 
                 { maxPointWidth: 50 }}
 },title: "Frequency of Recipes Used by Difficulty Level  - Last 30 Days", xtitle: "Difficulty Level", ytitle: "Number of Meals", id: "meal-difficulty-chart" %>');
         } else if(chartLink == "ingredients-chart-link"){
             $(".chart-section").html('<%= j column_chart  @ingredient_data, library: {  yAxis: {
-        tickAmount: 4,
         allowDecimals: false, plotOptions: {series: 
                 { maxPointWidth: 50 }}
     }
-}, title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Meals", id: "meal-ingredients-chart"  %>');
+}, title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Meals", id: "meal-ingredients-chart", height: "400px"  %>');
         } else if(chartLink =="food-groups-chart-link") {
             $(".chart-section").html('<%= j column_chart @food_group_data, 
                 library: {  yAxis: {
-        tickAmount: 4,
         allowDecimals: false
     },  plotOptions: {
             series: {
@@ -95,7 +90,6 @@ $(function () {
 }, id: "recipe-ingredients-chart" %>');
         } else {
             $(".chart-section").html('<%= j column_chart @difficulty_data, title: "Number of Active Recipes per Difficulty Level", xtitle: "Difficulty Level", ytitle: "Number of Recipes", library: {  yAxis: {
-        tickAmount: 4,
         allowDecimals: false
     },  plotOptions: {
             series: {
