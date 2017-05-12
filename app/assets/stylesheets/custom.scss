@@ -54,14 +54,21 @@
 .chart-dashboard-actions {
 	margin-top: 10px;
 }
+#chart-dashboard {	
+ 	background-color: #9fd9e0;
+}
+
 #recipes-chart, #meal-ingredients-chart,#recipe-ingredients-chart, #meal-difficulty-chart,#recipe-difficulty-chart, #meal-food-groups-chart {
  	padding: 20px 0;
  	background-color: #fff;
  }
  .chart-section {
- 	background-color: #9fd9e0;
-	border: 2px solid black;
 	padding: 20px;
+ }
+
+ .chart-dropdown {
+	 margin-left: auto;
+	 margin-right: 15px;
  }
 
 
