@@ -51,42 +51,17 @@
 	padding-right: 5px;
 }
 
-#chart-dashboard {
-	background-color: #9fd9e0;
-}
-
 .chart-dashboard-actions {
 	margin-top: 10px;
 }
 #recipes-chart, #meal-ingredients-chart,#recipe-ingredients-chart, #meal-difficulty-chart,#recipe-difficulty-chart, #meal-food-groups-chart {
  	padding: 20px 0;
- 	margin: 30px 0 35px 80px;
  	background-color: #fff;
  }
+ .chart-section {
+ 	background-color: #9fd9e0;
+	border: 2px solid black;
+	padding: 20px;
+ }
 
- /* iPads (landscape) ----------- */
-@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
-	#recipes-chart, #meal-ingredients-chart,#recipe-ingredients-chart, #meal-difficulty-chart,#recipe-difficulty-chart, #meal-food-groups-chart {
-	margin: 30px 10px 35px 60px;
-	}
-	/*give more background padding than col-7 allows */
-	#chart-dashboard {
-		flex: 0 0 67%;
-		max-width: 67%
-	}
-}
 
- /* iPads (portrait) ----------- */
-@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait)  {
-	#recipes-chart, #meal-ingredients-chart,#recipe-ingredients-chart, #meal-difficulty-chart,#recipe-difficulty-chart, #meal-food-groups-chart {
-	margin-bottom: 35px;
-	}
-}
-
- /* desktops and laptops ----------- */
-@media only screen and (min-width : 1224px) {
-	#chart-dashboard {
-		flex: 0 0 50%;
-		max-width: 50%;
-	}
-}

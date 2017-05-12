@@ -1,20 +1,6 @@
 <div class="row">
     <div id="chart-dashboard" class="col-10 offset-1 col-md-9 offset-md-2 col-lg-7 chart-dashboard">
-        <div class="row chart-dashboard-actions">
-            <div class="col-6 offset-6 col-sm-4 offset-sm-8 col-md-3 offset-md-9 dropdown">
-                <button class="btn btn-secondary dropdown-toggle" href="#" id="chartDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Select Chart
-                </button>
 
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
-                <button id="recipes-chart-link" class="dropdown-item chart-dropdown-item" type="button">Recipes in Meals</button>
-                <button id="difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Meal Difficulty Level</button>
-                <button id="ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Meals</button>
-                <button id="food-groups-chart-link" class="dropdown-item chart-dropdown-item" type="button">Food Groups in Meals</button>
-                <button id="recipe-ingredients-chart-link" class="dropdown-item chart-dropdown-item" type="button">Ingredients in Recipes</button>
-                <button id="recipe-difficulty-chart-link" class="dropdown-item chart-dropdown-item" type="button">Difficulty Level of Recipes</button>
-            </div>
-        </div>
         <div class="row chart-section">
             <%= column_chart  [{name: "Active", data: @last_month_active_recipe_data},
                 {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  
@@ -31,79 +17,3 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-
-$(function () {
-
- $('.chart-dropdown-item').on('touchstart', function(event){
-    getChart(event.target.id);
-    });
-  $('.chart-dropdown-item').on('click', function(event){
-    getChart(event.target.id);
-    });
-
- });
-     function getChart(chartLink){
-         if(chartLink == "recipes-chart-link"){      
-            $(".chart-section").html('<%= j column_chart  [{name: "Active", data: @last_month_active_recipe_data},
-  {name: "Inactive", data: @last_month_inactive_recipe_data}], library: {  yAxis: {
-        tickAmount: 4,
-        allowDecimals: false
-    },  plotOptions: {
-            series: {
-               pointPadding: 0,
-                maxPointWidth: 50
-            }
-        }
-}, title: "Frequency of Recipes Used - Last 30 days", xTitle: "Recipes", yTitle: "Number of Meals", id: "recipes-chart"
-             %>');
-        } else if(chartLink == "difficulty-chart-link"){
-            $(".chart-section").html('<%= j column_chart    @difficulty_level_last_month , library: {  yAxis: {
-        tickAmount: 4,
-        allowDecimals: false
-    }, plotOptions: {series: 
-                { maxPointWidth: 50 }}
-},title: "Frequency of Recipes Used by Difficulty Level  - Last 30 Days", xtitle: "Difficulty Level", ytitle: "Number of Meals", id: "meal-difficulty-chart" %>');
-        } else if(chartLink == "ingredients-chart-link"){
-            $(".chart-section").html('<%= j column_chart  @ingredient_data, library: {  yAxis: {
-        tickAmount: 4,
-        allowDecimals: false, plotOptions: {series: 
-                { maxPointWidth: 50 }}
-    }
-}, title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Meals", id: "meal-ingredients-chart"  %>');
-        } else if(chartLink =="food-groups-chart-link") {
-            $(".chart-section").html('<%= j column_chart @food_group_data, 
-                library: {  yAxis: {
-        tickAmount: 4,
-        allowDecimals: false
-    },  plotOptions: {
-            series: {
-               pointPadding: 0,
-                maxPointWidth: 50
-            }
-        }
-}, title: "Frequency of Food Groups Used in Meals - Last 30 Days", xtitle: "Food Groups", ytitle: "Number of Meals",  id: "meal-food-groups-chart" %>');
-        } else if(chartLink=="recipe-ingredients-chart-link"){
-                $(".chart-section").html('<%= j column_chart @ingredient_data, title: "Number of Active Recipes with Each Ingredient", xtitle: "Ingredient", ytitle: "Number of Recipes", library: {  yAxis: {
-        allowDecimals: false
-    },  plotOptions: {
-            series: {
-                maxPointWidth: 50
-            }
-        }
-}, id: "recipe-ingredients-chart" %>');
-        } else {
-            $(".chart-section").html('<%= j column_chart @difficulty_data, title: "Number of Active Recipes per Difficulty Level", xtitle: "Difficulty Level", ytitle: "Number of Recipes", library: {  yAxis: {
-        tickAmount: 4,
-        allowDecimals: false
-    },  plotOptions: {
-            series: {
-               pointPadding: 0,
-                maxPointWidth: 50
-            }
-        }
-}, id: "recipe-difficulty-chart" %>');
-        }
-    }
-
-</script>
