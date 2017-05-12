@@ -13,7 +13,7 @@
               </div>
             </div>
                         <div class="row chart-section">
-Try with semicolon
+Try without let variable
     </div>
         </div>
     </div>
@@ -25,10 +25,7 @@ Try with semicolon
 $(function () {
 
  $('.thing').on('touchstart', function(event){
-    let id = event.target.id;
-
-        $('.chart-section').html("test for id var, you touched the element " + id);
-   // getChart(id);
+    getChart(event.target.id);
     });
 
  });
