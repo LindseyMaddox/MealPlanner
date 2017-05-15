@@ -24,9 +24,10 @@
 
    <label id="ingredients-label"><strong>Ingredients</strong></label>
    <% @food_groups.each do |food_group| %>
-    <div class="food-group-label"> <%= food_group.name %></div>
+    <div class="food-groups-ingredients">
+      <div class="food-group-label"> <%= link_to food_group.name, "#" %></div>
           <% @ingredients.where(food_group_id: food_group.id).each do |ingredient| %>
-            <div class="field check-ingredient">
+            <div class="field recipe-form-ingredient hidden-ingredient">
                <% if @recipe.ingredients.count > 0 && @recipe.ingredients.include?(ingredient) %>
                      <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id, {:checked => "checked"} %><%= ingredient.name %>
               <% else %>
@@ -34,6 +35,7 @@
               <% end %>
             </div>
           <% end %>
+        </div>
       <% end %>
     </br>
      <div class="field">
@@ -45,3 +47,13 @@
   </div>
 </div>
 <% end %>
+<script type="text/javascript">
+$(function () {
+
+  $('.food-group-label').on('click', function(event){
+     event.preventDefault()
+  $(this).closest('.food-groups-ingredients').find('.recipe-form-ingredient').toggleClass('hidden-ingredient');
+   })
+
+  });
+</script>

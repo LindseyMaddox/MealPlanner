@@ -67,7 +67,7 @@ $(function () {
         allowDecimals: false, plotOptions: {series: 
                 { maxPointWidth: 50 }}
     }
-}, title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Meals", id: "meal-ingredients-chart", height: "400px"  %>');
+}, title: "Frequency of Ingredients Used in Meals - Last 30 Days", xtitle: "Ingredients", ytitle: "Number of Food Group Items", id: "meal-ingredients-chart", height: "400px"  %>');
         } else if(chartLink =="food-groups-chart-link") {
             $(".chart-section").html('<%= j column_chart @food_group_data, 
                 library: {  yAxis: {
@@ -81,7 +81,7 @@ $(function () {
 }, title: "Frequency of Food Groups Used in Meals - Last 30 Days", xtitle: "Food Groups", ytitle: "Number of Meals",  id: "meal-food-groups-chart" %>');
         } else if(chartLink=="recipe-ingredients-chart-link"){
                 $(".chart-section").html('<%= j column_chart @ingredient_data, title: "Number of Active Recipes with Each Ingredient", xtitle: "Ingredient", ytitle: "Number of Recipes", library: {  yAxis: {
-        allowDecimals: false
+        allowDecimals: false,
     },  plotOptions: {
             series: {
                 maxPointWidth: 50
