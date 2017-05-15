@@ -15,6 +15,9 @@ resources :meals do
    collection do
       get 'planner'
     end
+    collection do
+      get 'pantry'
+    end
     match :batch_create, via: [:post], on: :collection
   end
 

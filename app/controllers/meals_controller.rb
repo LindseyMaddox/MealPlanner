@@ -16,6 +16,11 @@ class MealsController < ApplicationController
 		@this_week_meals = Meal.meal_generator(params[:number_of_meals],current_user)				   
 	end
 
+	def pantry
+		@food_groups = FoodGroup.order(:name)
+		@ingredients = Ingredient.order(:name)
+	end
+
 	def show
 		@meal = Meal.find(params[:id])
 	end

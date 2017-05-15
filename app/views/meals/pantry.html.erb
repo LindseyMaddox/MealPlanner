@@ -1,0 +1,50 @@
+
+<div class="row">
+  <div class="col-10 offset-1 col-md-4 pantry-container">
+   <label id="ingredients-label"><strong>Must Include Ingredients</strong></label>
+   <% @food_groups.each do |food_group| %>
+    <div class="food-groups-ingredients">
+      <div class="food-group-label"> <%= link_to food_group.name, "#" %> <span class="fa fa-caret-down"></span></div> 
+          <% @ingredients.where(food_group_id: food_group.id).each do |ingredient| %>
+            <div class="field pantry-form-ingredient hidden-ingredient">
+              <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id %> <%= ingredient.name %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </br>
+      <div class="actions">
+         <%= submit_tag("Get Recipes", class: 'btn btn-primary form-button') %>
+      </div>
+      <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <p>This is where our recipes would go.</p>
+        <span class="close">&times;</span>
+      </div>
+
+</div>
+  </div>
+</div>
+<script type="text/javascript">
+$(function () {
+
+  $('.form-button').on('click', function(event){
+    event.preventDefault();
+   $('.modal').attr('style','display: block');
+   });
+
+  $('.span').on('click', function(){
+     $('.modal').attr('style','display: none');
+  })
+
+  $('.food-group-label').on('click', function(event){
+     event.preventDefault()
+     $(this).find('span').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
+     $(this).closest('.food-groups-ingredients').find('.pantry-form-ingredient').toggleClass('hidden-ingredient');
+   });
+
+  });
+</script>
