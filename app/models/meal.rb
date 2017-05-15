@@ -40,8 +40,6 @@ def self.date_filter(number, current_user)
 end
 
 def self.last_week_active_meals(current_user)
-	sql = "Select meals.meal_date from meals inner join recipes on recipes.id = meals.recipe_id where(recipes.active = 't') and meals.meal_date between 8.days.ago and 1.days.ago and recipes.user_id = current_user.id"
-		
 		@last_week_meals = Recipe.joins(:meals).where("meals.meal_date" => 8.days.ago..1.days.ago ).
 	    	where('recipes.user_id = ?', current_user.id).where('recipes.active = ?', true).select("recipes.id as recipe_id").to_a
 end
