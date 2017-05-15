@@ -14,11 +14,12 @@ Rails.application.routes.draw do
 resources :meals do 
    collection do
       get 'planner'
-    end
+    end 
+    match :batch_create, via: [:post], on: :collection
     collection do
       get 'pantry'
     end
-    match :batch_create, via: [:post], on: :collection
+     match :find_meals_with_pantry_ingredients, via: [:get], on: :collection
   end
 
   get  '/signup',  to: 'users#new'

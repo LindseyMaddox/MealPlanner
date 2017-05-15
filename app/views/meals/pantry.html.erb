@@ -7,7 +7,7 @@
       <div class="food-group-label"> <%= link_to food_group.name, "#" %> <span class="fa fa-caret-down"></span></div> 
           <% @ingredients.where(food_group_id: food_group.id).each do |ingredient| %>
             <div class="field pantry-form-ingredient hidden-ingredient">
-              <%= check_box_tag "recipe[ingredient_ids][]", ingredient.id %> <%= ingredient.name %>
+              <%= check_box_tag 'ingredient-selection',ingredient.id, false, class: "select-ingredient" %> <%= ingredient.name %>
             </div>
           <% end %>
         </div>
@@ -32,11 +32,15 @@
 $(function () {
 
   $('.form-button').on('click', function(event){
-    event.preventDefault();
-   $('.modal').attr('style','display: block');
-   });
+      event.preventDefault();
+      $('.modal').attr('style','display: block');
+      let ingredients = getSelectedIngredients();
+      console.log("ingredients are " + ingredients);
+      checkForMealsWithIngredients(ingredients);
+ }); 
 
-  $('.span').on('click', function(){
+
+  $('span').on('click', function(){
      $('.modal').attr('style','display: none');
   })
 
@@ -47,4 +51,36 @@ $(function () {
    });
 
   });
+function getSelectedIngredients(){
+     var ingredients = [];
+     $('.pantry-form-ingredient').each(function(){
+       var isChecked = $(this).find(".select-ingredient").is(':checked');
+       var tempHash = {};
+       if(isChecked == true){ 
+          var ingredientID =  $(this).find(".select-ingredient").val();
+          tempHash["ingredientID"] = ingredientID;
+          ingredients.push(tempHash)
+       }
+    }); //end of ingredients loop
+    return ingredients;
+}
+function checkForMealsWithIngredients(ingredients){
+  $.ajax({
+               url:'/meals/find_meals_with_pantry_ingredients',
+                type: 'GET',
+                dataType: 'script',
+                data: {"ingredients": ingredients },
+                headers: {
+                  'X-Transaction': 'POST Example',
+                  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                },
+              success: function() {
+                  console.log("ingredients are " + ingredients);
+                },
+                 error: function (jqXHR, textStatus, errorThrown) {
+               //     may want to do flash instead
+                   alert("could not process request");
+              } 
+           }); // end of ajax call
+}
 </script>

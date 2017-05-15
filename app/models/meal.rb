@@ -153,6 +153,11 @@ def self.check_amount(arr,hsh, item_list)
 	max	
 end
 
+def self.pantry_meals(ingredients)
+	#need to set up
+	@pantry_meals = Recipe.joins(:ingredients)
+end
+
 	def self.batch_create(meal_values)
 	  # begin exception handling
 	  begin

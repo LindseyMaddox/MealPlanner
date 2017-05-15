@@ -21,6 +21,12 @@ class MealsController < ApplicationController
 		@ingredients = Ingredient.order(:name)
 	end
 
+	def find_meals_with_pantry_ingredients
+
+		ingredients = params[:ingredients].values.map { |item| item[:ingredientID] }
+		@pantry_meals = Meal.pantry_meals(ingredients)
+	end
+
 	def show
 		@meal = Meal.find(params[:id])
 	end
