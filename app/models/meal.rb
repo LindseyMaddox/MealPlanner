@@ -153,9 +153,16 @@ def self.check_amount(arr,hsh, item_list)
 	max	
 end
 
-def self.pantry_meals(ingredients)
+def self.pantry_meals(ingredients,current_user)
 	#need to set up
-	@pantry_meals = Recipe.joins(:ingredients)
+	query_ingredients = "(" + ingredients.join(',') + ")"
+	ingredients_length = ingredients.length
+	
+ 	sql = "Select recipes.*, count(*) as ct from recipes inner join
+    recipe_ingredients on recipes.id = recipe_ingredients.recipe_id 
+ 	where recipe_ingredients.ingredient_id in #{query_ingredients} and recipes.user_id = #{current_user.id}
+ 	group by recipes.id having ct == #{ingredients_length}" 
+ 	@pantry_meals =  ActiveRecord::Base.connection.execute(sql)
 end
 
 	def self.batch_create(meal_values)
