@@ -1,0 +1,7 @@
+%div{:class => "row"}
+	%div{:class => "col-10 offset-1 col-md-8 offset-md-3 form-header"}
+		%h2 Add a Recipe
+= render 'form'
+%div{:class => "row"}
+	%div{:class => "col-10 offset-1 col-md-5 offset-md-3"}
+		%footer= link_to 'Back', recipes_path

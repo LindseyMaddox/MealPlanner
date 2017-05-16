@@ -5,7 +5,6 @@ class RecipesController < ApplicationController
 
 	def index
 		@recipes = Recipe.paginate(:page => params[:page], :per_page => 15).current_user_recipes(current_user)
-
 	end
 
 	def show
