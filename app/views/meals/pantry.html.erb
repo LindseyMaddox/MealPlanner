@@ -26,7 +26,7 @@
             <span class="close">&times;</span>
           </div>
         </div>
-        <div class="pantry-meals">
+        <div class="pantry-recipes">
         </div>
       </div>
 
@@ -71,7 +71,7 @@ function getSelectedIngredients(){
 }
 function checkForMealsWithIngredients(ingredients){
   $.ajax({
-               url:'/meals/find_pantry_meals',
+               url:'/meals/recipes_using_pantry',
                 type: 'GET',
                 dataType: 'script',
                 data: {"ingredients": ingredients },
@@ -89,18 +89,18 @@ function checkForMealsWithIngredients(ingredients){
            }); // end of ajax call
 }
   function clearPreviousModalContent(){
-    $('.pantry-meals').empty();
+    $('.pantry-recipes').empty();
   }
 
   function updatePantryMealsList(response){
     let list = JSON.parse(response);
     if(list.length == 0){
-        $('.pantry-meals').append("<p>no recipes match your list of ingredients. Please try again with fewer ingredients</p>");
+        $('.pantry-recipes').append("<p>no recipes match your list of ingredients. Please try again with fewer ingredients</p>");
     } else {
-      $('.pantry-meals').append('<h4> Recipes Using Selected Ingredients</h4><ul></ul>');
+      $('.pantry-recipes').append('<h4> Recipes Using Selected Ingredients</h4><ul></ul>');
 
       list.forEach(function (recipe){
-         $('.pantry-meals ul').append('<li>' + recipe.name + '</li>');
+         $('.pantry-recipes ul').append('<li>' + recipe.name + '</li>');
       })
   }
 }

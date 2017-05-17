@@ -21,12 +21,12 @@ class MealsController < ApplicationController
 		@ingredients = Ingredient.order(:name)
 	end
 
-	def find_pantry_meals
+	def recipes_using_pantry
 	 	selected_ingredients = params[:ingredients].values.map { |item| item[:ingredientID] }
 
-		@pantry_meals = Meal.pantry_meals(selected_ingredients, current_user)	
+		@pantry_recipes = Recipe.pantry_recipes(selected_ingredients, current_user)	
 	 	 respond_to do |format|
-	       format.json { render json: @pantry_meals }
+	       format.json { render json: @pantry_recipes }
 	      #format.js 
 	    end	
 	end

@@ -53,6 +53,16 @@ class Recipe < ApplicationRecord
     	group("recipes.name").count
     end
     
+    def self.pantry_meals(ingredients,current_user)
+		query_ingredients = "(" + ingredients.join(',') + ")"
+		ingredients_length = ingredients.length
+		
+	 	sql = "Select recipes.*, count(*) as ct from recipes inner join
+	    recipe_ingredients on recipes.id = recipe_ingredients.recipe_id 
+	 	where recipe_ingredients.ingredient_id in #{query_ingredients} and recipes.user_id = #{current_user.id}
+	 	group by recipes.id having ct == #{ingredients_length}" 
+	 	@pantry_recipes =  ActiveRecord::Base.connection.execute(sql)
+	end
 	protected
 	def titleize
 		self.name = name.titleize
