@@ -41,7 +41,7 @@ $(function () {
       $('.modal').attr('style','display: block');
       clearPreviousModalContent();
       let ingredients = getSelectedIngredients();
-      checkForMealsWithIngredients(ingredients);
+      checkForRecipesWithIngredients(ingredients);
  }); 
 
 
@@ -69,7 +69,7 @@ function getSelectedIngredients(){
     }); //end of ingredients loop
     return ingredients;
 }
-function checkForMealsWithIngredients(ingredients){
+function checkForRecipesWithIngredients(ingredients){
   $.ajax({
                url:'/meals/recipes_using_pantry',
                 type: 'GET',
@@ -80,7 +80,7 @@ function checkForMealsWithIngredients(ingredients){
                   'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 },
               success: function(response) {
-                updatePantryMealsList(response);
+                updatePantryRecipesList(response);
                 },
                  error: function (jqXHR, textStatus, errorThrown) {
                //     may want to do flash instead
@@ -92,7 +92,7 @@ function checkForMealsWithIngredients(ingredients){
     $('.pantry-recipes').empty();
   }
 
-  function updatePantryMealsList(response){
+  function updatePantryRecipesList(response){
     let list = JSON.parse(response);
     if(list.length == 0){
         $('.pantry-recipes').append("<p>no recipes match your list of ingredients. Please try again with fewer ingredients</p>");
