@@ -53,7 +53,7 @@ class Recipe < ApplicationRecord
     	group("recipes.name").count
     end
     
-    def self.pantry_meals(ingredients,current_user)
+    def self.pantry_recipes(ingredients,current_user)
 		query_ingredients = "(" + ingredients.join(',') + ")"
 		ingredients_length = ingredients.length
 		

@@ -1,0 +1,13 @@
+// pantryRecipes = <%= j @pantry_recipes.to_s %>;
+let html = "";
+ <% html = "" %>
+ <% if @pantry_recipes.length == 0 %>
+ 	$('.pantry-recipes').append( "<p>no recipes match your list of ingredients. Please try again with fewer
+ 	 ingredients</p>")
+ <% else %>
+    $('.pantry-recipes').append("<h4> Recipes Using Selected Ingredients</h4><ul></ul>")
+    <% @pantry_recipes.each do |recipe| %>
+		$('.pantry-recipes ul').append("<li> placeholder</li>")
+	<% end %>
+ <% end %>
+

@@ -19,7 +19,7 @@ resources :meals do
     collection do
       get 'pantry'
     end
-     match :find_pantry_meals, via: [:get], on: :collection
+     match :recipes_using_pantry, via: [:get], on: :collection
   end
 
   get  '/signup',  to: 'users#new'

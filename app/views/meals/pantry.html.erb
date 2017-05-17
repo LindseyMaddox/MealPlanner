@@ -1,4 +1,4 @@
-
+<%= form_tag("/meals/recipes_using_pantry", method: "get", remote: true) do  %>
 <div class="row">
   <div class="col-10 offset-1 col-md-4 pantry-container">
    <label id="ingredients-label"><strong>Must Include Ingredients</strong></label>
@@ -7,7 +7,7 @@
       <div class="food-group-label"> <%= link_to food_group.name, "#" %> <span class="fa fa-caret-down"></span></div> 
           <% @ingredients.where(food_group_id: food_group.id).each do |ingredient| %>
             <div class="field pantry-form-ingredient hidden-ingredient">
-              <%= check_box_tag 'ingredient-selection',ingredient.id, false, class: "select-ingredient" %> <%= ingredient.name %>
+              <%= check_box_tag 'ingredients[][id]',ingredient.id, false, class: "select-ingredient" %> <%= ingredient.name %>
             </div>
           <% end %>
         </div>
@@ -33,16 +33,17 @@
 </div>
   </div>
 </div>
+<% end %> <!-- end of form -->
 <script type="text/javascript">
 $(function () {
 
-  $('.form-button').on('click', function(event){
-      event.preventDefault();
-      $('.modal').attr('style','display: block');
-      clearPreviousModalContent();
-      let ingredients = getSelectedIngredients();
-      checkForRecipesWithIngredients(ingredients);
- }); 
+ //  $('.form-button').on('click', function(event){
+ //      event.preventDefault();
+ //      $('.modal').attr('style','display: block');
+ //      clearPreviousModalContent();
+ //      let ingredients = getSelectedIngredients();
+ //      checkForMealsWithIngredients(ingredients);
+ // }); 
 
 
   $('span').on('click', function(){
@@ -69,7 +70,7 @@ function getSelectedIngredients(){
     }); //end of ingredients loop
     return ingredients;
 }
-function checkForRecipesWithIngredients(ingredients){
+function checkForMealsWithIngredients(ingredients){
   $.ajax({
                url:'/meals/recipes_using_pantry',
                 type: 'GET',
@@ -80,7 +81,7 @@ function checkForRecipesWithIngredients(ingredients){
                   'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 },
               success: function(response) {
-                updatePantryRecipesList(response);
+                updatePantryMealsList(response);
                 },
                  error: function (jqXHR, textStatus, errorThrown) {
                //     may want to do flash instead
@@ -92,7 +93,7 @@ function checkForRecipesWithIngredients(ingredients){
     $('.pantry-recipes').empty();
   }
 
-  function updatePantryRecipesList(response){
+  function updatePantryMealsList(response){
     let list = JSON.parse(response);
     if(list.length == 0){
         $('.pantry-recipes').append("<p>no recipes match your list of ingredients. Please try again with fewer ingredients</p>");
