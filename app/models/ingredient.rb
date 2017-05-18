@@ -9,6 +9,9 @@ class Ingredient < ApplicationRecord
 
 	validates :name, uniqueness: { case_sensitive: false }
 
+	scope :pantry_selected_ingredients, ->(ingredients) {where('id in (?)', ingredients).order(:name)}
+
+
 	protected
 	def titleize
 		self.name = name.titleize

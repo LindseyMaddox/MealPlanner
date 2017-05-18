@@ -54,7 +54,10 @@ class Recipe < ApplicationRecord
     end
     
     def self.pantry_recipes(ingredients,current_user)
+    	
 		query_ingredients = "(" + ingredients.join(',') + ")"
+
+
 		ingredients_length = ingredients.length
 		
 		@pantry_recipes = Recipe.joins(:recipe_ingredients).where("recipe_ingredients.ingredient_id 

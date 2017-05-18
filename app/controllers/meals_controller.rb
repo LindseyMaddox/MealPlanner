@@ -22,7 +22,10 @@ class MealsController < ApplicationController
 	end
 
 	def recipes_using_pantry
+
 	 	selected_ingredients = params[:ingredients].map { |item| item["id"] }
+
+	 	@pantry_ingredients = Ingredient.pantry_selected_ingredients(selected_ingredients)
 
 		@pantry_recipes = Recipe.pantry_recipes(selected_ingredients, current_user)	
 
