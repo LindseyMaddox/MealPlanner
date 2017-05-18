@@ -1,10 +1,10 @@
 <% recipes.each do |recipe| %>
-	<li>
-		<%= link_to recipe.name, recipes_path(recipe) %>
-		<div>Ingredients: 
-			<% recipe.ingredients.each do |ingredient| %>
-				<%= ingredient.name %><% if ingredient != recipe.ingredients.last %>,<% end %>
-			<% end %>
-		</div>
-	</li>
+	<div class='row'>
+		<%= link_to recipe.name, recipe_path(recipe) %>
+	</div>
+	<div class='row'>Ingredients: 
+		<% recipe.ingredients.each do |ingredient| %>
+			<%= ingredient.name %><% if ingredient != recipe.ingredients.last  %>,<% end %>
+		<% end %>
+	</div>
 <% end %>

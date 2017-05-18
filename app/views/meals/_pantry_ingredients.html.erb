@@ -1,5 +1,5 @@
-<div>
-	<% ingredients.each do |ingredient|  %>
-		<%= ingredient.name %><% if ingredient == ingredients.last && ingredients.length > 1 %>,<% end %>
+<div class="row"> Ingredients Selected: 
+	<% ingredients.each do |ingredient| %>
+		<%= ingredient.name %><% if ingredient != ingredients.last  %>,<% end %>
 	<% end %>
 </div>

@@ -61,7 +61,7 @@ class Recipe < ApplicationRecord
 		ingredients_length = ingredients.length
 		
 		@pantry_recipes = Recipe.joins(:recipe_ingredients).where("recipe_ingredients.ingredient_id 
-			in #{query_ingredients}").group(:id).having("count(recipes.id) = ?", ingredients.length)
+			in #{query_ingredients}").where(user_id: current_user.id).group(:id).having("count(recipes.id) = ?", ingredients.length)
 	end
 	protected
 	def titleize

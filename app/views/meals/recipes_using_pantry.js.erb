@@ -3,9 +3,12 @@ $('.pantry-recipes').empty();
  	$('.pantry-recipes').append( "<p>no recipes match your list of ingredients. Please try again with fewer
  	 ingredients</p>")
  <% else %>
-    $('.pantry-recipes').append("<h4> Recipes Using Selected Ingredients</h4><div></div><ul></ul>")
-    $('.pantry-recipes ul').html("<%= j render(partial: 'pantry_recipes', locals: { recipes: @pantry_recipes } ) %>")
-    $('.pantry-recipes div').html("<%= j render(partial: 'pantry_ingredients', locals: { ingredients: @pantry_ingredients } ) %>")
+    html = ""
+    html += "<div class='col-12'><div class='row'><h4> Recipes Using Selected Ingredients</h4></div></div><div class='col-12 selected-ingredients'></div><div class='col-12 pantry-recipes-list'></div>";
+    $('.pantry-recipes').html(html)
+    $('.pantry-recipes-list').html("<%= j render(partial: 'pantry_recipes', locals: { recipes: @pantry_recipes } ) %>")
+ 	$('.pantry-recipes .selected-ingredients').html("<%= j render(partial: 'pantry_ingredients', locals: { ingredients: @pantry_ingredients } ) %>")
+ 
  <% end %>
 
  $('.modal').attr('style','display: block');
