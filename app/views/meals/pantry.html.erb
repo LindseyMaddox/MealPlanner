@@ -40,6 +40,11 @@ $(function () {
   $('span').on('click', function(){
      $('.modal').attr('style','display: none');
   })
+  $('.food-group-label').on('click', function(event){
+      event.preventDefault()
+      $(this).find('span').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
+      $(this).closest('.food-groups-ingredients').find('.pantry-form-ingredient').toggleClass('hidden-ingredient');
+    });
 
   });
 </script>

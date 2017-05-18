@@ -57,10 +57,10 @@ class Recipe < ApplicationRecord
 		query_ingredients = "(" + ingredients.join(',') + ")"
 		ingredients_length = ingredients.length
 		
-	 	sql = "Select recipes.*, count(*) as ct from recipes inner join
+		sql = "Select * from recipes inner join
 	    recipe_ingredients on recipes.id = recipe_ingredients.recipe_id 
 	 	where recipe_ingredients.ingredient_id in #{query_ingredients} and recipes.user_id = #{current_user.id}
-	 	group by recipes.id having ct == #{ingredients_length}" 
+	 	group by recipes.id having count('recipes.id') == #{ingredients_length}" 
 	 	@pantry_recipes =  ActiveRecord::Base.connection.execute(sql)
 	end
 	protected

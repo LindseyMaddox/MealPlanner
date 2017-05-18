@@ -4,7 +4,7 @@ $('.pantry-recipes').empty();
  	 ingredients</p>")
  <% else %>
     $('.pantry-recipes').append("<h4> Recipes Using Selected Ingredients</h4><ul></ul>")
-    $('.pantry-recipes').append("<% j render 'pantry_recipes', recipes: @pantry_recipes %>")
+    $('.pantry-recipes ul').html("<%= j render(partial: 'pantry_recipes', locals: { recipes: @pantry_recipes } ) %>")
  <% end %>
 
  $('.modal').attr('style','display: block');
