@@ -57,11 +57,8 @@ class Recipe < ApplicationRecord
 		query_ingredients = "(" + ingredients.join(',') + ")"
 		ingredients_length = ingredients.length
 		
-		sql = "Select * from recipes inner join
-	    recipe_ingredients on recipes.id = recipe_ingredients.recipe_id 
-	 	where recipe_ingredients.ingredient_id in #{query_ingredients} and recipes.user_id = #{current_user.id}
-	 	group by recipes.id having count('recipes.id') == #{ingredients_length}" 
-	 	@pantry_recipes =  ActiveRecord::Base.connection.execute(sql)
+		@pantry_recipes = Recipe.joins(:recipe_ingredients).where("recipe_ingredients.ingredient_id 
+			in #{query_ingredients}").group(:id).having("count(recipes.id) = ?", ingredients.length)
 	end
 	protected
 	def titleize
