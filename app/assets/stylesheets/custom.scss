@@ -96,8 +96,24 @@
 /* Modal Content */
 .modal-content {
     background-color: #fefefe;
-    margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    margin: auto;
+}
+
+.selected_ingredients {
+	margin-left: 0;
+	font-style: italic
+}
+
+.pantry-recipes-list {
+	padding-top: 35px;
+}
+.pantry-recipe {
+	padding-bottom: 15px;
+}
+
+footer {
+	padding-top: 15px
 }

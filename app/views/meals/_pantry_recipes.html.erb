@@ -1,10 +1,11 @@
 <% recipes.each do |recipe| %>
-	<div class='row'>
-		<%= link_to recipe.name, recipe_path(recipe) %>
-	</div>
-	<div class='row'>Ingredients: 
+	<div class='row pantry-recipe'>
+		<%= link_to recipe.name, recipe_path(recipe) %> -
 		<% recipe.ingredients.each do |ingredient| %>
 			<%= ingredient.name %><% if ingredient != recipe.ingredients.last  %>,<% end %>
 		<% end %>
 	</div>
 <% end %>
+<!-- 
+	Once exclusions are setup
+<footer><div class="row"><em> Don't have all the ingredients in one of these recipes? Make sure to mark those items in the exclude checklist</em></div></footer> -->
