@@ -28,6 +28,9 @@
           <% end %>
         </div>
       <% end %>
+   <div id="pantry-active-checkbox" class="field">
+        <%= check_box_tag 'active', true %> <label>Only Active Recipes</label>
+   </div>
       <div class="actions">
          <%= submit_tag("Get Recipes", class: 'btn btn-primary form-button') %>
       </div>

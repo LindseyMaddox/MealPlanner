@@ -22,7 +22,10 @@ class MealsController < ApplicationController
 	end
 
 	def recipes_using_pantry
-
+		onlyActive = false
+		if params[:active] 
+			onlyActive = true
+		end
 	 	included_ingredients = params[:included_ingredients].map { |item| item["id"] }
 
 	 	if params[:excluded_ingredients]
@@ -33,7 +36,7 @@ class MealsController < ApplicationController
 
 	 	@pantry_ingredients = Ingredient.pantry_selected_ingredients(included_ingredients)
 
-		@pantry_recipes = Recipe.pantry_recipes(included_ingredients, excluded_ingredients, current_user)	
+		@pantry_recipes = Recipe.pantry_recipes(included_ingredients, excluded_ingredients, onlyActive,current_user)	
 
 	 	 respond_to do |format|
 	       format.json { render json: @pantry_recipes }
