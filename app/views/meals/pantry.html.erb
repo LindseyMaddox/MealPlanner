@@ -1,13 +1,29 @@
+<div class="row">
+    <div class="col-10 offset-1 col-md-6">
+        <h3>Recipes with Ingredients You Have at Home</h3>
+    </div>
+</div>
 <%= form_tag("/meals/recipes_using_pantry", method: "get", remote: true) do  %>
 <div class="row">
   <div class="col-10 offset-1 col-md-4 pantry-container">
-   <label id="ingredients-label"><strong>Must Include Ingredients</strong></label>
+   <label id="ingredients-label"><strong>You have:</strong></label>
    <% @food_groups.each do |food_group| %>
     <div class="food-groups-ingredients">
       <div class="food-group-label"> <%= link_to food_group.name, "#" %> <span class="fa fa-caret-down"></span></div> 
           <% @ingredients.where(food_group_id: food_group.id).each do |ingredient| %>
             <div class="field pantry-form-ingredient hidden-ingredient">
-              <%= check_box_tag 'ingredients[][id]',ingredient.id, false, class: "select-ingredient" %> <%= ingredient.name %>
+              <%= check_box_tag 'included_ingredients[][id]',ingredient.id, false, class: "select-ingredient" %> <%= ingredient.name %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+   <label id="ingredients-label"><strong>You don't have</strong></label>
+   <% @food_groups.each do |food_group| %>
+    <div class="food-groups-ingredients">
+      <div class="food-group-label"> <%= link_to food_group.name, "#" %> <span class="fa fa-caret-down"></span></div> 
+          <% @ingredients.where(food_group_id: food_group.id).each do |ingredient| %>
+            <div class="field pantry-form-ingredient hidden-ingredient">
+              <%= check_box_tag 'excluded_ingredients[][id]',ingredient.id, false, class: "exclude-ingredient" %> <%= ingredient.name %>
             </div>
           <% end %>
         </div>

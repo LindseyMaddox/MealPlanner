@@ -53,15 +53,18 @@ class Recipe < ApplicationRecord
     	group("recipes.name").count
     end
     
-    def self.pantry_recipes(ingredients,current_user)
+    def self.pantry_recipes(included,excluded,current_user)
     	
-		query_ingredients = "(" + ingredients.join(',') + ")"
+		included_ingredients = "(" + included.join(',') + ")"
 
+		excluded_ingredients = "(" + excluded.join(',') + ")"
+#Joining a recipe that has multiple ingredients will return multiple rows,
+#so can't query not directly, we need to do a subquery to make sure a recipe with one of those ingredients it not included
 
-		ingredients_length = ingredients.length
-		
 		@pantry_recipes = Recipe.joins(:recipe_ingredients).where("recipe_ingredients.ingredient_id 
-			in #{query_ingredients}").where(user_id: current_user.id).group(:id).having("count(recipes.id) = ?", ingredients.length)
+			in #{included_ingredients}").where("recipe_ingredients.recipe_id 
+			NOT IN (select recipe_ingredients.recipe_id from recipe_ingredients where recipe_ingredients.ingredient_id in #{excluded_ingredients})").where(user_id: current_user.id).group(:id).having("count(recipes.id) = ?", included.length)
+
 	end
 	protected
 	def titleize
