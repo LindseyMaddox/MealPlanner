@@ -6,7 +6,12 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'recipes#index'
 
-  resources :recipes
+  resources :recipes do
+        collection do
+      get 'pantry'
+    end
+     match :recipes_using_pantry, via: [:get], on: :collection
+  end
 
   #probably will want to restrict the routes later
   resources :ingredients
@@ -16,10 +21,6 @@ resources :meals do
       get 'planner'
     end 
     match :batch_create, via: [:post], on: :collection
-    collection do
-      get 'pantry'
-    end
-     match :recipes_using_pantry, via: [:get], on: :collection
   end
 
   get  '/signup',  to: 'users#new'

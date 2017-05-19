@@ -16,34 +16,6 @@ class MealsController < ApplicationController
 		@this_week_meals = Meal.meal_generator(params[:number_of_meals],current_user)				   
 	end
 
-	def pantry
-		@food_groups = FoodGroup.order(:name)
-		@ingredients = Ingredient.order(:name)
-	end
-
-	def recipes_using_pantry
-		onlyActive = false
-		if params[:active] 
-			onlyActive = true
-		end
-	 	included_ingredients = params[:included_ingredients].map { |item| item["id"] }
-
-	 	if params[:excluded_ingredients]
-	 		excluded_ingredients = params[:excluded_ingredients].map { |item| item["id"] }
-	 	else
-	 		excluded_ingredients = []
-	 	end
-
-	 	@pantry_ingredients = Ingredient.pantry_selected_ingredients(included_ingredients)
-
-		@pantry_recipes = Recipe.pantry_recipes(included_ingredients, excluded_ingredients, onlyActive,current_user)	
-
-	 	 respond_to do |format|
-	       format.json { render json: @pantry_recipes }
-	       format.js 
-	    end	
-	end
-
 	def show
 		@meal = Meal.find(params[:id])
 	end
