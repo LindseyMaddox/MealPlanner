@@ -2,7 +2,6 @@ class Recipe < ApplicationRecord
 
 	before_validation :titleize
 
-
 	validates :user_id, presence: true
 
 	validates :name, length: { minimum: 4 }, uniqueness: { scope: :user_id}
@@ -61,12 +60,10 @@ class Recipe < ApplicationRecord
 #Joining a recipe that has multiple ingredients will return multiple rows,
 #so can't query not directly, we need to do a subquery to make sure a recipe with one of those ingredients it not included
 		if onlyActive
-			@pantry_recipes = Recipe.joins(:recipe_ingredients).where("recipe_ingredients.ingredient_id 
-				in #{included_ingredients}").where("recipe_ingredients.recipe_id 
+			@pantry_recipes = Recipe.joins(:recipe_ingredients).where(recipe_ingredients: {ingredient_id: included}).where("recipe_ingredients.recipe_id 
 				NOT IN (select recipe_ingredients.recipe_id from recipe_ingredients where recipe_ingredients.ingredient_id in #{excluded_ingredients})").where(active: true).where(user_id: current_user.id).group(:id).having("count(recipes.id) = ?", included.length)
 		else
-				@pantry_recipes = Recipe.joins(:recipe_ingredients).where("recipe_ingredients.ingredient_id 
-				in #{included_ingredients}").where("recipe_ingredients.recipe_id 
+				@pantry_recipes = Recipe.joins(:recipe_ingredients).where(recipe_ingredients: {ingredient_id: included}).where("recipe_ingredients.recipe_id 
 				NOT IN (select recipe_ingredients.recipe_id from recipe_ingredients where recipe_ingredients.ingredient_id in #{excluded_ingredients})").where(user_id: current_user.id).group(:id).having("count(recipes.id) = ?", included.length)
 		end
 	end
